@@ -1,0 +1,7 @@
+{
+  "*.tsx": [
+    "prettier --write",
+    "eslint --config .eslintrc.json --fix"
+  ],
+  "*.json": "prettier --write"
+}
