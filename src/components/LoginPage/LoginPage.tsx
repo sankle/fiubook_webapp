@@ -2,25 +2,28 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import fiubaIcon from '../../../images/logo-fiuba.png';
 
-// import * as styles from './styles.css';
+import styles from './styles.css';
 
 const validationSchema = yup.object({
   email: yup
     .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
+    .email('Ingrese una dirección de email válida')
+    .required('Debe ingresar su email'),
   password: yup
     .string()
-    .min(8, 'Password should be of minimum 8 characters length')
-    .required('Password is required'),
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .required('Debe ingresar su contraseña'),
 });
+
+const onClickFederatedLogin = (): void => alert('se presiono login federado');
 
 export default function LoginPage(): JSX.Element {
   const formik = useFormik({
     initialValues: {
-      email: 'foobar@example.com',
-      password: 'foobar',
+      email: '',
+      password: '',
     },
     validationSchema,
     onSubmit: values => {
@@ -29,10 +32,10 @@ export default function LoginPage(): JSX.Element {
   });
 
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
+    <div className={styles.formContainer}>
+      <form onSubmit={formik.handleSubmit} className={styles.form}>
+        <h1 className={styles.formTitle}>Inicio de sesión</h1>
         <TextField
-          fullWidth
           id="email"
           name="email"
           label="Email"
@@ -42,18 +45,26 @@ export default function LoginPage(): JSX.Element {
           helperText={formik.touched.email && formik.errors.email}
         />
         <TextField
-          fullWidth
           id="password"
           name="password"
-          label="Password"
+          label="Contraseña"
           type="password"
           value={formik.values.password}
           onChange={formik.handleChange}
           error={formik.touched.password && Boolean(formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
         />
-        <Button color="primary" variant="contained" fullWidth type="submit">
-          Submit
+        <Button color="primary" variant="contained" type="submit">
+          Acceder
+        </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          type="button"
+          onClick={onClickFederatedLogin}
+        >
+          <input type="image" src={fiubaIcon} className={styles.fiubaIcon} />
+          Conectar con FIUBA
         </Button>
       </form>
     </div>
