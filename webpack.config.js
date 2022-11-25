@@ -12,6 +12,7 @@ module.exports = {
   },
   devServer: {
     static: './dist',
+    historyApiFallback: true,
   },
   module: {
     rules: [
@@ -45,9 +46,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css', '.scss'],
-  },
-  devServer: {
-    historyApiFallback: true,
+    alias: {
+      "@images": path.resolve(__dirname, 'images'),
+      "@styles": path.resolve(__dirname, 'src/styles')
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

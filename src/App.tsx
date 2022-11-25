@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './components/LoginPage/LoginPage';
+import LoginPage from './components/Pages/LoginPage/LoginPage';
 
 function App(): JSX.Element {
   return (
