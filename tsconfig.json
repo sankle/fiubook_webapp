@@ -24,5 +24,4 @@
     }
   },
   "exclude": ["node_modules", "src/**/*.spec.ts"]
-  // "include": ["src", "src/components"]
 }
