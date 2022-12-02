@@ -47,9 +47,9 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css', '.scss'],
     alias: {
-      "@images": path.resolve(__dirname, 'images'),
-      "@styles": path.resolve(__dirname, 'src/styles')
-    }
+      '@images': path.resolve(__dirname, 'images'),
+      '@styles': path.resolve(__dirname, 'src/styles'),
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
