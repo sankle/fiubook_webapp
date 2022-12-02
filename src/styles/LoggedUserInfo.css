@@ -1,0 +1,26 @@
+.loggedUserInfoContainer {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.nameAndBadgesContainer {
+  display: flex;
+  flex-direction: column;
+  margin-right: 7px;
+}
+
+.userName {
+  align-self: end;
+  font-family: 'Inter';
+  font-size: 15pt;
+}
+
+.badgeStack {
+  display: flex;
+  margin-top: 0px;
+  vertical-align: top;
+  justify-content: flex-end;
+  gap: 5px;
+}

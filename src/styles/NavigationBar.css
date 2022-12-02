@@ -1,0 +1,55 @@
+.navigationContainer {
+  display: flex;
+  height: 14%;
+  width: 100%;
+  justify-content: space-between;
+  padding-top: 3px;
+  padding-bottom: 10px;
+}
+
+.leftNavigationContainer {
+  display: flex;
+  height: 100%;
+  width: 20%;
+  justify-content: center;
+}
+
+.centerNavigationContainer {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  height: 100%;
+  width: 50%;
+  align-items: start;
+  gap: 10px;
+}
+
+.rightNavigationContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 20%;
+  gap: 5px;
+}
+
+.logoTitle {
+  font-family: 'Asap', sans-serif;
+  font-weight: bold;
+  font-size: 40pt;
+  color: #01a0e4;
+}
+
+.menuTab {
+  color: #01a0e4;
+}
+
+.fiubaLogo {
+  width: 250px;
+  height: 70px;
+  align-self: end;
+  padding-right: 8px;
+}
+
+.loggedUserInfo {
+  height: 40px;
+}

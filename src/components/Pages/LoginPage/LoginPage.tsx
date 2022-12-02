@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
-import styles from '@styles/default.css';
+import styles from '@styles/LoginPage.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
 
