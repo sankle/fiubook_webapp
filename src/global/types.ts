@@ -8,3 +8,15 @@ export enum Roles {
   Student,
   Administrative,
 }
+
+export interface Service {
+  id: number;
+  name: string;
+  description: string;
+  tags: string[];
+  bookable: Boolean;
+  requiresConfirmation: Boolean;
+  imageUrl?: string;
+  minBooking?: string;
+  maxBooking?: string;
+}

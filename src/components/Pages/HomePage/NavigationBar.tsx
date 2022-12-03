@@ -40,7 +40,7 @@ export default function NavigationBar({
           onChange={index =>
             setCurrentMenuOption(tabIndexToMenuOptionArray[index])
           }
-          colorScheme="twitter"
+          colorScheme="linkedin"
         >
           <TabList>
             <Tab>
