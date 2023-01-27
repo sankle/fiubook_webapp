@@ -3,8 +3,7 @@
 interface CssExports {
   'bookingButton': string;
   'bookingContainer': string;
-  'bookingInfoContainer': string;
-  'cardContainer': string;
+  'iconWithText': string;
   'imageContainer': string;
   'serviceImage': string;
   'serviceNameAndDescriptionContainer': string;

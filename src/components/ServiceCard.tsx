@@ -1,4 +1,11 @@
-import { Image, Heading, Text, Tag, Button } from '@chakra-ui/react';
+import {
+  Image,
+  Heading,
+  Text,
+  Tag,
+  Button,
+  useDisclosure,
+} from '@chakra-ui/react';
 import {
   CalendarIcon,
   InfoIcon,
@@ -7,15 +14,24 @@ import {
 } from '@chakra-ui/icons';
 import styles from '@styles/ServiceCard.css';
 import { Service } from '../global/types';
+import BookServiceModal from './BookServiceModal';
 
 // TODO: change this
 const placeholderImage =
   'https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png';
 
-export function BookingTimeInfo({ text }: { text: String }): JSX.Element {
+export function IconWithText({
+  icon,
+  text,
+}: {
+  icon: String;
+  text: String;
+}): JSX.Element {
   return (
-    <div className={styles.bookingInfoContainer}>
-      <TimeIcon />
+    <div className={styles.iconWithText}>
+      {icon === 'timeIcon' && <TimeIcon />}
+      {icon === 'warningIcon' && <WarningIcon />}
+      {icon === 'calendarIcon' && <CalendarIcon />}
       {text}
     </div>
   );
@@ -26,8 +42,10 @@ export default function ServiceCard({
 }: {
   service: Service;
 }): JSX.Element {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <div className={styles.cardContainer}>
+    <>
       <div className={styles.imageContainer}>
         <Image
           src={service.imageUrl ?? placeholderImage}
@@ -52,26 +70,30 @@ export default function ServiceCard({
       </div>
       <div className={styles.bookingContainer}>
         {service.minBooking && (
-          <BookingTimeInfo text={`Reserva mínima ${service.minBooking}`} />
+          <IconWithText
+            icon="timeIcon"
+            text={`Reserva mínima ${service.minBooking}`}
+          />
         )}
         {service.maxBooking && (
-          <BookingTimeInfo text={`Reserva máxima ${service.maxBooking}`} />
+          <IconWithText
+            icon="timeIcon"
+            text={`Reserva máxima ${service.maxBooking}`}
+          />
         )}
         {service.requiresConfirmation && (
-          <div className={styles.bookingInfoContainer}>
-            <WarningIcon />
-            Requiere confirmación
-          </div>
+          <IconWithText icon="warningIcon" text="Requiere confirmación" />
         )}
         <Button
           colorScheme="linkedin"
           disabled={!service.bookable}
           className={styles.bookingButton}
+          onClick={onOpen}
         >
-          <CalendarIcon />
-          &nbsp;&nbsp;Reservar
+          <IconWithText icon="calendarIcon" text="Reservar" />
         </Button>
+        <BookServiceModal isOpen={isOpen} onClose={onClose} service={service} />
       </div>
-    </div>
+    </>
   );
 }
