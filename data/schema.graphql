@@ -1,0 +1,93 @@
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+"""Type of reservation. Either REQUIRES_CONFIRMATION or AUTOMATIC"""
+enum BookingType {
+  AUTOMATIC
+  REQUIRES_CONFIRMATION
+}
+
+input CreateServiceArgs {
+  name: String!
+  description: String!
+  granularity: Int!
+  min_time: Int!
+  max_time: Int
+  booking_type: BookingType!
+  allowed_roles: [UniversityRole!]!
+}
+
+input Credentials {
+  dni: String!
+  password: String!
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+type Mutation {
+  addUser(credentials: Credentials!): User!
+  createSession(credentials: Credentials!): Session!
+  createService(creationArgs: CreateServiceArgs!): Service!
+}
+
+type PaginatedServiceResponse {
+  items: [Service!]!
+  paginationToken: String
+}
+
+type PaginatedUserResponse {
+  items: [User!]!
+  paginationToken: String
+}
+
+type Query {
+  user(dni: String, id: String): User!
+  users(pagination_token: String): PaginatedUserResponse!
+  services(pagination_token: String, query_term: String): PaginatedServiceResponse!
+  myServices(pagination_token: String, query_term: String): PaginatedServiceResponse!
+}
+
+type Service {
+  ts: DateTime!
+  id: ID!
+  publisher_id: ID!
+  name: String!
+  description: String!
+
+  """Time slot granularity in seconds"""
+  granularity: Int!
+
+  """Minimum amount of time slots to reserve"""
+  min_time: Int!
+
+  """Maximum amount of time slots to reserve"""
+  max_time: Int
+  booking_type: BookingType!
+  allowed_roles: [UniversityRole!]!
+}
+
+type Session {
+  token: String!
+}
+
+"""Unversity role. STUDENT, PROFESSOR or NODO"""
+enum UniversityRole {
+  STUDENT
+  PROFESSOR
+  NODO
+}
+
+type User {
+  id: ID!
+  ts: DateTime!
+  dni: String!
+  roles: [String!]!
+  can_publish_services: Boolean!
+}
+
