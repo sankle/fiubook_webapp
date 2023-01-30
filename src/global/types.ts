@@ -20,3 +20,8 @@ export interface Service {
   minBooking?: string;
   maxBooking?: string;
 }
+
+export interface UserCredentials {
+  dni: number;
+  password: number;
+}

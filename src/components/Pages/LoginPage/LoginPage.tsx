@@ -5,6 +5,8 @@ import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
+import { useMutation } from 'react-relay';
+import { graphql } from 'relay-runtime';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -14,8 +16,21 @@ const validationSchema = yup.object({
     .required('Debe ingresar su contraseña'),
 });
 
+const CreateSessionMutation = graphql`
+  mutation LoginPageCreateSessionMutation($dni: String!, $password: String!) {
+    createSession(credentials: { dni: $dni, password: $password }) {
+      token
+    }
+  }
+`;
+
 export default function LoginPage(): JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [failedLoginAttempt, setFailedLoginAttempt] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [commitMutation, isMutationInFlight] = useMutation(
+    CreateSessionMutation,
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -23,9 +38,13 @@ export default function LoginPage(): JSX.Element {
       password: '',
     },
     validationSchema,
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
-      setFailedLoginAttempt(true);
+    onSubmit: ({ dni, password }) => {
+      commitMutation({
+        variables: {
+          dni,
+          password,
+        },
+      });
     },
   });
 

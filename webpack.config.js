@@ -17,14 +17,20 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(ts|tsx)?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-      },
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            generatorOpts: { compact: false },
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
+            plugins: [['relay']],
+          },
+        },
       },
       {
         test: /\.css$/,
