@@ -30,7 +30,7 @@
   "scripts": {
     "start": "npm run relay && webpack-dev-server --open --mode development --hot",
     "build": "npm run relay && webpack --mode production",
-    "lint": "eslint --config .eslintrc.json src",
+    "lint": "eslint --config .eslintrc.json src --fix",
     "prepare": "husky install",
     "relay": "relay-compiler",
     "get-schema": "get-graphql-schema http://localhost:3000/graph > ./data/schema.graphql"

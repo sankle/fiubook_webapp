@@ -33,7 +33,8 @@
     "react/react-in-jsx-scope": 0,
     "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/strict-boolean-expressions": 0,
-    "@typescript-eslint/no-use-before-define": ["error"]
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/explicit-function-return-type": 0
   },
   "settings": {
     "react": {
