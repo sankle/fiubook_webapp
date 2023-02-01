@@ -4,9 +4,13 @@ import fiubaLogo from '@images/fiuba_logo.jpg';
 import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.css';
 import WrongLoginAlert from './WrongLoginAlert';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
+import { UserContext } from '../../../contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
+
+const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -25,9 +29,14 @@ const CreateSessionMutation = graphql`
 `;
 
 export default function LoginPage(): JSX.Element {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [failedLoginAttempt, setFailedLoginAttempt] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [failedLoginAttempt, setFailedLoginAttempt] = useState({
+    showFailedLoginError: false,
+    errorMsg: INVALID_CREDENTIALS_ERROR_MSG,
+  });
+
+  const { sessionService } = useContext(UserContext);
+  const navigate = useNavigate();
+
   const [commitMutation, isMutationInFlight] = useMutation(
     CreateSessionMutation,
   );
@@ -43,6 +52,17 @@ export default function LoginPage(): JSX.Element {
         variables: {
           dni,
           password,
+        },
+        onCompleted(data) {
+          const token = data.createSession.token;
+          sessionService.setUserToken(token);
+          navigate('/home');
+        },
+        onError(err: Error) {
+          setFailedLoginAttempt({
+            showFailedLoginError: true,
+            errorMsg: err.message,
+          });
         },
       });
     },
@@ -69,7 +89,7 @@ export default function LoginPage(): JSX.Element {
             isInvalid={
               // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
               (formik.touched.dni && Boolean(formik.errors.dni)) ||
-              failedLoginAttempt
+              failedLoginAttempt.showFailedLoginError
             }
           />
           <Input
@@ -83,15 +103,23 @@ export default function LoginPage(): JSX.Element {
               (formik.touched.password &&
                 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 Boolean(formik.errors.password)) ||
-              failedLoginAttempt
+              failedLoginAttempt.showFailedLoginError
             }
           />
-          <Button colorScheme="primary" type="submit">
+          <Button
+            colorScheme="primary"
+            type="submit"
+            disabled={isMutationInFlight}
+            isLoading={isMutationInFlight}
+          >
             Iniciar Sesion
           </Button>
         </form>
       </Flex>
-      <WrongLoginAlert isVisible={failedLoginAttempt} />
+      <WrongLoginAlert
+        isVisible={failedLoginAttempt.showFailedLoginError}
+        errorMsg={failedLoginAttempt.errorMsg}
+      />
     </VStack>
   );
 }

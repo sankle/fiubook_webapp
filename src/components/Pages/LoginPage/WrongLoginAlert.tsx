@@ -9,8 +9,10 @@ import { ReactElement } from 'react';
 
 const WrongLoginAlert = ({
   isVisible,
+  errorMsg,
 }: {
   isVisible: boolean;
+  errorMsg: string;
 }): ReactElement => {
   return (
     <Alert
@@ -23,7 +25,7 @@ const WrongLoginAlert = ({
       <AlertIcon />
       <Box>
         <AlertTitle>Error al Iniciar Sesion</AlertTitle>
-        <AlertDescription>Credenciales Incorrectas</AlertDescription>
+        <AlertDescription>{errorMsg}</AlertDescription>
       </Box>
     </Alert>
   );
