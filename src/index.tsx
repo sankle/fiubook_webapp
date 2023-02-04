@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ChakraProvider } from '@chakra-ui/react';
-import '@styles/index.css';
+import '@styles/index.module.css';
 import theme from './themes/default';
 import { UserContextProvider } from './contexts/UserContext';
 import RelayContext from './contexts/RelayContext';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
+  document.getElementById('root') as HTMLElement
 );
 
 root.render(
@@ -20,5 +21,5 @@ root.render(
         </RelayContext>
       </UserContextProvider>
     </ChakraProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

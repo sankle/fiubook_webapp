@@ -4,10 +4,27 @@ directive @specifiedBy(
   url: String!
 ) on SCALAR
 
+type Booking {
+  id: ID!
+  ts: DateTime!
+  service_id: ID!
+  requestor_id: ID!
+  publisher_id: ID!
+  start_date: DateTime!
+  end_date: DateTime!
+  booking_status: String!
+}
+
 """Type of reservation. Either REQUIRES_CONFIRMATION or AUTOMATIC"""
 enum BookingType {
   AUTOMATIC
   REQUIRES_CONFIRMATION
+}
+
+input CreateBookingArgs {
+  service_id: ID!
+  start_date: DateTime!
+  end_date: DateTime!
 }
 
 input CreateServiceArgs {
@@ -32,25 +49,37 @@ scalar DateTime
 
 type Mutation {
   addUser(credentials: Credentials!): User!
+  updateUser(update_args: UpdateUserArgs!, id: String!): User!
   createSession(credentials: Credentials!): Session!
   createService(creationArgs: CreateServiceArgs!): Service!
+  updateService(update_args: UpdateServiceArgs!, service_id: String!): Service!
+  createBooking(creationArgs: CreateBookingArgs!): Booking!
+  cancelBooking(booking_id: String!): Booking!
+  acceptBooking(accept: Boolean!, booking_id: String!): Booking!
+}
+
+type PaginatedBookingResponse {
+  edges: [Booking!]!
+  after: String
 }
 
 type PaginatedServiceResponse {
-  items: [Service!]!
-  paginationToken: String
+  edges: [Service!]!
+  after: String
 }
 
 type PaginatedUserResponse {
-  items: [User!]!
-  paginationToken: String
+  edges: [User!]!
+  after: String
 }
 
 type Query {
   user(dni: String, id: String): User!
-  users(pagination_token: String): PaginatedUserResponse!
-  services(pagination_token: String, query_term: String): PaginatedServiceResponse!
-  myServices(pagination_token: String, query_term: String): PaginatedServiceResponse!
+  users(first: Float, after: String): PaginatedUserResponse!
+  services(first: Float, query_term: String, after: String): PaginatedServiceResponse!
+  myServices(first: Float, query_term: String, after: String): PaginatedServiceResponse!
+  myBookings(first: Float, pagination_token: String): PaginatedBookingResponse!
+  myBookingsForPublisher(first: Float, pagination_token: String): PaginatedBookingResponse!
 }
 
 type Service {
@@ -81,6 +110,21 @@ enum UniversityRole {
   STUDENT
   PROFESSOR
   NODO
+}
+
+input UpdateServiceArgs {
+  name: String
+  description: String
+  granularity: Int
+  min_time: Int
+  max_time: Int
+  booking_type: BookingType
+  allowed_roles: [UniversityRole!]
+}
+
+input UpdateUserArgs {
+  is_admin: Boolean
+  can_publish_services: Boolean
 }
 
 type User {

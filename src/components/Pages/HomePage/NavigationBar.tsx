@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { CalendarIcon, HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
 import fiubaLogo from '@images/fiuba_logo.jpg';
-import styles from '@styles/NavigationBar.css';
+import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
 import { HomeMenuOptions } from '../../../global/types';
 

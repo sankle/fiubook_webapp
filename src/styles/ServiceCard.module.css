@@ -6,12 +6,6 @@
   width: 60%;
 }
 
-.serviceImage {
-  object-fit: contain;
-  border-radius: 10px;
-  vertical-align: center;
-}
-
 .imageContainer {
   display: flex;
   width: 20%;
@@ -35,12 +29,6 @@
 
 .tagsIcon {
   align-self: center;
-}
-
-.iconWithText {
-  display: flex;
-  align-items: center;
-  gap: 5px;
 }
 
 .bookingButton {

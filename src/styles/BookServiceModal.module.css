@@ -1,0 +1,77 @@
+.modalContent {
+  width: 1200px;
+  height: 900px;
+  max-width: 1200px !important;
+}
+
+.serviceContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.serviceName {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.serviceDescription {
+  font-size: 20px;
+}
+
+.imageContainer {
+  display: flex;
+  width: 60%;
+  justify-content: center;
+}
+
+.tagsContainer {
+  display: flex;
+  gap: 5px;
+  margin-top: auto;
+}
+
+.nameAndDescriptionContainer {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  gap: 13px;
+}
+
+.imageAndTagsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  align-items: center;
+  gap: 5px;
+}
+
+.serviceBookingLimitsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+}
+
+.bookingDateContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 80px;
+  padding-top: 20px;
+}
+
+.dateSelectionContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+}
+
+.calendarContainer {
+  width: 700px;
+  height: 500px;
+}
+
+.input {
+  margin-bottom: 200px;
+}

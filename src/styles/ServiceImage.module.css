@@ -1,0 +1,5 @@
+.serviceImage {
+  object-fit: contain;
+  border-radius: 10px;
+  vertical-align: center;
+}

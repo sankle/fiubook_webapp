@@ -23,5 +23,6 @@
       "@styles/*": ["./src/styles/*"]
     }
   },
-  "exclude": ["node_modules", "src/**/*.spec.ts"]
+  "exclude": ["node_modules", "src/**/*.spec.ts"],
+  "plugins": [{ "name": "typescript-plugin-css-modules" }]
 }

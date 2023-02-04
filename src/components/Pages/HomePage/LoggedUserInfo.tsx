@@ -1,5 +1,5 @@
 import { Avatar, Badge } from '@chakra-ui/react';
-import styles from '@styles/LoggedUserInfo.css';
+import styles from '@styles/LoggedUserInfo.module.css';
 import { Roles } from '../../../global/types';
 
 const user = {

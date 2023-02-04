@@ -1,5 +1,5 @@
 import NavigationBar from './NavigationBar';
-import styles from '@styles/HomePage.css';
+import styles from '@styles/HomePage.module.css';
 import { useState } from 'react';
 import { HomeMenuOptions } from '../../../global/types';
 import ServiceList from '../../ServiceList';
@@ -63,7 +63,7 @@ const services = [
 
 export default function HomePage(): JSX.Element {
   const [currentMenuOption, setCurrentMenuOption] = useState(
-    HomeMenuOptions.ServicesList,
+    HomeMenuOptions.ServicesList
   );
 
   return (
@@ -74,7 +74,7 @@ export default function HomePage(): JSX.Element {
           <ServiceList services={services} />
         )}
         {currentMenuOption === HomeMenuOptions.BookingsList && (
-          <p>Bookings List</p>
+          <p>Aún no has efectuado ninguna reserva.</p>
         )}
       </div>
     </div>

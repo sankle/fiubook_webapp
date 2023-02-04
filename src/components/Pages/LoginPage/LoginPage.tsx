@@ -2,13 +2,14 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
-import styles from '@styles/LoginPage.css';
+import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useContext, useState } from 'react';
 import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
 import { UserContext } from '../../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
 
 const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
 
@@ -37,9 +38,8 @@ export default function LoginPage(): JSX.Element {
   const { sessionService } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const [commitMutation, isMutationInFlight] = useMutation(
-    CreateSessionMutation,
-  );
+  const [commitMutation, isMutationInFlight] =
+    useMutation<LoginPageCreateSessionMutation>(CreateSessionMutation);
 
   const formik = useFormik({
     initialValues: {

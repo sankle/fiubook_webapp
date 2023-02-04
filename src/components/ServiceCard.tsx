@@ -1,41 +1,23 @@
-import {
-  Image,
-  Heading,
-  Text,
-  Tag,
-  Button,
-  useDisclosure,
-} from '@chakra-ui/react';
-import {
-  CalendarIcon,
-  InfoIcon,
-  TimeIcon,
-  WarningIcon,
-} from '@chakra-ui/icons';
-import styles from '@styles/ServiceCard.css';
+import { Heading, Text, Button, useDisclosure } from '@chakra-ui/react';
+import { CalendarIcon, TimeIcon, WarningIcon } from '@chakra-ui/icons';
+import styles from '@styles/ServiceCard.module.css';
 import { Service } from '../global/types';
 import BookServiceModal from './BookServiceModal';
+import IconWithText from './IconWithText';
+import ServiceImage from './ServiceImage';
+import ServiceTags from './ServiceTags';
+// import { graphql } from 'relay-runtime';
 
-// TODO: change this
-const placeholderImage =
-  'https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png';
-
-export function IconWithText({
-  icon,
-  text,
-}: {
-  icon: String;
-  text: String;
-}): JSX.Element {
-  return (
-    <div className={styles.iconWithText}>
-      {icon === 'timeIcon' && <TimeIcon />}
-      {icon === 'warningIcon' && <WarningIcon />}
-      {icon === 'calendarIcon' && <CalendarIcon />}
-      {text}
-    </div>
-  );
-}
+// const ServiceCardFragment = graphql`
+//   fragment ServiceCardFragment on Service {
+//     id
+//     name
+//     description
+//     ts
+//     granularity
+//     booking_type
+//   }
+// `;
 
 export default function ServiceCard({
   service,
@@ -46,12 +28,10 @@ export default function ServiceCard({
 
   return (
     <>
-      <div className={styles.imageContainer}>
-        <Image
-          src={service.imageUrl ?? placeholderImage}
-          className={styles.serviceImage}
-        />
-      </div>
+      <ServiceImage
+        className={styles.imageContainer}
+        imageUrl={service.imageUrl ?? null}
+      />
       <div className={styles.serviceNameAndDescriptionContainer}>
         <Heading as="h3" size="md" noOfLines={1}>
           {service.name}
@@ -59,30 +39,26 @@ export default function ServiceCard({
         <Text fontSize="md" noOfLines={3}>
           {service.description}
         </Text>
-        <div className={styles.tagsContainer}>
-          {service.tags?.length && <InfoIcon className={styles.tagsIcon} />}
-          {service.tags.map(tagName => (
-            <Tag key={tagName} size="sm" variant="solid" colorScheme="teal">
-              {tagName}
-            </Tag>
-          ))}
-        </div>
+        <ServiceTags className={styles.tagsContainer} tags={service.tags} />
       </div>
       <div className={styles.bookingContainer}>
         {service.minBooking && (
           <IconWithText
-            icon="timeIcon"
-            text={`Reserva mínima ${service.minBooking}`}
+            icon={<TimeIcon />}
+            text={<p>Reserva mínima {service.minBooking}</p>}
           />
         )}
         {service.maxBooking && (
           <IconWithText
-            icon="timeIcon"
-            text={`Reserva máxima ${service.maxBooking}`}
+            icon={<TimeIcon />}
+            text={<p>Reserva máxima {service.maxBooking}</p>}
           />
         )}
         {service.requiresConfirmation && (
-          <IconWithText icon="warningIcon" text="Requiere confirmación" />
+          <IconWithText
+            icon={<WarningIcon />}
+            text={<p>Requiere confirmación</p>}
+          />
         )}
         <Button
           colorScheme="linkedin"
@@ -90,7 +66,7 @@ export default function ServiceCard({
           className={styles.bookingButton}
           onClick={onOpen}
         >
-          <IconWithText icon="calendarIcon" text="Reservar" />
+          <IconWithText icon={<CalendarIcon />} text={<p>Reservar</p>} />
         </Button>
         <BookServiceModal isOpen={isOpen} onClose={onClose} service={service} />
       </div>
