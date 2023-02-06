@@ -16,7 +16,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import styles from '@styles/BookServiceModal.module.css';
-import { Service } from '../global/types';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
@@ -24,6 +23,27 @@ import { useEffect, useState } from 'react';
 import { Calendar, Event, dayjsLocalizer } from 'react-big-calendar';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
+import { graphql, useFragment } from 'react-relay';
+import { BookServiceModalFragment$key } from './__generated__/BookServiceModalFragment.graphql';
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  service: BookServiceModalFragment$key;
+}
+
+const BookServiceModalFragment = graphql`
+  fragment BookServiceModalFragment on Service {
+    id
+    name
+    description
+    ts
+    granularity
+    booking_type
+    min_time
+    max_time
+  }
+`;
 
 dayjs.extend(timezone);
 // TODO: fix timezone drift when clicking calendar.
@@ -50,11 +70,9 @@ export default function BookServiceModal({
   isOpen,
   onClose,
   service,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  service: Service;
-}): JSX.Element {
+}: Props): JSX.Element {
+  const data = useFragment(BookServiceModalFragment, service);
+
   const [events, setEvents] = useState<Event[]>([]);
 
   const [fromDate, setFromDate] = useState(currentDate);
@@ -100,25 +118,25 @@ export default function BookServiceModal({
         <ModalBody>
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
-              <p className={styles.serviceName}>{service.name}</p>
+              <p className={styles.serviceName}>{data.name}</p>
               <Text fontSize="md" noOfLines={3}>
-                {service.description}
+                {data.description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {service.minBooking && (
+                {data.min_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva mínima {service.minBooking}</p>}
+                    text={<p>Reserva mínima {data.min_time}</p>}
                   />
                 )}
-                {service.maxBooking && (
+                {data.max_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {service.maxBooking}</p>}
+                    text={<p>Reserva máxima {data.max_time}</p>}
                   />
                 )}
               </div>
-              {service.requiresConfirmation && (
+              {data.booking_type === 'REQUIRES_CONFIRMATION' && (
                 <IconWithText
                   icon={<WarningIcon />}
                   text={<p>Requiere confirmación</p>}
@@ -126,14 +144,8 @@ export default function BookServiceModal({
               )}
             </div>
             <div className={styles.imageAndTagsContainer}>
-              <ServiceImage
-                className={styles.imageContainer}
-                imageUrl={service.imageUrl ?? null}
-              />
-              <ServiceTags
-                className={styles.tagsContainer}
-                tags={service.tags}
-              />
+              <ServiceImage className={styles.imageContainer} />
+              <ServiceTags className={styles.tagsContainer} />
             </div>
           </div>
           <Divider />

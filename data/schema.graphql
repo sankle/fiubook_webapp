@@ -15,6 +15,11 @@ type Booking {
   booking_status: String!
 }
 
+type BookingEdgesType {
+  node: Booking!
+  cursor: String!
+}
+
 """Type of reservation. Either REQUIRES_CONFIRMATION or AUTOMATIC"""
 enum BookingType {
   AUTOMATIC
@@ -58,19 +63,26 @@ type Mutation {
   acceptBooking(accept: Boolean!, booking_id: String!): Booking!
 }
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 type PaginatedBookingResponse {
-  edges: [Booking!]!
-  after: String
+  edges: [BookingEdgesType!]!
+  pageInfo: PageInfo!
 }
 
 type PaginatedServiceResponse {
-  edges: [Service!]!
-  after: String
+  edges: [ServicesEdgesType!]!
+  pageInfo: PageInfo!
 }
 
 type PaginatedUserResponse {
-  edges: [User!]!
-  after: String
+  edges: [UsersEdgesType!]!
+  pageInfo: PageInfo!
 }
 
 type Query {
@@ -78,8 +90,8 @@ type Query {
   users(first: Float, after: String): PaginatedUserResponse!
   services(first: Float, query_term: String, after: String): PaginatedServiceResponse!
   myServices(first: Float, query_term: String, after: String): PaginatedServiceResponse!
-  myBookings(first: Float, pagination_token: String): PaginatedBookingResponse!
-  myBookingsForPublisher(first: Float, pagination_token: String): PaginatedBookingResponse!
+  myBookings(first: Float, after: String): PaginatedBookingResponse!
+  myBookingsForPublisher(first: Float, after: String): PaginatedBookingResponse!
 }
 
 type Service {
@@ -99,6 +111,11 @@ type Service {
   max_time: Int
   booking_type: BookingType!
   allowed_roles: [UniversityRole!]!
+}
+
+type ServicesEdgesType {
+  node: Service!
+  cursor: String!
 }
 
 type Session {
@@ -133,5 +150,10 @@ type User {
   dni: String!
   roles: [String!]!
   can_publish_services: Boolean!
+}
+
+type UsersEdgesType {
+  node: User!
+  cursor: String!
 }
 

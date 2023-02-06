@@ -21,6 +21,11 @@ export interface Service {
   maxBooking?: string;
 }
 
+export enum BookingType {
+  AUTOMATIC,
+  REQUIRES_CONFIRMATION,
+}
+
 export interface UserCredentials {
   dni: number;
   password: number;
