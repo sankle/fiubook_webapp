@@ -17,24 +17,12 @@
   },
   "plugins": ["react"],
   "rules": {
-    "consistent-return": 0,
-    "import/no-extraneous-dependencies": 0,
-    "import/prefer-default-export": 0,
     "indent": 1,
-    "key-spacing": 0,
-    "max-len": 0,
-    "no-multi-spaces": 0,
-    "no-shadow": 0,
-    "no-useless-escape": 0,
-    "no-use-before-define": "off",
-    "no-return-assign": 0,
-    "react/forbid-prop-types": 0,
-    "react/require-default-props": 0,
     "react/react-in-jsx-scope": 0,
-    "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/strict-boolean-expressions": 0,
     "@typescript-eslint/no-use-before-define": ["error"],
-    "@typescript-eslint/explicit-function-return-type": 0
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/prefer-nullish-coalescing": 0
   },
   "settings": {
     "react": {

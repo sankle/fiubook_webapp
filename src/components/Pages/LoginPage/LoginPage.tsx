@@ -4,12 +4,12 @@ import fiubaLogo from '@images/fiuba_logo.jpg';
 import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
-import { UserContext } from '../../../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
+import { setSessionCookie } from '../../../services/sessionService';
 
 const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
 
@@ -35,7 +35,6 @@ export default function LoginPage(): JSX.Element {
     errorMsg: INVALID_CREDENTIALS_ERROR_MSG,
   });
 
-  const { sessionService } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [commitMutation, isMutationInFlight] =
@@ -55,7 +54,8 @@ export default function LoginPage(): JSX.Element {
         },
         onCompleted(data) {
           const token = data.createSession.token;
-          sessionService.setUserToken(token);
+          setSessionCookie({ token });
+          localStorage.setItem('token', token);
           navigate('/home');
         },
         onError(err: Error) {
@@ -87,7 +87,6 @@ export default function LoginPage(): JSX.Element {
             value={formik.values.dni}
             onChange={formik.handleChange}
             isInvalid={
-              // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
               (formik.touched.dni && Boolean(formik.errors.dni)) ||
               failedLoginAttempt.showFailedLoginError
             }
@@ -100,9 +99,7 @@ export default function LoginPage(): JSX.Element {
             value={formik.values.password}
             onChange={formik.handleChange}
             isInvalid={
-              (formik.touched.password &&
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                Boolean(formik.errors.password)) ||
+              (formik.touched.password && Boolean(formik.errors.password)) ||
               failedLoginAttempt.showFailedLoginError
             }
           />

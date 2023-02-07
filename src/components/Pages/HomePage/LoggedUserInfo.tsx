@@ -25,7 +25,7 @@ const roleBadges = {
 const getBadgeComponent = (role: Roles): JSX.Element => {
   const { colorScheme, text } = roleBadges[role];
   return (
-    <Badge colorScheme={colorScheme} variant="subtle">
+    <Badge key={text} colorScheme={colorScheme} variant="subtle">
       {text}
     </Badge>
   );
