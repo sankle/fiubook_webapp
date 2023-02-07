@@ -19,8 +19,8 @@ import styles from '@styles/BookServiceModal.module.css';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { useEffect, useState } from 'react';
-import { Calendar, Event, dayjsLocalizer } from 'react-big-calendar';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import { graphql, useFragment } from 'react-relay';
@@ -62,10 +62,6 @@ const floorToStepMinutes = (date: Date, stepMinutes: number) => {
 
 const convertToLocaleString = (date: Date) => date.toISOString().slice(0, -8);
 
-const currentDate = convertToLocaleString(
-  floorToStepMinutes(new Date(), stepMinutes)
-);
-
 export default function BookServiceModal({
   isOpen,
   onClose,
@@ -75,11 +71,35 @@ export default function BookServiceModal({
 
   const [events, setEvents] = useState<Event[]>([]);
 
-  const [fromDate, setFromDate] = useState(currentDate);
-  const [toDate, setToDate] = useState(currentDate);
+  const { currentDate, currentDateString } = useMemo(() => {
+    const currentDate = new Date();
+
+    return {
+      currentDate,
+      currentDateString: convertToLocaleString(
+        floorToStepMinutes(currentDate, stepMinutes)
+      ),
+    };
+  }, []);
+
+  const [fromDate, setFromDate] = useState(currentDateString);
+  const [toDate, setToDate] = useState(currentDateString);
 
   // TODO: useMemoization for calendar props. Follow examples in the library docs website.
-  const [calendarDate, setCalendarDate] = useState(new Date(currentDate));
+  const [calendarDate, setCalendarDate] = useState(currentDate);
+
+  const onSelectSlot = useCallback(
+    (slotInfo: SlotInfo) => {
+      setFromDate(convertToLocaleString(slotInfo.start));
+      setToDate(convertToLocaleString(slotInfo.end));
+    },
+    [setFromDate, setToDate]
+  );
+
+  const onNavigate = useCallback(
+    (newDate: Date) => setFromDate(convertToLocaleString(newDate)),
+    [setFromDate]
+  );
 
   const handleFromDateChange = (newValue: any) => {
     setFromDate(newValue.target.value);
@@ -90,7 +110,7 @@ export default function BookServiceModal({
   };
 
   useEffect(() => {
-    setCalendarDate(new Date(fromDate ?? toDate ?? currentDate));
+    setCalendarDate(new Date(fromDate || toDate || currentDate));
 
     // add event of current booking
     if (fromDate && toDate) {
@@ -159,7 +179,7 @@ export default function BookServiceModal({
                     type="datetime-local"
                     value={fromDate}
                     onChange={handleFromDateChange}
-                    min={currentDate}
+                    min={currentDateString}
                     step={stepMinutes * 60}
                   />
                   <FormHelperText>
@@ -173,7 +193,7 @@ export default function BookServiceModal({
                     type="datetime-local"
                     value={toDate}
                     onChange={handleToDateChange}
-                    min={fromDate ?? currentDate}
+                    min={fromDate || currentDateString}
                   />
                   <FormHelperText>
                     Seleccione la fecha de finalización del servicio
@@ -190,14 +210,8 @@ export default function BookServiceModal({
                 endAccessor="end"
                 toolbar={true}
                 date={calendarDate}
-                onNavigate={newDate =>
-                  setFromDate(convertToLocaleString(newDate))
-                }
-                onSelectSlot={slotInfo => {
-                  console.log('onSelectSlot: ', slotInfo);
-                  setFromDate(convertToLocaleString(slotInfo.start));
-                  setToDate(convertToLocaleString(slotInfo.end));
-                }}
+                onNavigate={onNavigate}
+                onSelectSlot={onSelectSlot}
                 selectable
               />
             </div>
