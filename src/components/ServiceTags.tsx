@@ -15,8 +15,10 @@ const hardcodedTags = [
   ['Alumnos', 'Equipo'],
 ];
 
+const tagId = Math.floor(Math.random() * hardcodedTags.length);
+
 export default function ServiceTags({ className }: Props): JSX.Element {
-  const tags = hardcodedTags[Math.floor(Math.random() * hardcodedTags.length)];
+  const tags = hardcodedTags[tagId];
 
   return (
     <div className={className}>
