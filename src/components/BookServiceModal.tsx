@@ -22,7 +22,6 @@ import ServiceTags from './ServiceTags';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
 import { graphql, useFragment } from 'react-relay';
 import { BookServiceModalFragment$key } from './__generated__/BookServiceModalFragment.graphql';
 
@@ -45,9 +44,6 @@ const BookServiceModalFragment = graphql`
   }
 `;
 
-dayjs.extend(timezone);
-// TODO: fix timezone drift when clicking calendar.
-dayjs.tz.setDefault('America/Argentina/Buenos_Aires');
 const localizer = dayjsLocalizer(dayjs);
 
 const stepMinutes = 30;
@@ -60,7 +56,9 @@ const floorToStepMinutes = (date: Date, stepMinutes: number) => {
   return date;
 };
 
-const convertToLocaleString = (date: Date) => date.toISOString().slice(0, -8);
+const timezoneOffsetMs = new Date().getTimezoneOffset() * 60000;
+const convertToLocaleString = (date: Date) =>
+  new Date(date.getTime() - timezoneOffsetMs).toISOString().slice(0, -8);
 
 export default function BookServiceModal({
   isOpen,
