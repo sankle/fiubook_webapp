@@ -1,10 +1,9 @@
+import config from '../../config/default';
+
 import { ReactNode } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 import { getSessionCookie } from '../services/sessionService';
-
-// TODO: move to config file
-const graphqlServerUrl = 'http://127.0.0.1:3000/graph';
 
 // Define a function that fetches the results of an operation (query/mutation/etc)
 // and returns its results as a Promise:
@@ -27,7 +26,7 @@ async function fetchQuery(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(graphqlServerUrl, {
+  const res = await fetch(config.graphqlServerUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify({

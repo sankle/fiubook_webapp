@@ -18,9 +18,11 @@
     "isolatedModules": true,
     "noEmit": false,
     "jsx": "react-jsx",
+    "baseUrl": "./",
     "paths": {
-      "@images/*": ["./images/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@config/*": ["config/*"],
+      "@images/*": ["images/*"],
+      "@styles/*": ["src/styles/*"]
     }
   },
   "exclude": ["node_modules", "src/**/*.spec.ts"],

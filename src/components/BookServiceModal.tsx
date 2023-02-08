@@ -24,6 +24,12 @@ import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
 import { graphql, useFragment } from 'react-relay';
 import { BookServiceModalFragment$key } from './__generated__/BookServiceModalFragment.graphql';
+import {
+  changeBookingSlot,
+  convertToLocaleString,
+  normalizeBookingSlot,
+} from '../utils/dateRangeUtils';
+import constants from '../constants';
 
 interface Props {
   isOpen: boolean;
@@ -46,20 +52,6 @@ const BookServiceModalFragment = graphql`
 
 const localizer = dayjsLocalizer(dayjs);
 
-const stepMinutes = 30;
-const currentBookingEventTitle = 'Su reserva';
-
-const floorToStepMinutes = (date: Date, stepMinutes: number) => {
-  const minutes = date.getMinutes();
-  const newMinutes = Math.floor(minutes / stepMinutes) * stepMinutes;
-  date.setMinutes(newMinutes);
-  return date;
-};
-
-const timezoneOffsetMs = new Date().getTimezoneOffset() * 60000;
-const convertToLocaleString = (date: Date) =>
-  new Date(date.getTime() - timezoneOffsetMs).toISOString().slice(0, -8);
-
 export default function BookServiceModal({
   isOpen,
   onClose,
@@ -67,62 +59,140 @@ export default function BookServiceModal({
 }: Props): JSX.Element {
   const data = useFragment(BookServiceModalFragment, service);
 
+  const granularity = data.granularity; // in seconds
+  const minSlots = data.min_time;
+  const maxSlots = data.max_time;
+
   const [events, setEvents] = useState<Event[]>([]);
 
-  const { currentDate, currentDateString } = useMemo(() => {
-    const currentDate = new Date();
+  const { currentDate, initialFromDateString, initialToDateString } =
+    useMemo((): {
+      currentDate: Date;
+      initialFromDateString: string;
+      initialToDateString: string;
+    } => {
+      const currentDate = new Date();
+      const currentDateString = convertToLocaleString(currentDate);
 
-    return {
-      currentDate,
-      currentDateString: convertToLocaleString(
-        floorToStepMinutes(currentDate, stepMinutes)
-      ),
-    };
-  }, []);
+      const { start: initialFromDate, end: initialToDate } =
+        normalizeBookingSlot(
+          currentDateString,
+          currentDateString,
+          granularity,
+          minSlots,
+          maxSlots,
+          false
+        );
 
-  const [fromDate, setFromDate] = useState(currentDateString);
-  const [toDate, setToDate] = useState(currentDateString);
+      return {
+        currentDate,
+        initialFromDateString: convertToLocaleString(
+          initialFromDate || currentDate
+        ),
+        initialToDateString: convertToLocaleString(
+          initialToDate || currentDate
+        ),
+      };
+    }, []);
 
-  // TODO: useMemoization for calendar props. Follow examples in the library docs website.
+  const [fromDate, setFromDate] = useState(initialFromDateString);
+  const [toDate, setToDate] = useState(initialToDateString);
   const [calendarDate, setCalendarDate] = useState(currentDate);
 
   const onSelectSlot = useCallback(
-    (slotInfo: SlotInfo) => {
-      setFromDate(convertToLocaleString(slotInfo.start));
-      setToDate(convertToLocaleString(slotInfo.end));
-    },
+    (slotInfo: SlotInfo) =>
+      changeBookingSlot({
+        newFromDate: convertToLocaleString(slotInfo.start),
+        newToDate: convertToLocaleString(slotInfo.end),
+        prevFromDate: fromDate,
+        prevToDate: toDate,
+        granularity,
+        minSlots,
+        maxSlots,
+        setFromDate,
+        setToDate,
+      }),
     [setFromDate, setToDate]
   );
 
   const onNavigate = useCallback(
-    (newDate: Date) => setFromDate(convertToLocaleString(newDate)),
-    [setFromDate]
+    (newDate: Date) =>
+      changeBookingSlot({
+        newFromDate: convertToLocaleString(newDate),
+        newToDate: null,
+        prevFromDate: fromDate,
+        prevToDate: toDate,
+        granularity,
+        minSlots,
+        maxSlots,
+        setFromDate,
+        setToDate,
+      }),
+    [setFromDate, setToDate]
   );
 
-  const handleFromDateChange = (newValue: any) => {
-    setFromDate(newValue.target.value);
-  };
+  const handleFromDateChange = useCallback(
+    (newValue: any) =>
+      changeBookingSlot({
+        newFromDate: newValue.target.value,
+        newToDate: null,
+        prevFromDate: fromDate,
+        prevToDate: toDate,
+        granularity,
+        minSlots,
+        maxSlots,
+        setFromDate,
+        setToDate,
+      }),
+    [setFromDate, setToDate]
+  );
 
-  const handleToDateChange = (newValue: any) => {
-    setToDate(newValue.target.value);
-  };
+  const handleToDateChange = useCallback(
+    (newValue: any) =>
+      changeBookingSlot({
+        newFromDate: null,
+        newToDate: newValue.target.value,
+        prevFromDate: fromDate,
+        prevToDate: toDate,
+        granularity,
+        minSlots,
+        maxSlots,
+        setFromDate,
+        setToDate,
+      }),
+    [setFromDate, setToDate]
+  );
 
   useEffect(() => {
-    setCalendarDate(new Date(fromDate || toDate || currentDate));
+    const { start, end } = normalizeBookingSlot(
+      fromDate,
+      toDate,
+      granularity,
+      minSlots,
+      maxSlots,
+      false
+    );
 
-    // add event of current booking
-    if (fromDate && toDate) {
+    setCalendarDate(start || end || currentDate);
+
+    if (start && end) {
+      // add event of current booking
       setEvents(prevEvents => [
-        ...prevEvents.filter(event => event.title !== currentBookingEventTitle),
+        ...prevEvents.filter(
+          event => event.title !== constants.currentBookingEventTitle
+        ),
         {
-          title: currentBookingEventTitle,
-          start: new Date(fromDate),
-          end: new Date(toDate),
+          title: constants.currentBookingEventTitle,
+          start,
+          end,
         },
       ]);
     } else {
+      // remove booking event from calendar since it is no delimited
       setEvents(prevEvents =>
-        prevEvents.filter(event => event.title !== currentBookingEventTitle)
+        prevEvents.filter(
+          event => event.title !== constants.currentBookingEventTitle
+        )
       );
     }
   }, [fromDate, toDate]);
@@ -177,8 +247,8 @@ export default function BookServiceModal({
                     type="datetime-local"
                     value={fromDate}
                     onChange={handleFromDateChange}
-                    min={currentDateString}
-                    step={stepMinutes * 60}
+                    min={initialFromDateString}
+                    step={granularity}
                   />
                   <FormHelperText>
                     Seleccione la fecha de inicio del servicio
@@ -191,7 +261,7 @@ export default function BookServiceModal({
                     type="datetime-local"
                     value={toDate}
                     onChange={handleToDateChange}
-                    min={fromDate || currentDateString}
+                    min={fromDate || initialFromDateString}
                   />
                   <FormHelperText>
                     Seleccione la fecha de finalización del servicio

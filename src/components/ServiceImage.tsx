@@ -1,10 +1,7 @@
 import { Image } from '@chakra-ui/react';
 import styles from '@styles/ServiceImage.module.css';
+import constants from '../constants';
 // import { graphql } from 'relay-runtime';
-
-// TODO: change this
-const placeholderImage =
-  'https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png';
 
 // const ServiceImageFragment = graphql`
 //   fragment ServiceImageFragment on Service {
@@ -20,7 +17,7 @@ export default function ServiceImage({
 }): JSX.Element {
   return (
     <div className={className}>
-      <Image src={placeholderImage} className={styles.serviceImage} />
+      <Image src={constants.placeholderImage} className={styles.serviceImage} />
     </div>
   );
 }
