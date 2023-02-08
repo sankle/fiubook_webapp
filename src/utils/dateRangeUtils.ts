@@ -15,14 +15,14 @@ export const normalizeBookingSlot = (
 ) => {
   const granularityMs = granularity * 1000;
 
-  let start = isDateSelected(fromDate) ? new Date(fromDate) : null;
-  let end = isDateSelected(toDate) ? new Date(toDate) : start;
+  const start = isDateSelected(fromDate) ? new Date(fromDate) : null;
+  const end = isDateSelected(toDate) ? new Date(toDate) : start;
 
   if (!start || !end) {
     return { start, end };
   }
 
-  let adjustEndTime = !changedToDateInput;
+  const adjustEndTime = !changedToDateInput;
 
   let startTime = start.getTime();
   let endTime = end.getTime();
