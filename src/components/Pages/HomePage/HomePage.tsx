@@ -6,10 +6,12 @@ import ServiceList from '../../ServiceList';
 import { graphql } from 'relay-runtime';
 import { useLazyLoadQuery } from 'react-relay';
 import { HomePageQuery as HomePageQueryType } from './__generated__/HomePageQuery.graphql';
+import MyBookingsList from '../../MyBookingsList';
 
 const HomePageQuery = graphql`
   query HomePageQuery {
     ...ServiceListFragment
+    ...MyBookingsListFragment
   }
 `;
 
@@ -29,7 +31,7 @@ export default function HomePage(): JSX.Element {
           <ServiceList services={data} />
         )}
         {currentMenuOption === HomeMenuOptions.BookingsList && (
-          <p>Aún no has efectuado ninguna reserva.</p>
+          <MyBookingsList bookings={data} />
         )}
       </div>
     </div>
