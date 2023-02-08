@@ -1,4 +1,4 @@
-import config from '../../config/default';
+import config from '@config/default';
 
 import { ReactNode } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';

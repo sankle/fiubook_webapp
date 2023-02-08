@@ -49,6 +49,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css', '.scss'],
     alias: {
+      '@config': path.resolve(__dirname, 'config'),
       '@images': path.resolve(__dirname, 'images'),
       '@styles': path.resolve(__dirname, 'src/styles'),
     },
