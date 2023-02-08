@@ -40,11 +40,9 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpe?g|gif|jp2|webp)$/,
-        loader: 'file-loader',
-        options: {
-          name: 'images/[name].[ext]',
-        },
+        test: /\.(png|svg|jpe?g|gif|ico|jp2|webp)$/,
+        exclude: /node_modules/,
+        use: ['file-loader?name=[name].[ext]'],
       },
     ],
   },
@@ -58,6 +56,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+      filename: './index.html',
+      favicon: './public/favicon.ico',
     }),
   ],
 };
