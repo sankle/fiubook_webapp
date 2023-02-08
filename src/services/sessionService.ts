@@ -22,3 +22,19 @@ export const getSessionCookie = (): Session | null => {
     return JSON.parse(sessionCookie);
   }
 };
+
+export const setToken = (token: string): void => {
+  setSessionCookie({ token });
+  localStorage.setItem('token', token);
+};
+
+export const getToken = (): string | null => {
+  const sessionCookie = getSessionCookie();
+  const localStorageSessionToken = localStorage.getItem('token');
+
+  return localStorageSessionToken || (sessionCookie && sessionCookie.token);
+};
+
+export const isUserLoggedIn = (): boolean => {
+  return !!getToken();
+};

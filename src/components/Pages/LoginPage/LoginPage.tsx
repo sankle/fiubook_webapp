@@ -9,7 +9,7 @@ import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
 import { useNavigate } from 'react-router-dom';
 import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
-import { setSessionCookie } from '../../../services/sessionService';
+import { isUserLoggedIn, setToken } from '../../../services/sessionService';
 
 const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
 
@@ -30,12 +30,17 @@ const CreateSessionMutation = graphql`
 `;
 
 export default function LoginPage(): JSX.Element {
+  const navigate = useNavigate();
+
+  if (isUserLoggedIn()) {
+    console.log('calling replace');
+    navigate('/home');
+  }
+
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({
     showFailedLoginError: false,
     errorMsg: INVALID_CREDENTIALS_ERROR_MSG,
   });
-
-  const navigate = useNavigate();
 
   const [commitMutation, isMutationInFlight] =
     useMutation<LoginPageCreateSessionMutation>(CreateSessionMutation);
@@ -54,8 +59,7 @@ export default function LoginPage(): JSX.Element {
         },
         onCompleted(data) {
           const token = data.createSession.token;
-          setSessionCookie({ token });
-          localStorage.setItem('token', token);
+          setToken(token);
           navigate('/home');
         },
         onError(err: Error) {

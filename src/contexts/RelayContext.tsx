@@ -3,7 +3,7 @@ import config from '@config/default';
 import { ReactNode } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
-import { getSessionCookie } from '../services/sessionService';
+import { getToken } from '../services/sessionService';
 
 // Define a function that fetches the results of an operation (query/mutation/etc)
 // and returns its results as a Promise:
@@ -17,10 +17,7 @@ async function fetchQuery(
     'content-type': 'application/json',
   };
 
-  const sessionCookie = getSessionCookie();
-  const localStorageSessionToken = localStorage.getItem('token');
-
-  const token = localStorageSessionToken || sessionCookie?.token;
+  const token = getToken();
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
