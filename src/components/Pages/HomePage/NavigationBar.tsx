@@ -7,7 +7,12 @@ import {
   Tab,
   Tabs,
 } from '@chakra-ui/react';
-import { CalendarIcon, HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  CalendarIcon,
+  HamburgerIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
@@ -23,10 +28,14 @@ export interface Props {
 const tabIndexToMenuOptionArray = [
   HomeMenuOptions.ServicesList,
   HomeMenuOptions.BookingsList,
+  HomeMenuOptions.NewService,
 ];
 
 const navigationBarFragment = graphql`
   fragment NavigationBarFragment on Query {
+    me {
+      is_admin
+    }
     ...LoggedUserInfoFragment
   }
 `;
@@ -63,6 +72,10 @@ export default function NavigationBar({
             <Tab>
               <CalendarIcon />
               &nbsp;&nbsp;Mis Reservas
+            </Tab>
+            <Tab>
+              <AddIcon />
+              &nbsp;&nbsp;Nuevo Servicio
             </Tab>
           </TabList>
         </Tabs>

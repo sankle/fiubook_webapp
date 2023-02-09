@@ -1,0 +1,30 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 700pt;
+  background-color: white;
+  border-radius: 5pt;
+  padding: 5pt;
+}
+
+.title {
+    color: #01a0e4;
+}
+
+.titleContainer {
+  width: 100%;
+}
+
+.formContainer{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.fieldTitle{
+  color: #777777;
+}
