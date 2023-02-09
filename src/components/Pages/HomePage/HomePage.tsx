@@ -13,6 +13,7 @@ const HomePageQuery = graphql`
     ...ServiceListFragment
     ...NavigationBarFragment
     ...MyBookingsListFragment
+    ...NavigationBarFragment
   }
 `;
 
