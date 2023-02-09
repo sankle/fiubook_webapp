@@ -6,7 +6,7 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 import { CancelBookingModalFragment$key } from './__generated__/CancelBookingModalFragment.graphql';
 import styles from '@styles/CancelBookingModal.module.css';
 import { BiTrashAlt } from 'react-icons/bi';
@@ -49,6 +49,27 @@ export default function CancelBookingModal({
   booking,
 }: Props): JSX.Element {
   const data = useFragment(CancelBookingModalFragment, booking);
+
+  const [commitMutation, isMutationInFlight] = useMutation(
+    graphql`
+      mutation CancelBookingModalDeleteButtonMutation($booking_id: String!) {
+        cancelBooking(booking_id: $booking_id) {
+          id
+          booking_status
+        }
+      }
+    `
+  );
+
+  const onDelete = () => {
+    commitMutation({
+      variables: {
+        booking_id: data.id,
+      },
+      onCompleted: onClose,
+    });
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay onClick={onClose} />
@@ -64,7 +85,12 @@ export default function CancelBookingModal({
           <Button variant={'outline'} colorScheme={'gray'} onClick={onClose}>
             Volver
           </Button>
-          <Button colorScheme={'red'} onClick={onClose}>
+          <Button
+            colorScheme={'red'}
+            onClick={onDelete}
+            isLoading={isMutationInFlight}
+            disabled={isMutationInFlight}
+          >
             Confirmar Cancelacion
           </Button>
         </div>
