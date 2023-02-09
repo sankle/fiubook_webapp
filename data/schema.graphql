@@ -97,11 +97,7 @@ type PaginatedUserResponse {
 type Query {
   user(dni: String, id: String): User!
   users(first: Float, after: String): PaginatedUserResponse!
-<<<<<<< HEAD
   me: User!
-=======
-<<<<<<< HEAD
->>>>>>> 04c3eff (Fetches logged user information and displays it in top right corner)
   services(
     first: Float
     query_term: String
@@ -112,11 +108,6 @@ type Query {
     query_term: String
     after: String
   ): PaginatedServiceResponse!
-=======
-  me: User!
-  services(first: Float, query_term: String, after: String): PaginatedServiceResponse!
-  myServices(first: Float, query_term: String, after: String): PaginatedServiceResponse!
->>>>>>> 80684d9 (Fetches logged user information and displays it in top right corner)
   myBookings(first: Float, after: String): PaginatedBookingResponse!
   myBookingsForPublisher(first: Float, after: String): PaginatedBookingResponse!
 }
