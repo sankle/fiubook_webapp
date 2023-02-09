@@ -19,7 +19,7 @@ async function fetchQuery(
 
   const token = getToken();
 
-  if (token) {
+  if (token !== null) {
     headers.Authorization = `Bearer ${token}`;
   }
 

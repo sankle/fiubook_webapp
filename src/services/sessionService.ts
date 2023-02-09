@@ -32,6 +32,7 @@ export const getToken = (): string | null => {
   const sessionCookie = getSessionCookie();
   const localStorageSessionToken = localStorage.getItem('token');
 
+  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
   return localStorageSessionToken || (sessionCookie && sessionCookie.token);
 };
 
