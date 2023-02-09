@@ -4,9 +4,10 @@ export enum HomeMenuOptions {
 }
 
 export enum Roles {
-  Professor,
-  Student,
-  Administrative,
+  Professor = 'PROFESSOR',
+  Student = 'STUDENT',
+  Administrative = 'NODO',
+  SystemAdmin = 'ADMIN',
 }
 
 export interface Service {

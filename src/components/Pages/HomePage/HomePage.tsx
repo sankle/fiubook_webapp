@@ -11,6 +11,7 @@ import MyBookingsList from '../../MyBookingsList';
 const HomePageQuery = graphql`
   query HomePageQuery {
     ...ServiceListFragment
+    ...NavigationBarFragment
     ...MyBookingsListFragment
   }
 `;
@@ -25,7 +26,10 @@ export default function HomePage(): JSX.Element {
 
   return (
     <div className={styles.pageContainer}>
-      <NavigationBar setCurrentMenuOption={setCurrentMenuOption} />
+      <NavigationBar
+        setCurrentMenuOption={setCurrentMenuOption}
+        loggedUser={data}
+      />
       <div className={styles.pageContent}>
         {currentMenuOption === HomeMenuOptions.ServicesList && (
           <ServiceList services={data} />

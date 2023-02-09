@@ -97,6 +97,7 @@ type PaginatedUserResponse {
 type Query {
   user(dni: String, id: String): User!
   users(first: Float, after: String): PaginatedUserResponse!
+  me: User!
   services(
     first: Float
     query_term: String
@@ -176,6 +177,7 @@ type User {
   dni: String!
   roles: [String!]!
   can_publish_services: Boolean!
+  is_admin: Boolean!
 }
 
 type UsersEdgesType {
