@@ -8,11 +8,14 @@ type Booking {
   id: ID!
   ts: DateTime!
   service_id: ID!
+  service: Service
   requestor_id: ID!
   publisher_id: ID!
   start_date: DateTime!
   end_date: DateTime!
   booking_status: String!
+  requestor: User
+  publisher: User!
 }
 
 type BookingEdgesType {
@@ -88,6 +91,7 @@ type PaginatedUserResponse {
 type Query {
   user(dni: String, id: String): User!
   users(first: Float, after: String): PaginatedUserResponse!
+  me: User!
   services(first: Float, query_term: String, after: String): PaginatedServiceResponse!
   myServices(first: Float, query_term: String, after: String): PaginatedServiceResponse!
   myBookings(first: Float, after: String): PaginatedBookingResponse!
@@ -111,6 +115,7 @@ type Service {
   max_time: Int
   booking_type: BookingType!
   allowed_roles: [UniversityRole!]!
+  publisher: User
 }
 
 type ServicesEdgesType {
@@ -150,6 +155,7 @@ type User {
   dni: String!
   roles: [String!]!
   can_publish_services: Boolean!
+  is_admin: Boolean!
 }
 
 type UsersEdgesType {

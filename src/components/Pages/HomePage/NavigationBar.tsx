@@ -12,17 +12,30 @@ import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
 import { HomeMenuOptions } from '../../../global/types';
+import { graphql, useFragment } from 'react-relay';
+import { NavigationBarFragment$key } from './__generated__/NavigationBarFragment.graphql';
+
+export interface Props {
+  loggedUser: NavigationBarFragment$key;
+  setCurrentMenuOption: React.Dispatch<React.SetStateAction<HomeMenuOptions>>;
+}
 
 const tabIndexToMenuOptionArray = [
   HomeMenuOptions.ServicesList,
   HomeMenuOptions.BookingsList,
 ];
 
+const navigationBarFragment = graphql`
+  fragment NavigationBarFragment on Query {
+    ...LoggedUserInfoFragment
+  }
+`;
+
 export default function NavigationBar({
+  loggedUser,
   setCurrentMenuOption,
-}: {
-  setCurrentMenuOption: React.Dispatch<React.SetStateAction<HomeMenuOptions>>;
-}): JSX.Element {
+}: Props): JSX.Element {
+  const data = useFragment(navigationBarFragment, loggedUser);
   return (
     <div className={styles.navigationContainer}>
       <div className={styles.leftNavigationContainer}>
@@ -56,7 +69,7 @@ export default function NavigationBar({
       </div>
       <div className={styles.rightNavigationContainer}>
         <Image src={fiubaLogo} className={styles.fiubaLogo} />
-        <LoggedUserInfo />
+        <LoggedUserInfo loggedUser={data} />
       </div>
     </div>
   );

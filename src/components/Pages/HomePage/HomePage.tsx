@@ -10,6 +10,7 @@ import { HomePageQuery as HomePageQueryType } from './__generated__/HomePageQuer
 const HomePageQuery = graphql`
   query HomePageQuery {
     ...ServiceListFragment
+    ...NavigationBarFragment
   }
 `;
 
@@ -23,7 +24,10 @@ export default function HomePage(): JSX.Element {
 
   return (
     <div className={styles.pageContainer}>
-      <NavigationBar setCurrentMenuOption={setCurrentMenuOption} />
+      <NavigationBar
+        setCurrentMenuOption={setCurrentMenuOption}
+        loggedUser={data}
+      />
       <div className={styles.pageContent}>
         {currentMenuOption === HomeMenuOptions.ServicesList && (
           <ServiceList services={data} />
