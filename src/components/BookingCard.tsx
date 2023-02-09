@@ -12,6 +12,7 @@ import ServiceTags from './ServiceTags';
 import { graphql } from 'relay-runtime';
 import { BookingCardFragment$key } from './__generated__/BookingCardFragment.graphql';
 import { useFragment } from 'react-relay';
+import CancelBookingModal from './CancelBookingModal';
 
 interface Props {
   booking: BookingCardFragment$key;
@@ -28,6 +29,7 @@ const BookingCardFragment = graphql`
       name
       description
     }
+    ...CancelBookingModalFragment
   }
 `;
 
@@ -72,7 +74,7 @@ const getFormattedDate = (date: Date): string => {
 };
 
 export default function BookingCard({ booking }: Props): JSX.Element {
-  const { onOpen } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const data = useFragment(BookingCardFragment, booking);
   const startDate = new Date(data.start_date);
   const endDate = new Date(data.end_date);
@@ -122,6 +124,7 @@ export default function BookingCard({ booking }: Props): JSX.Element {
           </Button>
         </div>
       </div>
+      <CancelBookingModal isOpen={isOpen} onClose={onClose} booking={data} />
     </>
   );
 }
