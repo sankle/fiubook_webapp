@@ -7,14 +7,13 @@
 
 .cardContainer {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  height: 150px;
+  height: 180px;
   width: 1000px;
   background-color: #FFFFFF;
   overflow: hidden;
   border-radius: 5px;
-  padding: 10px;
-  gap: 10px;
   box-shadow: 5px 5px 4px 0px rgba(214,214,214,1);
   margin-top: 10px;
 }

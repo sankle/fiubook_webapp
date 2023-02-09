@@ -1,4 +1,4 @@
-import styles from '@styles/ServiceList.module.css';
+import styles from '@styles/MyBookingsList.module.css';
 import { graphql } from 'relay-runtime';
 import { usePaginationFragment } from 'react-relay';
 import { MyBookingsListFragment$key } from './__generated__/MyBookingsListFragment.graphql';
