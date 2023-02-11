@@ -14,6 +14,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/BookServiceModal.module.css';
 import IconWithText from './IconWithText';
@@ -22,23 +23,36 @@ import ServiceTags from './ServiceTags';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
-import { graphql, useFragment } from 'react-relay';
-import { BookServiceModalFragment$key } from './__generated__/BookServiceModalFragment.graphql';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+import { BookServiceModalServiceFragment$key } from './__generated__/BookServiceModalServiceFragment.graphql';
+import { BookServiceModalExistentBookingsQuery as ExistentBookingsQueryType } from './__generated__/BookServiceModalExistentBookingsQuery.graphql';
+import { BookServiceModalMutation } from './__generated__/BookServiceModalMutation.graphql';
 import {
   changeBookingSlot,
   convertToLocaleString,
   normalizeBookingSlot,
 } from '../utils/dateRangeUtils';
 import constants from '../constants';
+import {
+  serviceBookedSuccessfullyToast,
+  serviceBookFailedToast,
+} from './notificationToasts';
+
+// TODO: add some validations and disable booking button accordingly
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  service: BookServiceModalFragment$key;
+  service: BookServiceModalServiceFragment$key;
 }
 
-const BookServiceModalFragment = graphql`
-  fragment BookServiceModalFragment on Service {
+const BookServiceModalServiceFragment = graphql`
+  fragment BookServiceModalServiceFragment on Service {
     id
     name
     description
@@ -50,6 +64,47 @@ const BookServiceModalFragment = graphql`
   }
 `;
 
+const BookServiceModalExistentBookingsQuery = graphql`
+  query BookServiceModalExistentBookingsQuery(
+    $startDate: DateTime!
+    $endDate: DateTime!
+    $serviceId: String!
+  ) {
+    conflictingBookings(
+      end_date: $endDate
+      start_date: $startDate
+      service_id: $serviceId
+    ) {
+      start_date
+      end_date
+    }
+  }
+`;
+
+const BookServiceMutation = graphql`
+  mutation BookServiceModalMutation(
+    $service_id: ID!
+    $start_date: DateTime!
+    $end_date: DateTime!
+  ) {
+    createBooking(
+      creationArgs: {
+        service_id: $service_id
+        start_date: $start_date
+        end_date: $end_date
+      }
+    ) {
+      bookingEdge {
+        node {
+          id
+          start_date
+          end_date
+        }
+      }
+    }
+  }
+`;
+
 const localizer = dayjsLocalizer(dayjs);
 
 export default function BookServiceModal({
@@ -57,13 +112,39 @@ export default function BookServiceModal({
   onClose,
   service,
 }: Props): JSX.Element {
-  const data = useFragment(BookServiceModalFragment, service);
+  const bookingServiceData = useFragment(
+    BookServiceModalServiceFragment,
+    service
+  );
 
-  const granularity = data.granularity; // in seconds
-  const minSlots = data.min_time;
-  const maxSlots = data.max_time;
+  // TODO: replace with preloaded query
+  const existentBookingsData = useLazyLoadQuery<ExistentBookingsQueryType>(
+    BookServiceModalExistentBookingsQuery,
+    {
+      serviceId: bookingServiceData.id,
+      startDate: constants.existentBookingsQueryStartDate,
+      endDate: constants.existentBookingsQueryEndDate,
+    }
+  );
 
-  const [events, setEvents] = useState<Event[]>([]);
+  const [commitMutation, isMutationInFlight] =
+    useMutation<BookServiceModalMutation>(BookServiceMutation);
+
+  const toast = useToast();
+
+  const granularity = bookingServiceData.granularity; // in seconds
+  const minSlots = bookingServiceData.min_time;
+  const maxSlots = bookingServiceData.max_time;
+
+  const existentEvents = existentBookingsData.conflictingBookings.map(
+    ({ start_date: start, end_date: end }) => ({
+      title: constants.existentBookingEventTitle,
+      start: new Date(start),
+      end: new Date(end),
+    })
+  );
+
+  const [events, setEvents] = useState<Event[]>(existentEvents);
 
   const { currentDate, initialFromDateString, initialToDateString } =
     useMemo((): {
@@ -163,6 +244,22 @@ export default function BookServiceModal({
     [setFromDate, setToDate]
   );
 
+  const eventPropGetter = useCallback(
+    (event: Event, start: Date, end: Date, isSelected: Boolean) => ({
+      ...(event.title === constants.currentBookingEventTitle && {
+        style: {
+          backgroundColor: '#537D08',
+        },
+      }),
+      ...(event.title === constants.existentBookingEventTitle && {
+        style: {
+          backgroundColor: '#8B0000',
+        },
+      }),
+    }),
+    []
+  );
+
   useEffect(() => {
     const { start, end } = normalizeBookingSlot(
       fromDate,
@@ -206,25 +303,25 @@ export default function BookServiceModal({
         <ModalBody>
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
-              <p className={styles.serviceName}>{data.name}</p>
+              <p className={styles.serviceName}>{bookingServiceData.name}</p>
               <Text fontSize="md" noOfLines={3}>
-                {data.description}
+                {bookingServiceData.description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {data.min_time && (
+                {bookingServiceData.min_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva mínima {data.min_time}</p>}
+                    text={<p>Reserva mínima {bookingServiceData.min_time}</p>}
                   />
                 )}
-                {data.max_time && (
+                {bookingServiceData.max_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {data.max_time}</p>}
+                    text={<p>Reserva máxima {bookingServiceData.max_time}</p>}
                   />
                 )}
               </div>
-              {data.booking_type === 'REQUIRES_CONFIRMATION' && (
+              {bookingServiceData.booking_type === 'REQUIRES_CONFIRMATION' && (
                 <IconWithText
                   icon={<WarningIcon />}
                   text={<p>Requiere confirmación</p>}
@@ -273,6 +370,7 @@ export default function BookServiceModal({
               <Calendar
                 localizer={localizer}
                 defaultView="week"
+                eventPropGetter={eventPropGetter}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
@@ -286,10 +384,55 @@ export default function BookServiceModal({
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="gray" mr={3} onClick={onClose}>
+          <Button
+            disabled={isMutationInFlight}
+            colorScheme="gray"
+            mr={3}
+            onClick={onClose}
+          >
             Cancelar
           </Button>
-          <Button colorScheme="linkedin">Siguiente</Button>
+          <Button
+            disabled={isMutationInFlight}
+            isLoading={isMutationInFlight}
+            colorScheme="linkedin"
+            onClick={() => {
+              commitMutation({
+                variables: {
+                  service_id: bookingServiceData.id,
+                  start_date: new Date(fromDate),
+                  end_date: new Date(toDate),
+                },
+                // TODO: update MyBookingsList
+                // (I could not find a way to do it without passing a reference to the connection fragment)
+                // updater: (store, data) => {
+                //   )
+                // },
+                onCompleted: data => {
+                  toast(
+                    serviceBookedSuccessfullyToast(
+                      bookingServiceData.name,
+                      data.createBooking.bookingEdge.node.start_date,
+                      data.createBooking.bookingEdge.node.end_date
+                    )
+                  );
+                  onClose();
+                },
+                onError: (error: Error) => {
+                  // TODO: parse error message somehow
+                  toast(
+                    serviceBookFailedToast(
+                      bookingServiceData.name,
+                      error.message
+                    )
+                  );
+                  onClose();
+                },
+              });
+            }}
+          >
+            Reservar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

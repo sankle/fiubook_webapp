@@ -1,10 +1,6 @@
-"""
-Exposes a URL that specifies the behaviour of this scalar.
-"""
+"""Exposes a URL that specifies the behaviour of this scalar."""
 directive @specifiedBy(
-  """
-  The URL that specifies the behaviour of this scalar.
-  """
+  """The URL that specifies the behaviour of this scalar."""
   url: String!
 ) on SCALAR
 
@@ -27,9 +23,7 @@ type BookingEdgesType {
   cursor: String!
 }
 
-"""
-Type of reservation. Either REQUIRES_CONFIRMATION or AUTOMATIC
-"""
+"""Type of reservation. Either REQUIRES_CONFIRMATION or AUTOMATIC"""
 enum BookingType {
   AUTOMATIC
   REQUIRES_CONFIRMATION
@@ -39,6 +33,10 @@ input CreateBookingArgs {
   service_id: ID!
   start_date: DateTime!
   end_date: DateTime!
+}
+
+type CreateBookingResponse {
+  bookingEdge: BookingEdgesType!
 }
 
 input CreateServiceArgs {
@@ -67,7 +65,7 @@ type Mutation {
   createSession(credentials: Credentials!): Session!
   createService(creationArgs: CreateServiceArgs!): Service!
   updateService(update_args: UpdateServiceArgs!, service_id: String!): Service!
-  createBooking(creationArgs: CreateBookingArgs!): Booking!
+  createBooking(creationArgs: CreateBookingArgs!): CreateBookingResponse!
   cancelBooking(booking_id: String!): Booking!
   acceptBooking(accept: Boolean!, booking_id: String!): Booking!
 }
@@ -98,16 +96,9 @@ type Query {
   user(dni: String, id: String): User!
   users(first: Float, after: String): PaginatedUserResponse!
   me: User!
-  services(
-    first: Float
-    query_term: String
-    after: String
-  ): PaginatedServiceResponse!
-  myServices(
-    first: Float
-    query_term: String
-    after: String
-  ): PaginatedServiceResponse!
+  services(first: Float, query_term: String, after: String): PaginatedServiceResponse!
+  myServices(first: Float, query_term: String, after: String): PaginatedServiceResponse!
+  conflictingBookings(end_date: DateTime!, start_date: DateTime!, service_id: String!): [Booking!]!
   myBookings(first: Float, after: String): PaginatedBookingResponse!
   myBookingsForPublisher(first: Float, after: String): PaginatedBookingResponse!
 }
@@ -119,19 +110,13 @@ type Service {
   name: String!
   description: String!
 
-  """
-  Time slot granularity in seconds
-  """
+  """Time slot granularity in seconds"""
   granularity: Int!
 
-  """
-  Minimum amount of time slots to reserve
-  """
+  """Minimum amount of time slots to reserve"""
   min_time: Int!
 
-  """
-  Maximum amount of time slots to reserve
-  """
+  """Maximum amount of time slots to reserve"""
   max_time: Int
   booking_type: BookingType!
   allowed_roles: [UniversityRole!]!
@@ -147,9 +132,7 @@ type Session {
   token: String!
 }
 
-"""
-Unversity role. STUDENT, PROFESSOR or NODO
-"""
+"""Unversity role. STUDENT, PROFESSOR or NODO"""
 enum UniversityRole {
   STUDENT
   PROFESSOR
@@ -184,3 +167,4 @@ type UsersEdgesType {
   node: User!
   cursor: String!
 }
+
