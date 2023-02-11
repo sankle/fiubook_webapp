@@ -350,7 +350,7 @@ export default function NewServiceForm(): JSX.Element {
             colorScheme={'linkedin'}
             type="submit"
             isLoading={isMutationInFlight}
-            isDisabled={isMutationInFlight}
+            isDisabled={isMutationInFlight || createdSuccesfully}
           >
             Crear Servicio
           </Button>
