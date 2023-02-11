@@ -7,9 +7,9 @@ import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
 import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
-import { useNavigate } from 'react-router-dom';
 import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
-import { isUserLoggedIn, setToken } from '../../../services/sessionService';
+import { setToken } from '../../../services/sessionService';
+import { useNavigate } from 'react-router-dom';
 
 const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
 
@@ -31,11 +31,6 @@ const CreateSessionMutation = graphql`
 
 export default function LoginPage(): JSX.Element {
   const navigate = useNavigate();
-
-  if (isUserLoggedIn()) {
-    console.log('calling replace');
-    navigate('/home');
-  }
 
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({
     showFailedLoginError: false,

@@ -23,7 +23,7 @@ const ServiceCardFragment = graphql`
     booking_type
     min_time
     max_time
-    ...BookServiceModalFragment
+    ...BookServiceModalServiceFragment
   }
 `;
 
