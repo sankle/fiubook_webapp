@@ -88,7 +88,7 @@ export const changeBookingSlot = ({
     fromDate,
     toDate,
     granularity,
-    minSlots,
+    1,
     maxSlots,
     changedToDateInput
   );

@@ -21,7 +21,6 @@ const ServiceCardFragment = graphql`
     ts
     granularity
     booking_type
-    min_time
     max_time
     ...BookServiceModalServiceFragment
   }
@@ -44,12 +43,6 @@ export default function ServiceCard({ service }: Props): JSX.Element {
         <ServiceTags className={styles.tagsContainer} />
       </div>
       <div className={styles.bookingContainer}>
-        {data.min_time && (
-          <IconWithText
-            icon={<TimeIcon />}
-            text={<p>Reserva mínima {data.min_time}</p>}
-          />
-        )}
         {data.max_time && (
           <IconWithText
             icon={<TimeIcon />}

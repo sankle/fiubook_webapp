@@ -59,7 +59,6 @@ const BookServiceModalServiceFragment = graphql`
     ts
     granularity
     booking_type
-    min_time
     max_time
   }
 `;
@@ -133,7 +132,6 @@ export default function BookServiceModal({
   const toast = useToast();
 
   const granularity = bookingServiceData.granularity; // in seconds
-  const minSlots = bookingServiceData.min_time;
   const maxSlots = bookingServiceData.max_time;
 
   const existentEvents = existentBookingsData.conflictingBookings.map(
@@ -160,7 +158,7 @@ export default function BookServiceModal({
           currentDateString,
           currentDateString,
           granularity,
-          minSlots,
+          1,
           maxSlots,
           false
         );
@@ -188,7 +186,7 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity,
-        minSlots,
+        minSlots: 1,
         maxSlots,
         setFromDate,
         setToDate,
@@ -204,7 +202,7 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity,
-        minSlots,
+        minSlots: 1,
         maxSlots,
         setFromDate,
         setToDate,
@@ -220,7 +218,7 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity,
-        minSlots,
+        minSlots: 1,
         maxSlots,
         setFromDate,
         setToDate,
@@ -236,7 +234,7 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity,
-        minSlots,
+        minSlots: 1,
         maxSlots,
         setFromDate,
         setToDate,
@@ -265,7 +263,7 @@ export default function BookServiceModal({
       fromDate,
       toDate,
       granularity,
-      minSlots,
+      1,
       maxSlots,
       false
     );
@@ -308,12 +306,6 @@ export default function BookServiceModal({
                 {bookingServiceData.description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {bookingServiceData.min_time && (
-                  <IconWithText
-                    icon={<TimeIcon />}
-                    text={<p>Reserva mínima {bookingServiceData.min_time}</p>}
-                  />
-                )}
                 {bookingServiceData.max_time && (
                   <IconWithText
                     icon={<TimeIcon />}

@@ -43,7 +43,6 @@ input CreateServiceArgs {
   name: String!
   description: String!
   granularity: Int!
-  min_time: Int!
   max_time: Int
   booking_type: BookingType!
   allowed_roles: [UniversityRole!]!
@@ -113,9 +112,6 @@ type Service {
   """Time slot granularity in seconds"""
   granularity: Int!
 
-  """Minimum amount of time slots to reserve"""
-  min_time: Int!
-
   """Maximum amount of time slots to reserve"""
   max_time: Int
   booking_type: BookingType!
@@ -143,7 +139,6 @@ input UpdateServiceArgs {
   name: String
   description: String
   granularity: Int
-  min_time: Int
   max_time: Int
   booking_type: BookingType
   allowed_roles: [UniversityRole!]
