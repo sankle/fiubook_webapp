@@ -7,6 +7,7 @@ import { graphql } from 'relay-runtime';
 import { useLazyLoadQuery } from 'react-relay';
 import { HomePageQuery as HomePageQueryType } from './__generated__/HomePageQuery.graphql';
 import MyBookingsList from '../../MyBookingsList';
+import NewServiceForm from '../../NewServiceForm';
 
 const HomePageQuery = graphql`
   query HomePageQuery {
@@ -37,6 +38,7 @@ export default function HomePage(): JSX.Element {
         {currentMenuOption === HomeMenuOptions.BookingsList && (
           <MyBookingsList bookings={data} />
         )}
+        {currentMenuOption === HomeMenuOptions.NewService && <NewServiceForm />}
       </div>
     </div>
   );
