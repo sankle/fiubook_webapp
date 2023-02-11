@@ -305,11 +305,13 @@ export default function NewServiceForm(): JSX.Element {
               size={'sm'}
               defaultValue={formik.values.max_slots}
               isDisabled={isMutationInFlight || createdSuccesfully}
+              onChange={(numberAsString, number) => {
+                void formik.setFieldValue('max_slots', number);
+              }}
             >
               <NumberInputField
                 id="max_slots"
                 name="max_slots"
-                onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.max_slots}
               />
