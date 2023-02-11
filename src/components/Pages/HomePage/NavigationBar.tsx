@@ -35,6 +35,7 @@ const navigationBarFragment = graphql`
   fragment NavigationBarFragment on Query {
     me {
       is_admin
+      can_publish_services
     }
     ...LoggedUserInfoFragment
   }
@@ -73,10 +74,12 @@ export default function NavigationBar({
               <CalendarIcon />
               &nbsp;&nbsp;Mis Reservas
             </Tab>
-            <Tab>
-              <AddIcon />
-              &nbsp;&nbsp;Nuevo Servicio
-            </Tab>
+            {(data.me.can_publish_services || data.me.is_admin) && (
+              <Tab>
+                <AddIcon />
+                &nbsp;&nbsp;Nuevo Servicio
+              </Tab>
+            )}
           </TabList>
         </Tabs>
       </div>
