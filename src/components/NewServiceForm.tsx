@@ -206,6 +206,7 @@ export default function NewServiceForm(): JSX.Element {
               onBlur={formik.handleBlur}
               checked={formik.values.automatic_confirmation}
               isDisabled={isMutationInFlight || createdSuccesfully}
+              defaultChecked={formik.values.automatic_confirmation}
             />
           </Stack>
         </Stack>

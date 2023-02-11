@@ -16,6 +16,7 @@ import CancelBookingModal from './CancelBookingModal';
 
 interface Props {
   booking: BookingCardFragment$key;
+  isPublisher: boolean;
 }
 
 const BookingCardFragment = graphql`
@@ -73,7 +74,10 @@ const getFormattedDate = (date: Date): string => {
   return `${day}/${month}/${year} a las ${hour}:${minutes}`;
 };
 
-export default function BookingCard({ booking }: Props): JSX.Element {
+export default function BookingCard({
+  booking,
+  isPublisher,
+}: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const data = useFragment(BookingCardFragment, booking);
   const startDate = new Date(data.start_date);
@@ -120,8 +124,13 @@ export default function BookingCard({ booking }: Props): JSX.Element {
             className={styles.cancelButton}
             onClick={onOpen}
           >
-            <IconWithText icon={<CalendarIcon />} text={<p>Cancelar</p>} />
+            <IconWithText icon={<CloseIcon />} text={<p>Cancelar</p>} />
           </Button>
+          {isPublisher && data.booking_status === 'PENDING_CONFIRMATION' && (
+            <Button colorScheme="green" className={styles.cancelButton}>
+              <IconWithText icon={<CheckIcon />} text={<p>Aceptar</p>} />
+            </Button>
+          )}
         </div>
       </div>
       <CancelBookingModal isOpen={isOpen} onClose={onClose} booking={data} />

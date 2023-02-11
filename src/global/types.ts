@@ -2,6 +2,7 @@ export enum HomeMenuOptions {
   ServicesList,
   BookingsList,
   NewService,
+  RequestsList,
 }
 
 export enum Roles {

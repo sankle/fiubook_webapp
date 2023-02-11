@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import {
   AddIcon,
+  AtSignIcon,
   CalendarIcon,
   HamburgerIcon,
   SearchIcon,
@@ -29,6 +30,7 @@ const tabIndexToMenuOptionArray = [
   HomeMenuOptions.ServicesList,
   HomeMenuOptions.BookingsList,
   HomeMenuOptions.NewService,
+  HomeMenuOptions.RequestsList,
 ];
 
 const navigationBarFragment = graphql`
@@ -78,6 +80,12 @@ export default function NavigationBar({
               <Tab>
                 <AddIcon />
                 &nbsp;&nbsp;Nuevo Servicio
+              </Tab>
+            )}
+            {(data.me.can_publish_services || data.me.is_admin) && (
+              <Tab>
+                <AtSignIcon />
+                &nbsp;&nbsp;Solicitudes
               </Tab>
             )}
           </TabList>
