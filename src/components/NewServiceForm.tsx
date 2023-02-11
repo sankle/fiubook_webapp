@@ -8,9 +8,6 @@ import {
   NumberInputField,
   NumberInputStepper,
   Stack,
-  Tab,
-  TabList,
-  Tabs,
   Textarea,
   Tooltip,
   Text,
@@ -18,26 +15,51 @@ import {
   CheckboxGroup,
   Checkbox,
   Button,
+  InputGroup,
+  InputRightElement,
+  Switch,
 } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
-// import * as yup from 'yup';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
-// const validationSchema = yup.object({
-//   name: yup
-//     .string()
-//     .min(3, 'El nombre debe tener al menos 3 caracteres')
-//     .required('El nombre no puede estar vacío'),
-//   description: yup
-//     .string()
-//     .min(8, 'La descripción debe tener al menos 8 caracteres')
-//     .required('La descripción no puede estar vacía'),
-//   automatic_confirmation: yup
-//     .string()
-//     .oneOf(['AUTOMATIC', 'REQUIRES_CONFIRMATION'])
-//     .required(),
-// });
+const validationSchema = yup.object({
+  name: yup
+    .string()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .required('El nombre no puede estar vacío'),
+  description: yup
+    .string()
+    .min(8, 'La descripción debe tener al menos 8 caracteres')
+    .required('La descripción no puede estar vacía'),
+  automatic_confirmation: yup.boolean().required(),
+  granularity_days: yup.number().min(0).required(),
+  granularity_hours: yup.number().min(0).max(23).required(),
+  granularity_minutes: yup.number().min(0).max(59).required(),
+  max_slots: yup.number().min(1).required(),
+  allowed_roles: yup
+    .array()
+    .of(yup.string().oneOf(['PROFESSOR', 'STUDENT', 'NODO'])),
+});
 
 export default function NewServiceForm(): JSX.Element {
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      automatic_confirmation: true,
+      granularity_days: 0,
+      granularity_hours: 0,
+      granularity_minutes: 30,
+      max_slots: 1,
+      allowed_roles: ['PROFESSOR', 'STUDENT', 'NODO'],
+    },
+    validationSchema,
+    onSubmit: values => {
+      console.log(values);
+    },
+  });
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.titleContainer}>
@@ -45,42 +67,84 @@ export default function NewServiceForm(): JSX.Element {
           Crear nuevo servicio
         </Heading>
       </div>
-      <div className={styles.formContainer}>
+      <form onSubmit={formik.handleSubmit} className={styles.formContainer}>
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
             1. Nombre
           </Heading>
-          <Input
-            placeholder="Nombre del servicio"
-            variant={'flushed'}
-            fontSize={'sm'}
-          />
+          <InputGroup>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.name}
+              isInvalid={formik.touched.name && !!formik.errors.name}
+              placeholder={'Nombre del servicio'}
+              variant={'flushed'}
+              fontSize={'sm'}
+            />
+            {formik.touched.name && !!formik.errors.name && (
+              <InputRightElement>
+                <Tooltip label={formik.errors.name}>
+                  <InfoIcon color="red" />
+                </Tooltip>
+              </InputRightElement>
+            )}
+          </InputGroup>
         </Stack>
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
             2. Descripción
           </Heading>
-          <Textarea
-            placeholder="Descripción del servicio"
-            resize={'none'}
-            variant={'flushed'}
-            fontSize={'sm'}
-          />
+          <InputGroup>
+            <Textarea
+              id="description"
+              name="description"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.description}
+              isInvalid={
+                formik.touched.description && !!formik.errors.description
+              }
+              placeholder="Descripción del servicio"
+              resize={'none'}
+              variant={'flushed'}
+              fontSize={'sm'}
+            />
+            {formik.touched.description && !!formik.errors.description && (
+              <InputRightElement>
+                <Tooltip label={formik.errors.description}>
+                  <InfoIcon color="red" />
+                </Tooltip>
+              </InputRightElement>
+            )}
+          </InputGroup>
         </Stack>
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            3. Confirmación de la reserva
+            {'3. Confirmación de la reserva '}
+            <Tooltip
+              label={
+                'Las reservas automáticas se confirman de manera instantánea. Si esta opción está desactivada, tendrás que confirmar manualmente las reservas a este'
+              }
+            >
+              <InfoIcon />
+            </Tooltip>
           </Heading>
-          <Tabs variant="solid-rounded" colorScheme="linkedin" size={'sm'}>
-            <TabList>
-              <Tooltip label="Las reservas hechas a este servició se confirmarán de manera instantánea y automática.">
-                <Tab>Automática</Tab>
-              </Tooltip>
-              <Tooltip label="Las reservas hechas a este servicio deberán ser confirmadas por vos.">
-                <Tab>Manual</Tab>
-              </Tooltip>
-            </TabList>
-          </Tabs>
+          <Stack direction="row">
+            <Text fontSize={'sm'} className={styles.text}>
+              Confirmación Automática
+            </Text>
+            <Switch
+              name="automatic_confirmation"
+              id="automatic_confirmation"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              checked={formik.values.automatic_confirmation}
+            />
+          </Stack>
         </Stack>
         <Divider />
         <Stack>
@@ -88,8 +152,19 @@ export default function NewServiceForm(): JSX.Element {
             4. Duración de los turnos
           </Heading>
           <Stack direction={'row'} alignItems={'center'}>
-            <NumberInput defaultValue={0} min={0} maxW={'16'} size={'sm'}>
-              <NumberInputField />
+            <NumberInput
+              defaultValue={formik.values.granularity_days}
+              min={0}
+              maxW={'16'}
+              size={'sm'}
+            >
+              <NumberInputField
+                id="granularity_days"
+                name="granularity_days"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.granularity_days}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -99,13 +174,19 @@ export default function NewServiceForm(): JSX.Element {
               días
             </Text>
             <NumberInput
-              defaultValue={0}
+              defaultValue={formik.values.granularity_hours}
               min={0}
               max={23}
               maxW={'16'}
               size={'sm'}
             >
-              <NumberInputField />
+              <NumberInputField
+                name="granularity_hours"
+                id="granularity_hours"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.granularity_hours}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -115,13 +196,19 @@ export default function NewServiceForm(): JSX.Element {
               hs
             </Text>
             <NumberInput
-              defaultValue={30}
+              defaultValue={formik.values.granularity_minutes}
               min={0}
               max={59}
               maxW={'16'}
               size={'sm'}
             >
-              <NumberInputField />
+              <NumberInputField
+                id="granularity_minutes"
+                name="granularity_minutes"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.granularity_minutes}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -135,7 +222,7 @@ export default function NewServiceForm(): JSX.Element {
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            5. Cantidad máxima de turnos
+            {'5. Cantidad máxima de turnos '}
             <Tooltip
               label={
                 'Cantidad máxima de turnos seguidos que se pueden solicitar en una misma reserva'
@@ -145,8 +232,19 @@ export default function NewServiceForm(): JSX.Element {
             </Tooltip>
           </Heading>
           <Stack direction={'row'} alignItems={'center'}>
-            <NumberInput defaultValue={1} min={0} maxW={'16'} size={'sm'}>
-              <NumberInputField />
+            <NumberInput
+              min={1}
+              maxW={'16'}
+              size={'sm'}
+              defaultValue={formik.values.max_slots}
+            >
+              <NumberInputField
+                id="max_slots"
+                name="max_slots"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.max_slots}
+              />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
@@ -164,7 +262,11 @@ export default function NewServiceForm(): JSX.Element {
           </Heading>
           <CheckboxGroup
             colorScheme={'linkedin'}
-            defaultValue={['STUDENT', 'PROFESSOR', 'NODO']}
+            defaultValue={formik.values.allowed_roles}
+            onChange={values => {
+              void formik.setFieldValue('allowed_roles', values);
+            }}
+            value={formik.values.allowed_roles}
           >
             <Stack direction={'row'} spacing={'10'}>
               <Checkbox value="STUDENT">
@@ -181,9 +283,11 @@ export default function NewServiceForm(): JSX.Element {
         </Stack>
         <Divider />
         <Stack align={'flex-start'}>
-          <Button colorScheme={'linkedin'}>Crear Servicio</Button>
+          <Button colorScheme={'linkedin'} type="submit">
+            Crear Servicio
+          </Button>
         </Stack>
-      </div>
+      </form>
     </div>
   );
 }
