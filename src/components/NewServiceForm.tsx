@@ -46,7 +46,7 @@ const validationSchema = yup.object({
 });
 
 export default function NewServiceForm(): JSX.Element {
-  const successToast = useToast();
+  const toast = useToast();
 
   const [commitMutation, isMutationInFlight] = useMutation(
     graphql`
@@ -99,17 +99,22 @@ export default function NewServiceForm(): JSX.Element {
           const parsedResponse = response as {
             createService: { name: string };
           };
-          successToast({
+          toast({
             title: 'Servicio creado',
             description: `Su servicio "${parsedResponse.createService.name}" ha sido creado exitosamente.`,
             status: 'success',
             duration: 9000,
             isClosable: true,
           });
-          console.log(response);
         },
         onError: error => {
-          console.log(error);
+          toast({
+            title: 'Error al crear el servicio',
+            description: error.message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
         },
       });
     },
