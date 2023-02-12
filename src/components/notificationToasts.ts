@@ -38,3 +38,23 @@ export const serviceBookFailedToast = (
   duration: 9000,
   isClosable: true,
 });
+
+export const serviceCreatedSuccessfullyToast = (
+  name: string
+): UseToastOptions => ({
+  title: 'Servicio creado',
+  description: `Su servicio "${name}" ha sido creado exitosamente.`,
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const serviceCreationFailedToast = (
+  errorDescription: string
+): UseToastOptions => ({
+  title: 'Error al crear el servicio',
+  description: errorDescription,
+  status: 'error',
+  duration: 9000,
+  isClosable: true,
+});

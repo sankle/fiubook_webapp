@@ -58,7 +58,7 @@ const getBadgeComponent = (role: Roles): JSX.Element => {
 
 export default function loggedUserInfo({ loggedUser }: Props): JSX.Element {
   const data = useFragment(LoggedUserInfoFragment, loggedUser);
-  console.log(data);
+
   return (
     <div className={styles.loggedUserInfoContainer}>
       <div className={styles.nameAndBadgesContainer}>

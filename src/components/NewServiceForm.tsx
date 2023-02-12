@@ -25,6 +25,14 @@ import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { graphql, useMutation } from 'react-relay';
 import { useState } from 'react';
+import {
+  serviceCreatedSuccessfullyToast,
+  serviceCreationFailedToast,
+} from './notificationToasts';
+import {
+  NewServiceFormCreateServiceMutation,
+  UniversityRole,
+} from './__generated__/NewServiceFormCreateServiceMutation.graphql';
 
 const validationSchema = yup.object({
   name: yup
@@ -48,19 +56,20 @@ const validationSchema = yup.object({
 export default function NewServiceForm(): JSX.Element {
   const toast = useToast();
 
-  const [commitMutation, isMutationInFlight] = useMutation(
-    graphql`
-      mutation NewServiceFormCreateServiceMutation(
-        $creation_args: CreateServiceArgs!
-      ) {
-        createService(creationArgs: $creation_args) {
-          id
-          name
-          description
+  const [commitMutation, isMutationInFlight] =
+    useMutation<NewServiceFormCreateServiceMutation>(
+      graphql`
+        mutation NewServiceFormCreateServiceMutation(
+          $creation_args: CreateServiceArgs!
+        ) {
+          createService(creationArgs: $creation_args) {
+            id
+            name
+            description
+          }
         }
-      }
-    `
-  );
+      `
+    );
 
   const [createdSuccesfully, setCreatedSuccessfully] = useState(false);
 
@@ -77,7 +86,6 @@ export default function NewServiceForm(): JSX.Element {
     },
     validationSchema,
     onSubmit: values => {
-      console.log(values);
       commitMutation({
         variables: {
           creation_args: {
@@ -91,30 +99,15 @@ export default function NewServiceForm(): JSX.Element {
             booking_type: values.automatic_confirmation
               ? 'AUTOMATIC'
               : 'REQUIRES_CONFIRMATION',
-            allowed_roles: values.allowed_roles,
+            allowed_roles: values.allowed_roles as UniversityRole[],
           },
         },
-        onCompleted: (response: any) => {
+        onCompleted: response => {
           setCreatedSuccessfully(true);
-          const parsedResponse = response as {
-            createService: { name: string };
-          };
-          toast({
-            title: 'Servicio creado',
-            description: `Su servicio "${parsedResponse.createService.name}" ha sido creado exitosamente.`,
-            status: 'success',
-            duration: 9000,
-            isClosable: true,
-          });
+          toast(serviceCreatedSuccessfullyToast(response.createService.name));
         },
         onError: error => {
-          toast({
-            title: 'Error al crear el servicio',
-            description: error.message,
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-          });
+          toast(serviceCreationFailedToast(error.message));
         },
       });
     },
