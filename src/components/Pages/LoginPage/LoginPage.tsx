@@ -9,9 +9,8 @@ import { useMutation } from 'react-relay';
 import { graphql } from 'relay-runtime';
 import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
 import { setToken } from '../../../services/sessionService';
-import { useNavigate } from 'react-router-dom';
-
-const INVALID_CREDENTIALS_ERROR_MSG = 'Credenciales Incorrectas';
+import { useRouter } from 'found';
+import constants from '../../../constants';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -30,11 +29,11 @@ const CreateSessionMutation = graphql`
 `;
 
 export default function LoginPage(): JSX.Element {
-  const navigate = useNavigate();
+  const { router } = useRouter();
 
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({
     showFailedLoginError: false,
-    errorMsg: INVALID_CREDENTIALS_ERROR_MSG,
+    errorMsg: constants.invalidCredentialsErrorMessage,
   });
 
   const [commitMutation, isMutationInFlight] =
@@ -55,7 +54,7 @@ export default function LoginPage(): JSX.Element {
         onCompleted(data) {
           const token = data.createSession.token;
           setToken(token);
-          navigate('/home');
+          router.replace('/services');
         },
         onError(err: Error) {
           setFailedLoginAttempt({

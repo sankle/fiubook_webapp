@@ -28,7 +28,9 @@ const ServiceListFragment = graphql`
   }
 `;
 
-export default function ServiceList({ services }: Props): JSX.Element {
+export default function ServiceList(
+  services: ServiceListFragment$key
+): JSX.Element {
   // const [isPending, startTransition] = useTransition();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, loadNext } = usePaginationFragment(

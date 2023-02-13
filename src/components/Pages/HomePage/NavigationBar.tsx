@@ -17,20 +17,20 @@ import {
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
-import { HomeMenuOptions } from '../../../global/types';
 import { graphql, useFragment } from 'react-relay';
 import { NavigationBarFragment$key } from './__generated__/NavigationBarFragment.graphql';
+import { useRouter } from 'found';
 
 export interface Props {
+  defaultTabIndex: number;
   loggedUser: NavigationBarFragment$key;
-  setCurrentMenuOption: React.Dispatch<React.SetStateAction<HomeMenuOptions>>;
 }
 
-const tabIndexToMenuOptionArray = [
-  HomeMenuOptions.ServicesList,
-  HomeMenuOptions.BookingsList,
-  HomeMenuOptions.NewService,
-  HomeMenuOptions.RequestsList,
+export const tabIndexToRouteArray = [
+  '/services',
+  '/bookings',
+  '/create-service',
+  '/requests',
 ];
 
 const navigationBarFragment = graphql`
@@ -43,11 +43,13 @@ const navigationBarFragment = graphql`
   }
 `;
 
-export default function NavigationBar({
+export function NavigationBar({
   loggedUser,
-  setCurrentMenuOption,
+  defaultTabIndex,
 }: Props): JSX.Element {
   const data = useFragment(navigationBarFragment, loggedUser);
+  const { router } = useRouter();
+
   return (
     <div className={styles.navigationContainer}>
       <div className={styles.leftNavigationContainer}>
@@ -61,10 +63,9 @@ export default function NavigationBar({
           <Input placeholder="Buscar Servicios" />
         </InputGroup>
         <Tabs
+          defaultIndex={defaultTabIndex}
           isLazy
-          onChange={index =>
-            setCurrentMenuOption(tabIndexToMenuOptionArray[index])
-          }
+          onChange={index => router.replace(tabIndexToRouteArray[index])}
           colorScheme="linkedin"
         >
           <TabList>

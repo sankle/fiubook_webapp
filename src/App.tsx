@@ -1,36 +1,23 @@
-import LoginPage from './components/Pages/LoginPage/LoginPage';
-import HomePage from './components/Pages/HomePage/HomePage';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Suspense } from 'react';
-import { Spinner } from '@chakra-ui/react';
+import { createFarceRouter, createRender } from 'found';
+import { BrowserProtocol, queryMiddleware } from 'farce';
+import { Resolver } from 'found-relay';
+import environment from './relayEnvironment';
+import routes from './routes';
+import ErrorPage from './components/Pages/ErrorPage/ErrorPage';
 
-const router = createBrowserRouter([
-  {
-    path: '/login',
-    element: <LoginPage />,
+const Router = createFarceRouter({
+  historyProtocol: new BrowserProtocol(),
+  historyMiddlewares: [queryMiddleware],
+  routeConfig: routes,
+  render: createRender({}),
+  renderError: ({ error }) => {
+    console.error('(found-relay) renderError');
+    return <ErrorPage error={error} />;
   },
-  {
-    path: '/home',
-    element: (
-      <Suspense
-        fallback={
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        }
-      >
-        <HomePage />
-      </Suspense>
-    ),
-  },
-]);
+});
 
 function App(): JSX.Element {
-  return <RouterProvider router={router} />;
+  return <Router resolver={new Resolver(environment)} />;
 }
 
 export default App;

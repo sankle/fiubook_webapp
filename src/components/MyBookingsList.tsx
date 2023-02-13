@@ -4,10 +4,6 @@ import { usePaginationFragment } from 'react-relay';
 import { MyBookingsListFragment$key } from './__generated__/MyBookingsListFragment.graphql';
 import BookingCard from './BookingCard';
 
-export interface Props {
-  bookings: MyBookingsListFragment$key;
-}
-
 const MyBookingsListFragment = graphql`
   fragment MyBookingsListFragment on Query
   @refetchable(queryName: "MyBookingsListPaginationQuery")
@@ -27,7 +23,9 @@ const MyBookingsListFragment = graphql`
   }
 `;
 
-export default function MyBookingsList({ bookings }: Props): JSX.Element {
+export default function MyBookingsList(
+  bookings: MyBookingsListFragment$key
+): JSX.Element {
   // const [isPending, startTransition] = useTransition();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, loadNext } = usePaginationFragment(

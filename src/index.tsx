@@ -5,7 +5,8 @@ import { ChakraProvider } from '@chakra-ui/react';
 import '@styles/index.module.css';
 import theme from './themes/default';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import RelayContext from './contexts/RelayContext';
+import { RelayEnvironmentProvider } from 'react-relay';
+import environment from './relayEnvironment';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,9 +15,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <RelayContext>
+      <RelayEnvironmentProvider environment={environment}>
         <App />
-      </RelayContext>
+      </RelayEnvironmentProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

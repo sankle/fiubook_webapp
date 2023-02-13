@@ -1,50 +1,41 @@
-import NavigationBar from './NavigationBar';
+import { NavigationBar, tabIndexToRouteArray } from './NavigationBar';
 import styles from '@styles/HomePage.module.css';
-import { useState } from 'react';
-import { HomeMenuOptions } from '../../../global/types';
-import ServiceList from '../../ServiceList';
-import { graphql } from 'relay-runtime';
-import { useLazyLoadQuery } from 'react-relay';
-import { HomePageQuery as HomePageQueryType } from './__generated__/HomePageQuery.graphql';
-import MyBookingsList from '../../MyBookingsList';
-import NewServiceForm from '../../NewServiceForm';
-import MyRequestsList from '../../MyRequestsList';
+import React, { Suspense } from 'react';
+import { Spinner } from '@chakra-ui/react';
+import { useRouter } from 'found';
 
-const HomePageQuery = graphql`
-  query HomePageQuery {
-    ...ServiceListFragment
-    ...NavigationBarFragment
-    ...MyBookingsListFragment
-    ...MyRequestsListFragment
-  }
-`;
-
-export default function HomePage(): JSX.Element {
-  // TODO: replace lazy query with preloaded query
-  const data = useLazyLoadQuery<HomePageQueryType>(HomePageQuery, {});
-
-  const [currentMenuOption, setCurrentMenuOption] = useState(
-    HomeMenuOptions.ServicesList
-  );
+export default function HomePage(props: any): JSX.Element {
+  const { match } = useRouter();
 
   return (
-    <div className={styles.pageContainer}>
-      <NavigationBar
-        setCurrentMenuOption={setCurrentMenuOption}
-        loggedUser={data}
-      />
-      <div className={styles.pageContent}>
-        {currentMenuOption === HomeMenuOptions.ServicesList && (
-          <ServiceList services={data} />
-        )}
-        {currentMenuOption === HomeMenuOptions.BookingsList && (
-          <MyBookingsList bookings={data} />
-        )}
-        {currentMenuOption === HomeMenuOptions.NewService && <NewServiceForm />}
-        {currentMenuOption === HomeMenuOptions.RequestsList && (
-          <MyRequestsList requests={data} />
-        )}
+    <Suspense
+      fallback={
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      }
+    >
+      <div className={styles.pageContainer}>
+        <NavigationBar
+          loggedUser={props}
+          defaultTabIndex={tabIndexToRouteArray.findIndex(
+            route => match.location.pathname === route
+          )}
+        />
+        <div className={styles.pageContent}>
+          {React.Children.map(props.children, child => {
+            // self-made hack to pass relay query references to children
+            if (React.isValidElement(child)) {
+              return React.cloneElement(child, props);
+            }
+            return child;
+          })}
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }

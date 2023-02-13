@@ -1,17 +1,14 @@
 import config from '@config/default';
-
-import { ReactNode } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
 import { Environment, Network, RecordSource, Store } from 'relay-runtime';
-import { getToken } from '../services/sessionService';
+import { getToken } from './services/sessionService';
 
 // Define a function that fetches the results of an operation (query/mutation/etc)
 // and returns its results as a Promise:
 async function fetchQuery(
   operation: any,
   variables: any,
-  cacheConfig: any,
-  uploadables: any
+  _cacheConfig: any,
+  _uploadables: any
 ): Promise<any> {
   const headers: any = {
     'content-type': 'application/json',
@@ -44,10 +41,4 @@ const environment = new Environment({
   store,
 });
 
-export default function RelayContext({ children }: { children: ReactNode }) {
-  return (
-    <RelayEnvironmentProvider environment={environment}>
-      {children}
-    </RelayEnvironmentProvider>
-  );
-}
+export default environment;
