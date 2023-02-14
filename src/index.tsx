@@ -5,15 +5,38 @@ import { ChakraProvider } from '@chakra-ui/react';
 import '@styles/index.module.css';
 import theme from './themes/default';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
 import config from '../config/default';
+import { setContext } from '@apollo/client/link/context';
+import { getToken } from './services/sessionService';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const client = new ApolloClient({
+const baseLink = createHttpLink({
   uri: config.graphqlServerUrl,
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = getToken();
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(baseLink),
   cache: new InMemoryCache(),
 });
 

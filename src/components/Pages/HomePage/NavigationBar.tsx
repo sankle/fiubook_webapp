@@ -6,6 +6,7 @@ import {
   TabList,
   Tab,
   Tabs,
+  Spinner,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -18,6 +19,7 @@ import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
 import { useRouter } from 'found';
+import { gql, useQuery } from '@apollo/client';
 
 export interface Props {
   defaultTabIndex: number;
@@ -30,14 +32,49 @@ export const tabIndexToRouteArray = [
   '/requests',
 ];
 
+const getUserInfoQuery = gql`
+  query GetUserInfo {
+    me {
+      id
+      dni
+      roles
+      is_admin
+    }
+  }
+`;
+
+const PublisherTabs = ({
+  isAdmin,
+  canPublishServices,
+}: {
+  isAdmin: boolean;
+  canPublishServices: boolean;
+}) => {
+  if (canPublishServices || isAdmin) {
+    return (
+      <>
+        <Tab>
+          <AddIcon />
+          &nbsp;&nbsp;Nuevo Servicio
+        </Tab>
+        <Tab>
+          <AtSignIcon />
+          &nbsp;&nbsp;Solicitudes
+        </Tab>
+      </>
+    );
+  }
+  return null;
+};
+
 export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
   const { router } = useRouter();
-  const data = {
-    me: {
-      can_publish_services: true,
-      is_admin: true,
+  const { data, loading } = useQuery(getUserInfoQuery, {
+    onError: error => {
+      // TODO hacer algo
+      console.log(JSON.stringify(error));
     },
-  };
+  });
 
   return (
     <div className={styles.navigationContainer}>
@@ -66,24 +103,26 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
               <CalendarIcon />
               &nbsp;&nbsp;Mis Reservas
             </Tab>
-            {(data.me.can_publish_services || data.me.is_admin) && (
-              <Tab>
-                <AddIcon />
-                &nbsp;&nbsp;Nuevo Servicio
-              </Tab>
-            )}
-            {(data.me.can_publish_services || data.me.is_admin) && (
-              <Tab>
-                <AtSignIcon />
-                &nbsp;&nbsp;Solicitudes
-              </Tab>
-            )}
+            {!loading ? (
+              <PublisherTabs
+                isAdmin={data.me.is_admin}
+                canPublishServices={true}
+              />
+            ) : null}
           </TabList>
         </Tabs>
       </div>
       <div className={styles.rightNavigationContainer}>
         <Image src={fiubaLogo} className={styles.fiubaLogo} />
-        <LoggedUserInfo />
+        {loading ? (
+          <Spinner />
+        ) : (
+          <LoggedUserInfo
+            isAdmin={data.me.is_admin}
+            roles={data.me.roles}
+            dni={data.me.dni}
+          />
+        )}
       </div>
     </div>
   );
