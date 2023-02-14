@@ -8,6 +8,9 @@ import { useState } from 'react';
 // import { setToken } from '../../../services/sessionService';
 // import { useRouter } from 'found';
 import constants from '../../../constants';
+import { gql, useMutation } from '@apollo/client';
+import { setToken } from '../../../services/sessionService';
+import { useRouter } from 'found';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -17,10 +20,34 @@ const validationSchema = yup.object({
     .required('Debe ingresar su contraseña'),
 });
 
+const createSessionMutation = gql`
+  mutation CreateSession($dni: String!, $password: String!) {
+    createSession(credentials: { dni: $dni, password: $password }) {
+      token
+    }
+  }
+`;
+
 export default function LoginPage(): JSX.Element {
+  const { router } = useRouter();
+
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({
     showFailedLoginError: false,
     errorMsg: constants.invalidCredentialsErrorMessage,
+  });
+
+  const [createSession, { loading }] = useMutation(createSessionMutation, {
+    onCompleted: data => {
+      const token = data.createSession.token;
+      setToken(token);
+      router.replace('/services');
+    },
+    onError: error => {
+      setFailedLoginAttempt({
+        showFailedLoginError: true,
+        errorMsg: error.message,
+      });
+    },
   });
 
   const formik = useFormik({
@@ -29,12 +56,8 @@ export default function LoginPage(): JSX.Element {
       password: '',
     },
     validationSchema,
-    onSubmit: ({ dni, password }) => {
-      console.log('submitted');
-      setFailedLoginAttempt({
-        showFailedLoginError: false,
-        errorMsg: constants.invalidCredentialsErrorMessage,
-      });
+    onSubmit: async ({ dni, password }) => {
+      await createSession({ variables: { dni, password } });
     },
   });
 
@@ -60,6 +83,7 @@ export default function LoginPage(): JSX.Element {
               (formik.touched.dni && Boolean(formik.errors.dni)) ||
               failedLoginAttempt.showFailedLoginError
             }
+            isDisabled={loading}
           />
           <Input
             id="password"
@@ -72,8 +96,14 @@ export default function LoginPage(): JSX.Element {
               (formik.touched.password && Boolean(formik.errors.password)) ||
               failedLoginAttempt.showFailedLoginError
             }
+            isDisabled={loading}
           />
-          <Button colorScheme="primary" type="submit">
+          <Button
+            colorScheme="primary"
+            type="submit"
+            isDisabled={loading}
+            isLoading={loading}
+          >
             Iniciar Sesion
           </Button>
         </form>
