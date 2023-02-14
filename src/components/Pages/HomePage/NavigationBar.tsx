@@ -17,13 +17,10 @@ import {
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
-import { graphql, useFragment } from 'react-relay';
-import { NavigationBarFragment$key } from './__generated__/NavigationBarFragment.graphql';
 import { useRouter } from 'found';
 
 export interface Props {
   defaultTabIndex: number;
-  loggedUser: NavigationBarFragment$key;
 }
 
 export const tabIndexToRouteArray = [
@@ -33,22 +30,14 @@ export const tabIndexToRouteArray = [
   '/requests',
 ];
 
-const navigationBarFragment = graphql`
-  fragment NavigationBarFragment on Query {
-    me {
-      is_admin
-      can_publish_services
-    }
-    ...LoggedUserInfoFragment
-  }
-`;
-
-export function NavigationBar({
-  loggedUser,
-  defaultTabIndex,
-}: Props): JSX.Element {
-  const data = useFragment(navigationBarFragment, loggedUser);
+export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
   const { router } = useRouter();
+  const data = {
+    me: {
+      can_publish_services: true,
+      is_admin: true,
+    },
+  };
 
   return (
     <div className={styles.navigationContainer}>
@@ -94,7 +83,7 @@ export function NavigationBar({
       </div>
       <div className={styles.rightNavigationContainer}>
         <Image src={fiubaLogo} className={styles.fiubaLogo} />
-        <LoggedUserInfo loggedUser={data} />
+        <LoggedUserInfo />
       </div>
     </div>
   );

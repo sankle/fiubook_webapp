@@ -5,11 +5,8 @@ import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
-import { useMutation } from 'react-relay';
-import { graphql } from 'relay-runtime';
-import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
-import { setToken } from '../../../services/sessionService';
-import { useRouter } from 'found';
+// import { setToken } from '../../../services/sessionService';
+// import { useRouter } from 'found';
 import constants from '../../../constants';
 
 const validationSchema = yup.object({
@@ -20,24 +17,11 @@ const validationSchema = yup.object({
     .required('Debe ingresar su contraseña'),
 });
 
-const CreateSessionMutation = graphql`
-  mutation LoginPageCreateSessionMutation($dni: String!, $password: String!) {
-    createSession(credentials: { dni: $dni, password: $password }) {
-      token
-    }
-  }
-`;
-
 export default function LoginPage(): JSX.Element {
-  const { router } = useRouter();
-
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({
     showFailedLoginError: false,
     errorMsg: constants.invalidCredentialsErrorMessage,
   });
-
-  const [commitMutation, isMutationInFlight] =
-    useMutation<LoginPageCreateSessionMutation>(CreateSessionMutation);
 
   const formik = useFormik({
     initialValues: {
@@ -46,22 +30,10 @@ export default function LoginPage(): JSX.Element {
     },
     validationSchema,
     onSubmit: ({ dni, password }) => {
-      commitMutation({
-        variables: {
-          dni,
-          password,
-        },
-        onCompleted(data) {
-          const token = data.createSession.token;
-          setToken(token);
-          router.replace('/services');
-        },
-        onError(err: Error) {
-          setFailedLoginAttempt({
-            showFailedLoginError: true,
-            errorMsg: err.message,
-          });
-        },
+      console.log('submitted');
+      setFailedLoginAttempt({
+        showFailedLoginError: false,
+        errorMsg: constants.invalidCredentialsErrorMessage,
       });
     },
   });
@@ -101,12 +73,7 @@ export default function LoginPage(): JSX.Element {
               failedLoginAttempt.showFailedLoginError
             }
           />
-          <Button
-            colorScheme="primary"
-            type="submit"
-            disabled={isMutationInFlight}
-            isLoading={isMutationInFlight}
-          >
+          <Button colorScheme="primary" type="submit">
             Iniciar Sesion
           </Button>
         </form>

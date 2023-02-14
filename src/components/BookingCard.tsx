@@ -9,30 +9,11 @@ import styles from '@styles/BookingCard.module.css';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { graphql } from 'relay-runtime';
-import { BookingCardFragment$key } from './__generated__/BookingCardFragment.graphql';
-import { useFragment, useMutation } from 'react-relay';
 import CancelBookingModal from './CancelBookingModal';
 
 interface Props {
-  booking: BookingCardFragment$key;
   isPublisher: boolean;
 }
-
-const BookingCardFragment = graphql`
-  fragment BookingCardFragment on Booking {
-    id
-    start_date
-    end_date
-    booking_status
-    service {
-      id
-      name
-      description
-    }
-    ...CancelBookingModalFragment
-  }
-`;
 
 const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
   let color;
@@ -153,51 +134,28 @@ const ButtonGroup = ({
   return null;
 };
 
-export default function BookingCard({
-  booking,
-  isPublisher,
-}: Props): JSX.Element {
+export default function BookingCard({ isPublisher }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = useFragment(BookingCardFragment, booking);
+
+  const data = {
+    start_date: '2024-10-15',
+    end_date: '2024-10-16',
+    booking_status: 'CONFIRMED',
+    service: {
+      name: 'Servicio Dummy',
+      description: 'Descripción Dummy',
+    },
+  };
+
   const startDate = new Date(data.start_date);
   const endDate = new Date(data.end_date);
 
-  const [commitMutation, isMutationInFlight] = useMutation(
-    graphql`
-      mutation BookingCardConfirmOrRejectMutation(
-        $booking_id: String!
-        $confirmed: Boolean!
-      ) {
-        acceptBooking(booking_id: $booking_id, accept: $confirmed) {
-          id
-          booking_status
-        }
-      }
-    `
-  );
-
   const onAccept = () => {
-    commitMutation({
-      variables: {
-        booking_id: data.id,
-        confirmed: true,
-      },
-      onCompleted: data => {
-        console.log(data);
-      },
-    });
+    console.log('Accepted');
   };
 
   const onReject = () => {
-    commitMutation({
-      variables: {
-        booking_id: data.id,
-        confirmed: false,
-      },
-      onCompleted: data => {
-        console.log(data);
-      },
-    });
+    console.log('Accepted');
   };
 
   return (
@@ -241,11 +199,11 @@ export default function BookingCard({
             onCancelClick={onOpen}
             onAcceptClick={onAccept}
             onRejectClick={onReject}
-            isMutationInFlight={isMutationInFlight}
+            isMutationInFlight={false}
           />
         </div>
       </div>
-      <CancelBookingModal isOpen={isOpen} onClose={onClose} booking={data} />
+      <CancelBookingModal isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

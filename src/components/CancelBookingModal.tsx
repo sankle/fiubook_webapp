@@ -6,8 +6,6 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { graphql, useFragment, useMutation } from 'react-relay';
-import { CancelBookingModalFragment$key } from './__generated__/CancelBookingModalFragment.graphql';
 import styles from '@styles/CancelBookingModal.module.css';
 import { BiTrashAlt } from 'react-icons/bi';
 import constants from '../constants';
@@ -15,18 +13,7 @@ import constants from '../constants';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  booking: CancelBookingModalFragment$key;
 }
-
-const CancelBookingModalFragment = graphql`
-  fragment CancelBookingModalFragment on Booking {
-    id
-    start_date
-    service {
-      name
-    }
-  }
-`;
 
 const getConfirmationMessage = (data: any) => {
   const startDate = new Date(data.start_date);
@@ -46,28 +33,16 @@ const getConfirmationMessage = (data: any) => {
 export default function CancelBookingModal({
   isOpen,
   onClose,
-  booking,
 }: Props): JSX.Element {
-  const data = useFragment(CancelBookingModalFragment, booking);
-
-  const [commitMutation, isMutationInFlight] = useMutation(
-    graphql`
-      mutation CancelBookingModalDeleteButtonMutation($booking_id: String!) {
-        cancelBooking(booking_id: $booking_id) {
-          id
-          booking_status
-        }
-      }
-    `
-  );
-
   const onDelete = () => {
-    commitMutation({
-      variables: {
-        booking_id: data.id,
-      },
-      onCompleted: onClose,
-    });
+    console.log('Deleted');
+  };
+
+  const data = {
+    start_date: '2021-08-01T18:00:00.000Z',
+    service: {
+      name: 'Corte de pelo',
+    },
   };
 
   return (
@@ -85,12 +60,7 @@ export default function CancelBookingModal({
           <Button variant={'outline'} colorScheme={'gray'} onClick={onClose}>
             Volver
           </Button>
-          <Button
-            colorScheme={'red'}
-            onClick={onDelete}
-            isLoading={isMutationInFlight}
-            disabled={isMutationInFlight}
-          >
+          <Button colorScheme={'red'} onClick={onDelete}>
             Confirmar Cancelacion
           </Button>
         </div>

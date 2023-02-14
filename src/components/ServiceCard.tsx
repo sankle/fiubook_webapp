@@ -5,30 +5,16 @@ import BookServiceModal from './BookServiceModal';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { graphql } from 'relay-runtime';
-import { ServiceCardFragment$key } from './__generated__/ServiceCardFragment.graphql';
-import { useFragment } from 'react-relay';
 
-interface Props {
-  service: ServiceCardFragment$key;
-}
-
-const ServiceCardFragment = graphql`
-  fragment ServiceCardFragment on Service {
-    id
-    name
-    description
-    ts
-    granularity
-    booking_type
-    max_time
-    ...BookServiceModalServiceFragment
-  }
-`;
-
-export default function ServiceCard({ service }: Props): JSX.Element {
+export default function ServiceCard(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = useFragment(ServiceCardFragment, service);
+
+  const data = {
+    name: 'Testeo',
+    description: 'Testeo de servicio',
+    max_time: '1',
+    booking_type: 'REQUIRES_CONFIRMATION',
+  };
 
   return (
     <>
@@ -63,7 +49,7 @@ export default function ServiceCard({ service }: Props): JSX.Element {
         >
           <IconWithText icon={<CalendarIcon />} text={<p>Reservar</p>} />
         </Button>
-        <BookServiceModal isOpen={isOpen} onClose={onClose} service={data} />
+        <BookServiceModal isOpen={isOpen} onClose={onClose} />
       </div>
     </>
   );
