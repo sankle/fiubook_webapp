@@ -14,6 +14,7 @@ import {
 import config from '../config/default';
 import { setContext } from '@apollo/client/link/context';
 import { getToken } from './services/sessionService';
+import { relayStylePagination } from '@apollo/client/utilities';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -35,9 +36,21 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        services: relayStylePagination(),
+        myBookings: relayStylePagination(),
+        myBookingsForPublisher: relayStylePagination(),
+      },
+    },
+  },
+});
+
 const client = new ApolloClient({
   link: authLink.concat(baseLink),
-  cache: new InMemoryCache(),
+  cache,
 });
 
 root.render(
