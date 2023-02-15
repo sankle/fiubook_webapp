@@ -16,6 +16,7 @@ interface Props {
   bookingStatus: string;
   startDate: string;
   endDate: string;
+  id: string;
   service: {
     name: string;
     description: string;
@@ -147,6 +148,7 @@ export default function BookingCard({
   endDate,
   bookingStatus,
   service,
+  id,
 }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -206,7 +208,13 @@ export default function BookingCard({
           />
         </div>
       </div>
-      <CancelBookingModal isOpen={isOpen} onClose={onClose} />
+      <CancelBookingModal
+        isOpen={isOpen}
+        onClose={onClose}
+        id={id}
+        startDate={startDate}
+        serviceName={service.name}
+      />
     </>
   );
 }

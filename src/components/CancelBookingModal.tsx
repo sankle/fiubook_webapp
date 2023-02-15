@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   Button,
   Modal,
@@ -9,17 +10,33 @@ import {
 import styles from '@styles/CancelBookingModal.module.css';
 import { BiTrashAlt } from 'react-icons/bi';
 import constants from '../constants';
+import { gql } from '../__generated__/gql';
+
+const cancelBookingMutation = gql(/* GraphQL */ `
+  mutation CancelBookingMutation($booking_id: String!) {
+    cancelBooking(booking_id: $booking_id) {
+      id
+      booking_status
+    }
+  }
+`);
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  id: string;
+  startDate: string;
+  serviceName: string;
 }
 
-const getConfirmationMessage = (data: any) => {
-  const startDate = new Date(data.start_date);
+const getConfirmationMessage = (
+  startDateString: string,
+  serviceName: string
+) => {
+  const startDate = new Date(startDateString);
   return (
     <Text noOfLines={5} maxWidth={350}>
-      ¿Seguro que desea cancelar su reserva de <b>{data.service?.name}</b> del{' '}
+      ¿Seguro que desea cancelar su reserva de <b>{serviceName}</b> del{' '}
       <b>
         {startDate.getDate()} de {constants.months[startDate.getMonth()]} de{' '}
         {startDate.getFullYear()} a las {startDate.getHours()}:
@@ -33,16 +50,23 @@ const getConfirmationMessage = (data: any) => {
 export default function CancelBookingModal({
   isOpen,
   onClose,
+  startDate,
+  serviceName,
+  id,
 }: Props): JSX.Element {
-  const onDelete = () => {
-    console.log('Deleted');
-  };
-
-  const data = {
-    start_date: '2021-08-01T18:00:00.000Z',
-    service: {
-      name: 'Corte de pelo',
+  const [cancelBooking, { loading }] = useMutation(cancelBookingMutation, {
+    onCompleted: () => {
+      onClose();
     },
+    refetchQueries: ['MyBookingsQuery'],
+  });
+
+  const onDelete = () => {
+    void cancelBooking({
+      variables: {
+        booking_id: id,
+      },
+    });
   };
 
   return (
@@ -54,13 +78,18 @@ export default function CancelBookingModal({
           <BiTrashAlt size={90} color={'white'} />
         </div>
         <div className={styles.confirmationMessageContainer}>
-          {getConfirmationMessage(data)}
+          {getConfirmationMessage(startDate, serviceName)}
         </div>
         <div className={styles.buttonsSectionContainer}>
           <Button variant={'outline'} colorScheme={'gray'} onClick={onClose}>
             Volver
           </Button>
-          <Button colorScheme={'red'} onClick={onDelete}>
+          <Button
+            colorScheme={'red'}
+            onClick={onDelete}
+            isLoading={loading}
+            isDisabled={loading}
+          >
             Confirmar Cancelacion
           </Button>
         </div>

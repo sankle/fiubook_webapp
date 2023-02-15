@@ -42,6 +42,7 @@ export default function MyBookingsList(): JSX.Element {
               endDate={booking.node.end_date}
               bookingStatus={booking.node.booking_status}
               service={booking.node.service as Service}
+              id={booking.node.id}
             />
           </div>
         ))
