@@ -13,6 +13,13 @@ import CancelBookingModal from './CancelBookingModal';
 
 interface Props {
   isPublisher: boolean;
+  bookingStatus: string;
+  startDate: string;
+  endDate: string;
+  service: {
+    name: string;
+    description: string;
+  };
 }
 
 const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
@@ -134,21 +141,17 @@ const ButtonGroup = ({
   return null;
 };
 
-export default function BookingCard({ isPublisher }: Props): JSX.Element {
+export default function BookingCard({
+  isPublisher,
+  startDate,
+  endDate,
+  bookingStatus,
+  service,
+}: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const data = {
-    start_date: '2024-10-15',
-    end_date: '2024-10-16',
-    booking_status: 'CONFIRMED',
-    service: {
-      name: 'Servicio Dummy',
-      description: 'Descripción Dummy',
-    },
-  };
-
-  const startDate = new Date(data.start_date);
-  const endDate = new Date(data.end_date);
+  const parsedStartDate = new Date(startDate);
+  const parsedEndDate = new Date(endDate);
 
   const onAccept = () => {
     console.log('Accepted');
@@ -160,15 +163,15 @@ export default function BookingCard({ isPublisher }: Props): JSX.Element {
 
   return (
     <>
-      <BookingStatusStrip status={data.booking_status} />
+      <BookingStatusStrip status={bookingStatus} />
       <div className={styles.cardInfoContainer}>
         <ServiceImage className={styles.imageContainer} />
         <div className={styles.serviceNameAndDescriptionContainer}>
           <Heading as="h3" size="md" noOfLines={1}>
-            {data.service?.name}
+            {service.name}
           </Heading>
           <Text fontSize="md" noOfLines={3}>
-            {data.service?.description}
+            {service.description}
           </Text>
           <ServiceTags className={styles.tagsContainer} />
         </div>
@@ -179,7 +182,7 @@ export default function BookingCard({ isPublisher }: Props): JSX.Element {
               {' Desde'}
             </Heading>
             <Text fontSize="md" noOfLines={3}>
-              {getFormattedDate(startDate)}
+              {getFormattedDate(parsedStartDate)}
             </Text>
           </Stack>
           <Stack direction={'column'}>
@@ -188,14 +191,14 @@ export default function BookingCard({ isPublisher }: Props): JSX.Element {
               {' Hasta'}
             </Heading>
             <Text fontSize="md" noOfLines={3}>
-              {getFormattedDate(endDate)}
+              {getFormattedDate(parsedEndDate)}
             </Text>
           </Stack>
         </div>
         <div className={styles.cancelBookingContainer}>
           <ButtonGroup
             isPublisher={isPublisher}
-            bookingStatus={data.booking_status}
+            bookingStatus={bookingStatus}
             onCancelClick={onOpen}
             onAcceptClick={onAccept}
             onRejectClick={onReject}
