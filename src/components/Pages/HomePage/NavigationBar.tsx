@@ -22,6 +22,7 @@ import { useRouter } from 'found';
 import { useQuery } from '@apollo/client';
 import { gql } from '../../../__generated__/gql';
 import { Roles } from '../../../global/types';
+import { useState } from 'react';
 
 export interface Props {
   defaultTabIndex: number;
@@ -77,6 +78,9 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
     },
   });
 
+  const [tabIndex, setTabIndex] = useState(defaultTabIndex);
+  const [searchStringValue, setSearchStringValue] = useState('');
+
   return (
     <div className={styles.navigationContainer}>
       <div className={styles.leftNavigationContainer}>
@@ -87,13 +91,35 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
           <InputLeftElement pointerEvents="none">
             <SearchIcon />
           </InputLeftElement>
-          <Input placeholder="Buscar Servicios" />
+          <Input
+            placeholder="Buscar Servicios"
+            onChange={event => setSearchStringValue(event.target.value)}
+            onKeyDown={event => {
+              if (event.key === 'Enter') {
+                setTabIndex(tabIndexToRouteArray.indexOf('/services'));
+                console.log(
+                  `setting index to ${tabIndexToRouteArray.indexOf(
+                    '/services'
+                  )}`
+                );
+                if (searchStringValue !== '') {
+                  router.replace(`/services?search=${searchStringValue}`);
+                } else {
+                  router.replace(`/services`);
+                }
+              }
+            }}
+          />
         </InputGroup>
         <Tabs
           defaultIndex={defaultTabIndex}
           isLazy
-          onChange={index => router.replace(tabIndexToRouteArray[index])}
+          onChange={index => {
+            setTabIndex(index);
+            router.replace(tabIndexToRouteArray[index]);
+          }}
           colorScheme="linkedin"
+          index={tabIndex}
         >
           <TabList>
             <Tab>

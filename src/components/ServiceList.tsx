@@ -3,10 +3,12 @@ import ServiceCard from './ServiceCard';
 import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
 import { Button, Spinner } from '@chakra-ui/react';
+import { useRouter } from 'found';
+import { useEffect } from 'react';
 
 const getServicesQuery = gql(/* GraphQL */ `
-  query GetServices($cursor: String) {
-    services(first: 2, after: $cursor) {
+  query GetServices($cursor: String, $queryTerm: String) {
+    services(first: 2, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
@@ -34,7 +36,19 @@ export default function ServiceList(): JSX.Element {
   //     loadNext(3);
   //   });
 
-  const { data, loading, fetchMore } = useQuery(getServicesQuery);
+  const { match } = useRouter();
+
+  const { data, loading, fetchMore, refetch } = useQuery(getServicesQuery, {
+    variables: {
+      queryTerm: match.location.query.search,
+    },
+  });
+
+  useEffect(() => {
+    void refetch({
+      queryTerm: match.location.query.search,
+    });
+  }, [match.location.query.search]);
 
   if (loading || !data) {
     return (
