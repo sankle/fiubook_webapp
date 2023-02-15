@@ -6,7 +6,7 @@ import { Spinner } from '@chakra-ui/spinner';
 import { Service } from '../__generated__/graphql';
 
 const myRequestsQuery = gql(/* GraphQL */ `
-  query MyRequests($cursor: String) {
+  query MyRequestsQuery($cursor: String) {
     myBookingsForPublisher(first: 10, after: $cursor) {
       edges {
         node {

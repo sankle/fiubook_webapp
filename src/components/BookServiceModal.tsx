@@ -139,7 +139,7 @@ export default function BookServiceModal({
       );
       onClose();
     },
-    refetchQueries: ['MyBookingsQuery'],
+    refetchQueries: ['MyBookingsQuery', 'MyRequestsQuery'],
   });
 
   const { currentDate, initialFromDateString, initialToDateString } =

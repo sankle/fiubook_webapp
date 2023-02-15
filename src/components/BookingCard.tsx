@@ -10,6 +10,20 @@ import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
 import CancelBookingModal from './CancelBookingModal';
+import { gql } from '../__generated__/gql';
+import { useMutation } from '@apollo/client';
+
+const bookingConfirmOrRejectMutation = gql(/* GraphQL */ `
+  mutation BookingCardConfirmOrRejectMutation(
+    $booking_id: String!
+    $confirmed: Boolean!
+  ) {
+    acceptBooking(booking_id: $booking_id, accept: $confirmed) {
+      id
+      booking_status
+    }
+  }
+`);
 
 interface Props {
   isPublisher: boolean;
@@ -155,12 +169,29 @@ export default function BookingCard({
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
 
+  const [confirmBooking, { loading }] = useMutation(
+    bookingConfirmOrRejectMutation,
+    {
+      refetchQueries: ['MyRequestsQuery', 'MyBookingsQuery'],
+    }
+  );
+
   const onAccept = () => {
-    console.log('Accepted');
+    void confirmBooking({
+      variables: {
+        booking_id: id,
+        confirmed: true,
+      },
+    });
   };
 
   const onReject = () => {
-    console.log('Accepted');
+    void confirmBooking({
+      variables: {
+        booking_id: id,
+        confirmed: false,
+      },
+    });
   };
 
   return (
@@ -204,7 +235,7 @@ export default function BookingCard({
             onCancelClick={onOpen}
             onAcceptClick={onAccept}
             onRejectClick={onReject}
-            isMutationInFlight={false}
+            isMutationInFlight={loading}
           />
         </div>
       </div>
