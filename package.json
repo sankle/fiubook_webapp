@@ -8,6 +8,8 @@
     "@chakra-ui/react": "^2.4.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@graphql-codegen/cli": "^3.0.0",
+    "@graphql-codegen/client-preset": "^2.0.0",
     "@mui/material": "^5.10.13",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -32,11 +34,12 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "webpack-dev-server --open --mode development --hot",
-    "build": "webpack --mode production",
+    "start": "npm run compile && webpack-dev-server --open --mode development --hot",
+    "build": "npm run compile && webpack --mode production",
     "lint": "eslint --config .eslintrc.json src --fix",
     "prepare": "husky install",
-    "get-schema": "get-graphql-schema http://localhost:3000/graph > ./data/schema.graphql"
+    "compile": "graphql-codegen",
+    "watch": "graphql-codegen -w"
   },
   "eslintConfig": {
     "extends": [

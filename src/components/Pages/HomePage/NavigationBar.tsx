@@ -19,7 +19,9 @@ import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
 import { useRouter } from 'found';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { gql } from '../../../__generated__/gql';
+import { Roles } from '../../../global/types';
 
 export interface Props {
   defaultTabIndex: number;
@@ -32,7 +34,7 @@ export const tabIndexToRouteArray = [
   '/requests',
 ];
 
-const getUserInfoQuery = gql`
+const getUserInfoQuery = gql(/* GraphQL */ `
   query GetUserInfo {
     me {
       id
@@ -41,7 +43,7 @@ const getUserInfoQuery = gql`
       is_admin
     }
   }
-`;
+`);
 
 const PublisherTabs = ({
   isAdmin,
@@ -103,7 +105,7 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
               <CalendarIcon />
               &nbsp;&nbsp;Mis Reservas
             </Tab>
-            {!loading ? (
+            {!loading && data ? (
               <PublisherTabs
                 isAdmin={data.me.is_admin}
                 canPublishServices={true}
@@ -114,14 +116,14 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
       </div>
       <div className={styles.rightNavigationContainer}>
         <Image src={fiubaLogo} className={styles.fiubaLogo} />
-        {loading ? (
-          <Spinner />
-        ) : (
+        {!loading && data ? (
           <LoggedUserInfo
             isAdmin={data.me.is_admin}
-            roles={data.me.roles}
+            roles={data.me.roles as Roles[]}
             dni={data.me.dni}
           />
+        ) : (
+          <Spinner />
         )}
       </div>
     </div>

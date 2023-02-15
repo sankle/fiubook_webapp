@@ -8,9 +8,10 @@ import { useState } from 'react';
 // import { setToken } from '../../../services/sessionService';
 // import { useRouter } from 'found';
 import constants from '../../../constants';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { setToken } from '../../../services/sessionService';
 import { useRouter } from 'found';
+import { gql } from '../../../__generated__/gql';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -20,13 +21,13 @@ const validationSchema = yup.object({
     .required('Debe ingresar su contraseña'),
 });
 
-const createSessionMutation = gql`
+const createSessionMutation = gql(/* GraphQL */ `
   mutation CreateSession($dni: String!, $password: String!) {
     createSession(credentials: { dni: $dni, password: $password }) {
       token
     }
   }
-`;
+`);
 
 export default function LoginPage(): JSX.Element {
   const { router } = useRouter();

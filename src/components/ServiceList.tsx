@@ -1,6 +1,22 @@
 import styles from '@styles/ServiceList.module.css';
 import ServiceCard from './ServiceCard';
 
+// const getServicesQuery = gql`
+//   query GetServices($cursor: String){
+//     services(first: 10, after: $cursor){
+//       edges{
+//         node{
+//           id,
+//           name,
+//           description,
+//           booking_type,
+
+//         }
+//       }
+//     }
+//   }
+// `;
+
 export default function ServiceList(): JSX.Element {
   // const [isPending, startTransition] = useTransition();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
