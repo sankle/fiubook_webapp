@@ -14,7 +14,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  // useToast,
+  useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/BookServiceModal.module.css';
 import IconWithText from './IconWithText';
@@ -31,11 +31,11 @@ import {
 import constants from '../constants';
 import { BookingType } from '../__generated__/graphql';
 import { gql } from '../__generated__/gql';
-import { useQuery } from '@apollo/client';
-// import {
-//   serviceBookedSuccessfullyToast,
-//   serviceBookFailedToast,
-// } from './notificationToasts';
+import { useMutation, useQuery } from '@apollo/client';
+import {
+  serviceBookedSuccessfullyToast,
+  serviceBookFailedToast,
+} from './notificationToasts';
 
 // TODO: add some validations and disable booking button accordingly
 
@@ -63,6 +63,30 @@ const BookServiceModalExistentBookingsQuery = gql(/* GraphQL */ `
     ) {
       start_date
       end_date
+    }
+  }
+`);
+
+const BookServiceMutation = gql(/* GraphQL */ `
+  mutation BookServiceModalMutation(
+    $service_id: ID!
+    $start_date: DateTime!
+    $end_date: DateTime!
+  ) {
+    createBooking(
+      creationArgs: {
+        service_id: $service_id
+        start_date: $start_date
+        end_date: $end_date
+      }
+    ) {
+      bookingEdge {
+        node {
+          id
+          start_date
+          end_date
+        }
+      }
     }
   }
 `);
@@ -98,8 +122,24 @@ export default function BookServiceModal({
       setEvents(existentEvents);
     },
   });
+  const toast = useToast();
 
-  // const toast = useToast();
+  const [bookService, { loading }] = useMutation(BookServiceMutation, {
+    onError: error => {
+      console.log(JSON.stringify(error));
+      toast(serviceBookFailedToast(name, error.message));
+    },
+    onCompleted: data => {
+      toast(
+        serviceBookedSuccessfullyToast(
+          name,
+          data.createBooking.bookingEdge.node.start_date,
+          data.createBooking.bookingEdge.node.end_date
+        )
+      );
+      onClose();
+    },
+  });
 
   const { currentDate, initialFromDateString, initialToDateString } =
     useMemo((): {
@@ -335,13 +375,26 @@ export default function BookServiceModal({
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="gray" mr={3} onClick={onClose}>
+          <Button
+            disabled={loading}
+            colorScheme="gray"
+            mr={3}
+            onClick={onClose}
+          >
             Cancelar
           </Button>
           <Button
+            disabled={loading}
+            isLoading={loading}
             colorScheme="linkedin"
             onClick={() => {
-              console.log('Clicked');
+              void bookService({
+                variables: {
+                  service_id: id,
+                  start_date: new Date(fromDate),
+                  end_date: new Date(toDate),
+                },
+              });
             }}
           >
             Reservar
