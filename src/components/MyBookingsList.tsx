@@ -1,48 +1,49 @@
 import styles from '@styles/MyBookingsList.module.css';
-import { graphql } from 'relay-runtime';
-import { usePaginationFragment } from 'react-relay';
-import { MyBookingsListFragment$key } from './__generated__/MyBookingsListFragment.graphql';
 import BookingCard from './BookingCard';
+import { gql } from '../__generated__/gql';
+import { useQuery } from '@apollo/client';
+import { Spinner } from '@chakra-ui/react';
+import { Service } from 'src/__generated__/graphql';
 
-const MyBookingsListFragment = graphql`
-  fragment MyBookingsListFragment on Query
-  @refetchable(queryName: "MyBookingsListPaginationQuery")
-  @argumentDefinitions(
-    cursor: { type: "String" }
-    count: { type: Float, defaultValue: 3 }
-  ) {
-    myBookings(first: $count, after: $cursor)
-      @connection(key: "MyBookingsListFragment_myBookings") {
+const myBookingsQuery = gql(/* GraphQL */ `
+  query MyBookingsQuery($cursor: String) {
+    myBookings(first: 10, after: $cursor) {
       edges {
         node {
           id
-          ...BookingCardFragment
+          booking_status
+          start_date
+          end_date
+          service {
+            name
+            description
+          }
         }
       }
     }
   }
-`;
+`);
 
-export default function MyBookingsList(
-  bookings: MyBookingsListFragment$key
-): JSX.Element {
-  // const [isPending, startTransition] = useTransition();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, loadNext } = usePaginationFragment(
-    MyBookingsListFragment,
-    bookings
-  );
-  // const onLoadMore = () =>
-  //   startTransition(() => {
-  //     loadNext(3);
-  //   });
+export default function MyBookingsList(): JSX.Element {
+  const { data, loading } = useQuery(myBookingsQuery);
+
+  if (loading || !data) {
+    return <Spinner />;
+  }
 
   return (
     <div className={styles.servicesContainer}>
       {data.myBookings.edges.length ? (
         data.myBookings.edges.map(booking => (
           <div key={booking.node.id} className={styles.cardContainer}>
-            <BookingCard booking={booking.node} isPublisher={false} />
+            <BookingCard
+              isPublisher={false}
+              startDate={booking.node.start_date}
+              endDate={booking.node.end_date}
+              bookingStatus={booking.node.booking_status}
+              service={booking.node.service as Service}
+              id={booking.node.id}
+            />
           </div>
         ))
       ) : (

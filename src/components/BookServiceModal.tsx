@@ -24,20 +24,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
 import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
-import { BookServiceModalServiceFragment$key } from './__generated__/BookServiceModalServiceFragment.graphql';
-import { BookServiceModalExistentBookingsQuery as ExistentBookingsQueryType } from './__generated__/BookServiceModalExistentBookingsQuery.graphql';
-import { BookServiceModalMutation } from './__generated__/BookServiceModalMutation.graphql';
-import {
   changeBookingSlot,
   convertToLocaleString,
   normalizeBookingSlot,
 } from '../utils/dateRangeUtils';
 import constants from '../constants';
+import { BookingType } from '../__generated__/graphql';
+import { gql } from '../__generated__/gql';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   serviceBookedSuccessfullyToast,
   serviceBookFailedToast,
@@ -48,22 +42,15 @@ import {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  service: BookServiceModalServiceFragment$key;
+  id: string;
+  name: string;
+  description: string;
+  granularity: number;
+  maxTime: number;
+  bookingType: BookingType;
 }
 
-const BookServiceModalServiceFragment = graphql`
-  fragment BookServiceModalServiceFragment on Service {
-    id
-    name
-    description
-    ts
-    granularity
-    booking_type
-    max_time
-  }
-`;
-
-const BookServiceModalExistentBookingsQuery = graphql`
+const BookServiceModalExistentBookingsQuery = gql(/* GraphQL */ `
   query BookServiceModalExistentBookingsQuery(
     $startDate: DateTime!
     $endDate: DateTime!
@@ -78,9 +65,9 @@ const BookServiceModalExistentBookingsQuery = graphql`
       end_date
     }
   }
-`;
+`);
 
-const BookServiceMutation = graphql`
+const BookServiceMutation = gql(/* GraphQL */ `
   mutation BookServiceModalMutation(
     $service_id: ID!
     $start_date: DateTime!
@@ -102,47 +89,58 @@ const BookServiceMutation = graphql`
       }
     }
   }
-`;
+`);
 
 const localizer = dayjsLocalizer(dayjs);
 
 export default function BookServiceModal({
   isOpen,
   onClose,
-  service,
+  name,
+  description,
+  granularity,
+  maxTime,
+  bookingType,
+  id,
 }: Props): JSX.Element {
-  const bookingServiceData = useFragment(
-    BookServiceModalServiceFragment,
-    service
-  );
+  const [events, setEvents] = useState<Event[]>([]);
 
-  // TODO: replace with preloaded query
-  const existentBookingsData = useLazyLoadQuery<ExistentBookingsQueryType>(
-    BookServiceModalExistentBookingsQuery,
-    {
-      serviceId: bookingServiceData.id,
+  useQuery(BookServiceModalExistentBookingsQuery, {
+    variables: {
+      serviceId: id,
       startDate: constants.existentBookingsQueryStartDate,
       endDate: constants.existentBookingsQueryEndDate,
-    }
-  );
-
-  const [commitMutation, isMutationInFlight] =
-    useMutation<BookServiceModalMutation>(BookServiceMutation);
-
+    },
+    onCompleted: data => {
+      const existentEvents = data.conflictingBookings.map(
+        ({ start_date: start, end_date: end }) => ({
+          title: constants.existentBookingEventTitle,
+          start: new Date(start),
+          end: new Date(end),
+        })
+      );
+      setEvents(existentEvents);
+    },
+  });
   const toast = useToast();
 
-  const granularity = bookingServiceData.granularity; // in seconds
-  const maxSlots = bookingServiceData.max_time;
-
-  const existentEvents = existentBookingsData.conflictingBookings.map(
-    ({ start_date: start, end_date: end }) => ({
-      title: constants.existentBookingEventTitle,
-      start: new Date(start),
-      end: new Date(end),
-    })
-  );
-
-  const [events, setEvents] = useState<Event[]>(existentEvents);
+  const [bookService, { loading }] = useMutation(BookServiceMutation, {
+    onError: error => {
+      console.log(JSON.stringify(error));
+      toast(serviceBookFailedToast(name, error.message));
+    },
+    onCompleted: data => {
+      toast(
+        serviceBookedSuccessfullyToast(
+          name,
+          data.createBooking.bookingEdge.node.start_date,
+          data.createBooking.bookingEdge.node.end_date
+        )
+      );
+      onClose();
+    },
+    refetchQueries: ['MyBookingsQuery', 'MyRequestsQuery'],
+  });
 
   const { currentDate, initialFromDateString, initialToDateString } =
     useMemo((): {
@@ -159,9 +157,11 @@ export default function BookServiceModal({
           currentDateString,
           granularity,
           1,
-          maxSlots,
+          maxTime,
           false
         );
+
+      console.log(initialToDate || currentDate);
 
       return {
         currentDate,
@@ -187,7 +187,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -203,7 +203,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -219,7 +219,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -235,7 +235,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -264,7 +264,7 @@ export default function BookServiceModal({
       toDate,
       granularity,
       1,
-      maxSlots,
+      maxTime,
       false
     );
 
@@ -301,19 +301,19 @@ export default function BookServiceModal({
         <ModalBody>
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
-              <p className={styles.serviceName}>{bookingServiceData.name}</p>
+              <p className={styles.serviceName}>{name}</p>
               <Text fontSize="md" noOfLines={3}>
-                {bookingServiceData.description}
+                {description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {bookingServiceData.max_time && (
+                {maxTime && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {bookingServiceData.max_time}</p>}
+                    text={<p>Reserva máxima {maxTime}</p>}
                   />
                 )}
               </div>
-              {bookingServiceData.booking_type === 'REQUIRES_CONFIRMATION' && (
+              {bookingType === BookingType.RequiresConfirmation && (
                 <IconWithText
                   icon={<WarningIcon />}
                   text={<p>Requiere confirmación</p>}
@@ -377,7 +377,7 @@ export default function BookServiceModal({
         </ModalBody>
         <ModalFooter>
           <Button
-            disabled={isMutationInFlight}
+            disabled={loading}
             colorScheme="gray"
             mr={3}
             onClick={onClose}
@@ -385,40 +385,15 @@ export default function BookServiceModal({
             Cancelar
           </Button>
           <Button
-            disabled={isMutationInFlight}
-            isLoading={isMutationInFlight}
+            disabled={loading}
+            isLoading={loading}
             colorScheme="linkedin"
             onClick={() => {
-              commitMutation({
+              void bookService({
                 variables: {
-                  service_id: bookingServiceData.id,
+                  service_id: id,
                   start_date: new Date(fromDate),
                   end_date: new Date(toDate),
-                },
-                // TODO: update MyBookingsList
-                // (I could not find a way to do it without passing a reference to the connection fragment)
-                // updater: (store, data) => {
-                //   )
-                // },
-                onCompleted: data => {
-                  toast(
-                    serviceBookedSuccessfullyToast(
-                      bookingServiceData.name,
-                      data.createBooking.bookingEdge.node.start_date,
-                      data.createBooking.bookingEdge.node.end_date
-                    )
-                  );
-                  onClose();
-                },
-                onError: (error: Error) => {
-                  // TODO: parse error message somehow
-                  toast(
-                    serviceBookFailedToast(
-                      bookingServiceData.name,
-                      error.message
-                    )
-                  );
-                  onClose();
                 },
               });
             }}

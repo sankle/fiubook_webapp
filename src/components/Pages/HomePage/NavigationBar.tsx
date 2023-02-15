@@ -6,6 +6,7 @@ import {
   TabList,
   Tab,
   Tabs,
+  Spinner,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -17,13 +18,13 @@ import {
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
-import { graphql, useFragment } from 'react-relay';
-import { NavigationBarFragment$key } from './__generated__/NavigationBarFragment.graphql';
 import { useRouter } from 'found';
+import { useQuery } from '@apollo/client';
+import { gql } from '../../../__generated__/gql';
+import { Roles } from '../../../global/types';
 
 export interface Props {
   defaultTabIndex: number;
-  loggedUser: NavigationBarFragment$key;
 }
 
 export const tabIndexToRouteArray = [
@@ -33,22 +34,48 @@ export const tabIndexToRouteArray = [
   '/requests',
 ];
 
-const navigationBarFragment = graphql`
-  fragment NavigationBarFragment on Query {
+const getUserInfoQuery = gql(/* GraphQL */ `
+  query GetUserInfo {
     me {
+      id
+      dni
+      roles
       is_admin
-      can_publish_services
     }
-    ...LoggedUserInfoFragment
   }
-`;
+`);
 
-export function NavigationBar({
-  loggedUser,
-  defaultTabIndex,
-}: Props): JSX.Element {
-  const data = useFragment(navigationBarFragment, loggedUser);
+const PublisherTabs = ({
+  isAdmin,
+  canPublishServices,
+}: {
+  isAdmin: boolean;
+  canPublishServices: boolean;
+}) => {
+  if (canPublishServices || isAdmin) {
+    return (
+      <>
+        <Tab>
+          <AddIcon />
+          &nbsp;&nbsp;Nuevo Servicio
+        </Tab>
+        <Tab>
+          <AtSignIcon />
+          &nbsp;&nbsp;Solicitudes
+        </Tab>
+      </>
+    );
+  }
+  return null;
+};
+
+export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
   const { router } = useRouter();
+  const { data, loading } = useQuery(getUserInfoQuery, {
+    onError: error => {
+      console.log(JSON.stringify(error));
+    },
+  });
 
   return (
     <div className={styles.navigationContainer}>
@@ -77,24 +104,26 @@ export function NavigationBar({
               <CalendarIcon />
               &nbsp;&nbsp;Mis Reservas
             </Tab>
-            {(data.me.can_publish_services || data.me.is_admin) && (
-              <Tab>
-                <AddIcon />
-                &nbsp;&nbsp;Nuevo Servicio
-              </Tab>
-            )}
-            {(data.me.can_publish_services || data.me.is_admin) && (
-              <Tab>
-                <AtSignIcon />
-                &nbsp;&nbsp;Solicitudes
-              </Tab>
-            )}
+            {!loading && data ? (
+              <PublisherTabs
+                isAdmin={data.me.is_admin}
+                canPublishServices={true}
+              />
+            ) : null}
           </TabList>
         </Tabs>
       </div>
       <div className={styles.rightNavigationContainer}>
         <Image src={fiubaLogo} className={styles.fiubaLogo} />
-        <LoggedUserInfo loggedUser={data} />
+        {!loading && data ? (
+          <LoggedUserInfo
+            isAdmin={data.me.is_admin}
+            roles={data.me.roles as Roles[]}
+            dni={data.me.dni}
+          />
+        ) : (
+          <Spinner />
+        )}
       </div>
     </div>
   );

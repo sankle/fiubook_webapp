@@ -1,48 +1,49 @@
 import styles from '@styles/MyBookingsList.module.css';
-import { graphql } from 'relay-runtime';
-import { usePaginationFragment } from 'react-relay';
 import BookingCard from './BookingCard';
-import { MyRequestsListFragment$key } from './__generated__/MyRequestsListFragment.graphql';
+import { gql } from '../__generated__/gql';
+import { useQuery } from '@apollo/client';
+import { Spinner } from '@chakra-ui/spinner';
+import { Service } from '../__generated__/graphql';
 
-const MyRequestsListFragment = graphql`
-  fragment MyRequestsListFragment on Query
-  @refetchable(queryName: "MyRequestsListPaginationQuery")
-  @argumentDefinitions(
-    cursor: { type: "String" }
-    count: { type: Float, defaultValue: 3 }
-  ) {
-    myBookingsForPublisher(first: $count, after: $cursor)
-      @connection(key: "bookings_myBookingsForPublisher") {
+const myRequestsQuery = gql(/* GraphQL */ `
+  query MyRequestsQuery($cursor: String) {
+    myBookingsForPublisher(first: 10, after: $cursor) {
       edges {
         node {
           id
-          ...BookingCardFragment
+          booking_status
+          start_date
+          end_date
+          service {
+            name
+            description
+          }
         }
       }
     }
   }
-`;
+`);
 
-export default function MyRequestsList(
-  requests: MyRequestsListFragment$key
-): JSX.Element {
-  // const [isPending, startTransition] = useTransition();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, loadNext } = usePaginationFragment(
-    MyRequestsListFragment,
-    requests
-  );
-  // const onLoadMore = () =>
-  //   startTransition(() => {
-  //     loadNext(3);
-  //   });
+export default function MyRequestsList(): JSX.Element {
+  const { data, loading } = useQuery(myRequestsQuery);
+
+  if (loading || !data) {
+    return <Spinner />;
+  }
 
   return (
     <div className={styles.servicesContainer}>
       {data.myBookingsForPublisher.edges.length ? (
         data.myBookingsForPublisher.edges.map(booking => (
           <div key={booking.node.id} className={styles.cardContainer}>
-            <BookingCard booking={booking.node} isPublisher />
+            <BookingCard
+              isPublisher
+              bookingStatus={booking.node.booking_status}
+              startDate={booking.node.start_date}
+              endDate={booking.node.end_date}
+              id={booking.node.id}
+              service={booking.node.service as Service}
+            />
           </div>
         ))
       ) : (

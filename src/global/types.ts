@@ -25,8 +25,8 @@ export interface Service {
 }
 
 export enum BookingType {
-  AUTOMATIC,
-  REQUIRES_CONFIRMATION,
+  AUTOMATIC = 'AUTOMATIC',
+  REQUIRES_CONFIRMATION = 'REQUIRES_CONFIRMATION',
 }
 
 export interface UserCredentials {

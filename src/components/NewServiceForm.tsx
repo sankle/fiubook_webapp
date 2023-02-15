@@ -23,16 +23,15 @@ import {
 import { InfoIcon } from '@chakra-ui/icons';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { graphql, useMutation } from 'react-relay';
 import { useState } from 'react';
+import { gql } from '../__generated__/gql';
+import { useMutation } from '@apollo/client';
+import { BookingType, UniversityRole } from '../__generated__/graphql';
+
 import {
   serviceCreatedSuccessfullyToast,
   serviceCreationFailedToast,
 } from './notificationToasts';
-import {
-  NewServiceFormCreateServiceMutation,
-  UniversityRole,
-} from './__generated__/NewServiceFormCreateServiceMutation.graphql';
 
 const validationSchema = yup.object({
   name: yup
@@ -53,25 +52,33 @@ const validationSchema = yup.object({
     .of(yup.string().oneOf(['PROFESSOR', 'STUDENT', 'NODO'])),
 });
 
+const createServiceMutation = gql(/* GraphQL */ `
+  mutation NewServiceFormCreateServiceMutation(
+    $creation_args: CreateServiceArgs!
+  ) {
+    createService(creationArgs: $creation_args) {
+      id
+      name
+      description
+    }
+  }
+`);
+
 export default function NewServiceForm(): JSX.Element {
   const toast = useToast();
 
-  const [commitMutation, isMutationInFlight] =
-    useMutation<NewServiceFormCreateServiceMutation>(
-      graphql`
-        mutation NewServiceFormCreateServiceMutation(
-          $creation_args: CreateServiceArgs!
-        ) {
-          createService(creationArgs: $creation_args) {
-            id
-            name
-            description
-          }
-        }
-      `
-    );
-
   const [createdSuccesfully, setCreatedSuccessfully] = useState(false);
+
+  const [createService, { loading }] = useMutation(createServiceMutation, {
+    onCompleted: response => {
+      setCreatedSuccessfully(true);
+      toast(serviceCreatedSuccessfullyToast(response.createService.name));
+    },
+    onError: error => {
+      toast(serviceCreationFailedToast(error.message));
+    },
+    refetchQueries: ['GetServices'],
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -86,7 +93,8 @@ export default function NewServiceForm(): JSX.Element {
     },
     validationSchema,
     onSubmit: values => {
-      commitMutation({
+      console.log(values);
+      void createService({
         variables: {
           creation_args: {
             name: values.name,
@@ -97,19 +105,13 @@ export default function NewServiceForm(): JSX.Element {
               60 * values.granularity_minutes,
             max_time: values.max_slots,
             booking_type: values.automatic_confirmation
-              ? 'AUTOMATIC'
-              : 'REQUIRES_CONFIRMATION',
+              ? BookingType.Automatic
+              : BookingType.RequiresConfirmation,
             allowed_roles: values.allowed_roles as UniversityRole[],
           },
         },
-        onCompleted: response => {
-          setCreatedSuccessfully(true);
-          toast(serviceCreatedSuccessfullyToast(response.createService.name));
-        },
-        onError: error => {
-          toast(serviceCreationFailedToast(error.message));
-        },
       });
+      setCreatedSuccessfully(true);
     },
   });
 
@@ -137,7 +139,7 @@ export default function NewServiceForm(): JSX.Element {
               placeholder={'Nombre del servicio'}
               variant={'flushed'}
               fontSize={'sm'}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
             />
             {formik.touched.name && !!formik.errors.name && (
               <InputRightElement>
@@ -166,7 +168,7 @@ export default function NewServiceForm(): JSX.Element {
               resize={'none'}
               variant={'flushed'}
               fontSize={'sm'}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
             />
             {formik.touched.description && !!formik.errors.description && (
               <InputRightElement>
@@ -198,7 +200,7 @@ export default function NewServiceForm(): JSX.Element {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               checked={formik.values.automatic_confirmation}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
               defaultChecked={formik.values.automatic_confirmation}
             />
           </Stack>
@@ -214,7 +216,7 @@ export default function NewServiceForm(): JSX.Element {
               min={0}
               maxW={'16'}
               size={'sm'}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
             >
               <NumberInputField
                 id="granularity_days"
@@ -237,7 +239,7 @@ export default function NewServiceForm(): JSX.Element {
               max={23}
               maxW={'16'}
               size={'sm'}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
             >
               <NumberInputField
                 name="granularity_hours"
@@ -260,7 +262,7 @@ export default function NewServiceForm(): JSX.Element {
               max={59}
               maxW={'16'}
               size={'sm'}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
             >
               <NumberInputField
                 id="granularity_minutes"
@@ -297,7 +299,7 @@ export default function NewServiceForm(): JSX.Element {
               maxW={'16'}
               size={'sm'}
               defaultValue={formik.values.max_slots}
-              isDisabled={isMutationInFlight || createdSuccesfully}
+              isDisabled={loading || createdSuccesfully}
               onChange={(numberAsString, number) => {
                 void formik.setFieldValue('max_slots', number);
               }}
@@ -330,7 +332,7 @@ export default function NewServiceForm(): JSX.Element {
               void formik.setFieldValue('allowed_roles', values);
             }}
             value={formik.values.allowed_roles}
-            isDisabled={isMutationInFlight || createdSuccesfully}
+            isDisabled={loading || createdSuccesfully}
           >
             <Stack direction={'row'} spacing={'10'}>
               <Checkbox value="STUDENT">
@@ -350,8 +352,8 @@ export default function NewServiceForm(): JSX.Element {
           <Button
             colorScheme={'linkedin'}
             type="submit"
-            isLoading={isMutationInFlight}
-            isDisabled={isMutationInFlight || createdSuccesfully}
+            isDisabled={loading || createdSuccesfully}
+            isLoading={loading}
           >
             Crear Servicio
           </Button>

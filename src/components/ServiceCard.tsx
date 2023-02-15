@@ -5,51 +5,47 @@ import BookServiceModal from './BookServiceModal';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { graphql } from 'relay-runtime';
-import { ServiceCardFragment$key } from './__generated__/ServiceCardFragment.graphql';
-import { useFragment } from 'react-relay';
+import { BookingType } from '../__generated__/graphql';
 
 interface Props {
-  service: ServiceCardFragment$key;
+  name: string;
+  description: string;
+  maxTime: number;
+  bookingType: BookingType;
+  granularity: number;
+  id: string;
 }
 
-const ServiceCardFragment = graphql`
-  fragment ServiceCardFragment on Service {
-    id
-    name
-    description
-    ts
-    granularity
-    booking_type
-    max_time
-    ...BookServiceModalServiceFragment
-  }
-`;
-
-export default function ServiceCard({ service }: Props): JSX.Element {
+export default function ServiceCard({
+  name,
+  description,
+  maxTime,
+  bookingType,
+  granularity,
+  id,
+}: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = useFragment(ServiceCardFragment, service);
 
   return (
     <>
       <ServiceImage className={styles.imageContainer} />
       <div className={styles.serviceNameAndDescriptionContainer}>
         <Heading as="h3" size="md" noOfLines={1}>
-          {data.name}
+          {name}
         </Heading>
         <Text fontSize="md" noOfLines={3}>
-          {data.description}
+          {description}
         </Text>
         <ServiceTags className={styles.tagsContainer} />
       </div>
       <div className={styles.bookingContainer}>
-        {data.max_time && (
+        {maxTime && (
           <IconWithText
             icon={<TimeIcon />}
-            text={<p>Reserva máxima {data.max_time}</p>}
+            text={<p>Reserva máxima {maxTime}</p>}
           />
         )}
-        {data.booking_type === 'REQUIRES_CONFIRMATION' && (
+        {bookingType === BookingType.RequiresConfirmation && (
           <IconWithText
             icon={<WarningIcon />}
             text={<p>Requiere confirmación</p>}
@@ -63,7 +59,16 @@ export default function ServiceCard({ service }: Props): JSX.Element {
         >
           <IconWithText icon={<CalendarIcon />} text={<p>Reservar</p>} />
         </Button>
-        <BookServiceModal isOpen={isOpen} onClose={onClose} service={data} />
+        <BookServiceModal
+          isOpen={isOpen}
+          onClose={onClose}
+          name={name}
+          description={description}
+          maxTime={maxTime}
+          bookingType={bookingType}
+          granularity={granularity}
+          id={id}
+        />
       </div>
     </>
   );

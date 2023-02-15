@@ -5,12 +5,13 @@ import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
-import { useMutation } from 'react-relay';
-import { graphql } from 'relay-runtime';
-import { LoginPageCreateSessionMutation } from './__generated__/LoginPageCreateSessionMutation.graphql';
+// import { setToken } from '../../../services/sessionService';
+// import { useRouter } from 'found';
+import constants from '../../../constants';
+import { useMutation } from '@apollo/client';
 import { setToken } from '../../../services/sessionService';
 import { useRouter } from 'found';
-import constants from '../../../constants';
+import { gql } from '../../../__generated__/gql';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -20,13 +21,13 @@ const validationSchema = yup.object({
     .required('Debe ingresar su contraseña'),
 });
 
-const CreateSessionMutation = graphql`
-  mutation LoginPageCreateSessionMutation($dni: String!, $password: String!) {
+const createSessionMutation = gql(/* GraphQL */ `
+  mutation CreateSession($dni: String!, $password: String!) {
     createSession(credentials: { dni: $dni, password: $password }) {
       token
     }
   }
-`;
+`);
 
 export default function LoginPage(): JSX.Element {
   const { router } = useRouter();
@@ -36,8 +37,19 @@ export default function LoginPage(): JSX.Element {
     errorMsg: constants.invalidCredentialsErrorMessage,
   });
 
-  const [commitMutation, isMutationInFlight] =
-    useMutation<LoginPageCreateSessionMutation>(CreateSessionMutation);
+  const [createSession, { loading }] = useMutation(createSessionMutation, {
+    onCompleted: data => {
+      const token = data.createSession.token;
+      setToken(token);
+      router.replace('/services');
+    },
+    onError: error => {
+      setFailedLoginAttempt({
+        showFailedLoginError: true,
+        errorMsg: error.message,
+      });
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -45,24 +57,8 @@ export default function LoginPage(): JSX.Element {
       password: '',
     },
     validationSchema,
-    onSubmit: ({ dni, password }) => {
-      commitMutation({
-        variables: {
-          dni,
-          password,
-        },
-        onCompleted(data) {
-          const token = data.createSession.token;
-          setToken(token);
-          router.replace('/services');
-        },
-        onError(err: Error) {
-          setFailedLoginAttempt({
-            showFailedLoginError: true,
-            errorMsg: err.message,
-          });
-        },
-      });
+    onSubmit: async ({ dni, password }) => {
+      await createSession({ variables: { dni, password } });
     },
   });
 
@@ -88,6 +84,7 @@ export default function LoginPage(): JSX.Element {
               (formik.touched.dni && Boolean(formik.errors.dni)) ||
               failedLoginAttempt.showFailedLoginError
             }
+            isDisabled={loading}
           />
           <Input
             id="password"
@@ -100,12 +97,13 @@ export default function LoginPage(): JSX.Element {
               (formik.touched.password && Boolean(formik.errors.password)) ||
               failedLoginAttempt.showFailedLoginError
             }
+            isDisabled={loading}
           />
           <Button
             colorScheme="primary"
             type="submit"
-            disabled={isMutationInFlight}
-            isLoading={isMutationInFlight}
+            isDisabled={loading}
+            isLoading={loading}
           >
             Iniciar Sesion
           </Button>

@@ -9,30 +9,33 @@ import styles from '@styles/BookingCard.module.css';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { graphql } from 'relay-runtime';
-import { BookingCardFragment$key } from './__generated__/BookingCardFragment.graphql';
-import { useFragment, useMutation } from 'react-relay';
 import CancelBookingModal from './CancelBookingModal';
+import { gql } from '../__generated__/gql';
+import { useMutation } from '@apollo/client';
+
+const bookingConfirmOrRejectMutation = gql(/* GraphQL */ `
+  mutation BookingCardConfirmOrRejectMutation(
+    $booking_id: String!
+    $confirmed: Boolean!
+  ) {
+    acceptBooking(booking_id: $booking_id, accept: $confirmed) {
+      id
+      booking_status
+    }
+  }
+`);
 
 interface Props {
-  booking: BookingCardFragment$key;
   isPublisher: boolean;
+  bookingStatus: string;
+  startDate: string;
+  endDate: string;
+  id: string;
+  service: {
+    name: string;
+    description: string;
+  };
 }
-
-const BookingCardFragment = graphql`
-  fragment BookingCardFragment on Booking {
-    id
-    start_date
-    end_date
-    booking_status
-    service {
-      id
-      name
-      description
-    }
-    ...CancelBookingModalFragment
-  }
-`;
 
 const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
   let color;
@@ -154,63 +157,54 @@ const ButtonGroup = ({
 };
 
 export default function BookingCard({
-  booking,
   isPublisher,
+  startDate,
+  endDate,
+  bookingStatus,
+  service,
+  id,
 }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = useFragment(BookingCardFragment, booking);
-  const startDate = new Date(data.start_date);
-  const endDate = new Date(data.end_date);
 
-  const [commitMutation, isMutationInFlight] = useMutation(
-    graphql`
-      mutation BookingCardConfirmOrRejectMutation(
-        $booking_id: String!
-        $confirmed: Boolean!
-      ) {
-        acceptBooking(booking_id: $booking_id, accept: $confirmed) {
-          id
-          booking_status
-        }
-      }
-    `
+  const parsedStartDate = new Date(startDate);
+  const parsedEndDate = new Date(endDate);
+
+  const [confirmBooking, { loading }] = useMutation(
+    bookingConfirmOrRejectMutation,
+    {
+      refetchQueries: ['MyRequestsQuery', 'MyBookingsQuery'],
+    }
   );
 
   const onAccept = () => {
-    commitMutation({
+    void confirmBooking({
       variables: {
-        booking_id: data.id,
+        booking_id: id,
         confirmed: true,
-      },
-      onCompleted: data => {
-        console.log(data);
       },
     });
   };
 
   const onReject = () => {
-    commitMutation({
+    void confirmBooking({
       variables: {
-        booking_id: data.id,
+        booking_id: id,
         confirmed: false,
-      },
-      onCompleted: data => {
-        console.log(data);
       },
     });
   };
 
   return (
     <>
-      <BookingStatusStrip status={data.booking_status} />
+      <BookingStatusStrip status={bookingStatus} />
       <div className={styles.cardInfoContainer}>
         <ServiceImage className={styles.imageContainer} />
         <div className={styles.serviceNameAndDescriptionContainer}>
           <Heading as="h3" size="md" noOfLines={1}>
-            {data.service?.name}
+            {service.name}
           </Heading>
           <Text fontSize="md" noOfLines={3}>
-            {data.service?.description}
+            {service.description}
           </Text>
           <ServiceTags className={styles.tagsContainer} />
         </div>
@@ -221,7 +215,7 @@ export default function BookingCard({
               {' Desde'}
             </Heading>
             <Text fontSize="md" noOfLines={3}>
-              {getFormattedDate(startDate)}
+              {getFormattedDate(parsedStartDate)}
             </Text>
           </Stack>
           <Stack direction={'column'}>
@@ -230,22 +224,28 @@ export default function BookingCard({
               {' Hasta'}
             </Heading>
             <Text fontSize="md" noOfLines={3}>
-              {getFormattedDate(endDate)}
+              {getFormattedDate(parsedEndDate)}
             </Text>
           </Stack>
         </div>
         <div className={styles.cancelBookingContainer}>
           <ButtonGroup
             isPublisher={isPublisher}
-            bookingStatus={data.booking_status}
+            bookingStatus={bookingStatus}
             onCancelClick={onOpen}
             onAcceptClick={onAccept}
             onRejectClick={onReject}
-            isMutationInFlight={isMutationInFlight}
+            isMutationInFlight={loading}
           />
         </div>
       </div>
-      <CancelBookingModal isOpen={isOpen} onClose={onClose} booking={data} />
+      <CancelBookingModal
+        isOpen={isOpen}
+        onClose={onClose}
+        id={id}
+        startDate={startDate}
+        serviceName={service.name}
+      />
     </>
   );
 }
