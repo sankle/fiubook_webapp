@@ -5,37 +5,43 @@ import BookServiceModal from './BookServiceModal';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
+import { BookingType } from '../__generated__/graphql';
 
-export default function ServiceCard(): JSX.Element {
+interface Props {
+  name: string;
+  description: string;
+  maxTime?: number | null;
+  bookingType: BookingType;
+}
+
+export default function ServiceCard({
+  name,
+  description,
+  maxTime,
+  bookingType,
+}: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const data = {
-    name: 'Testeo',
-    description: 'Testeo de servicio',
-    max_time: '1',
-    booking_type: 'REQUIRES_CONFIRMATION',
-  };
 
   return (
     <>
       <ServiceImage className={styles.imageContainer} />
       <div className={styles.serviceNameAndDescriptionContainer}>
         <Heading as="h3" size="md" noOfLines={1}>
-          {data.name}
+          {name}
         </Heading>
         <Text fontSize="md" noOfLines={3}>
-          {data.description}
+          {description}
         </Text>
         <ServiceTags className={styles.tagsContainer} />
       </div>
       <div className={styles.bookingContainer}>
-        {data.max_time && (
+        {maxTime && (
           <IconWithText
             icon={<TimeIcon />}
-            text={<p>Reserva máxima {data.max_time}</p>}
+            text={<p>Reserva máxima {maxTime}</p>}
           />
         )}
-        {data.booking_type === 'REQUIRES_CONFIRMATION' && (
+        {bookingType === BookingType.RequiresConfirmation && (
           <IconWithText
             icon={<WarningIcon />}
             text={<p>Requiere confirmación</p>}

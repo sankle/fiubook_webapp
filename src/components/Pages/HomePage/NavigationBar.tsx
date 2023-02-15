@@ -73,7 +73,6 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
   const { router } = useRouter();
   const { data, loading } = useQuery(getUserInfoQuery, {
     onError: error => {
-      // TODO hacer algo
       console.log(JSON.stringify(error));
     },
   });
