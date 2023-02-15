@@ -11,6 +11,7 @@ const getServicesQuery = gql(/* GraphQL */ `
         node {
           id
           name
+          granularity
           description
           booking_type
           max_time
@@ -48,6 +49,8 @@ export default function ServiceList(): JSX.Element {
               description={service.node.description}
               bookingType={service.node.booking_type}
               maxTime={service.node.max_time}
+              granularity={service.node.granularity}
+              id={service.node.id}
             />
           </div>
         ))

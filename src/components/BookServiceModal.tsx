@@ -29,6 +29,9 @@ import {
   normalizeBookingSlot,
 } from '../utils/dateRangeUtils';
 import constants from '../constants';
+import { BookingType } from '../__generated__/graphql';
+import { gql } from '../__generated__/gql';
+import { useQuery } from '@apollo/client';
 // import {
 //   serviceBookedSuccessfullyToast,
 //   serviceBookFailedToast,
@@ -39,41 +42,64 @@ import constants from '../constants';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  id: string;
+  name: string;
+  description: string;
+  granularity: number;
+  maxTime: number;
+  bookingType: BookingType;
 }
+
+const BookServiceModalExistentBookingsQuery = gql(/* GraphQL */ `
+  query BookServiceModalExistentBookingsQuery(
+    $startDate: DateTime!
+    $endDate: DateTime!
+    $serviceId: String!
+  ) {
+    conflictingBookings(
+      end_date: $endDate
+      start_date: $startDate
+      service_id: $serviceId
+    ) {
+      start_date
+      end_date
+    }
+  }
+`);
 
 const localizer = dayjsLocalizer(dayjs);
 
 export default function BookServiceModal({
   isOpen,
   onClose,
+  name,
+  description,
+  granularity,
+  maxTime,
+  bookingType,
+  id,
 }: Props): JSX.Element {
-  // TODO: replace with preloaded query
+  const [events, setEvents] = useState<Event[]>([]);
 
-  const bookingServiceData = {
-    name: 'Dummy Service',
-    description: 'Dummy description',
-    granularity: 1800,
-    max_time: 3,
-    booking_type: 'AUTOMATIC',
-  };
+  useQuery(BookServiceModalExistentBookingsQuery, {
+    variables: {
+      serviceId: id,
+      startDate: constants.existentBookingsQueryStartDate,
+      endDate: constants.existentBookingsQueryEndDate,
+    },
+    onCompleted: data => {
+      const existentEvents = data.conflictingBookings.map(
+        ({ start_date: start, end_date: end }) => ({
+          title: constants.existentBookingEventTitle,
+          start: new Date(start),
+          end: new Date(end),
+        })
+      );
+      setEvents(existentEvents);
+    },
+  });
 
-  const existentBookingsData = {
-    conflictingBookings: [],
-  };
   // const toast = useToast();
-
-  const granularity = bookingServiceData.granularity; // in seconds
-  const maxSlots = bookingServiceData.max_time;
-
-  const existentEvents = existentBookingsData.conflictingBookings.map(
-    ({ start_date: start, end_date: end }) => ({
-      title: constants.existentBookingEventTitle,
-      start: new Date(start),
-      end: new Date(end),
-    })
-  );
-
-  const [events, setEvents] = useState<Event[]>(existentEvents);
 
   const { currentDate, initialFromDateString, initialToDateString } =
     useMemo((): {
@@ -90,9 +116,11 @@ export default function BookServiceModal({
           currentDateString,
           granularity,
           1,
-          maxSlots,
+          maxTime,
           false
         );
+
+      console.log(initialToDate || currentDate);
 
       return {
         currentDate,
@@ -118,7 +146,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -134,7 +162,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -150,7 +178,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -166,7 +194,7 @@ export default function BookServiceModal({
         prevToDate: toDate,
         granularity,
         minSlots: 1,
-        maxSlots,
+        maxSlots: maxTime,
         setFromDate,
         setToDate,
       }),
@@ -195,7 +223,7 @@ export default function BookServiceModal({
       toDate,
       granularity,
       1,
-      maxSlots,
+      maxTime,
       false
     );
 
@@ -232,19 +260,19 @@ export default function BookServiceModal({
         <ModalBody>
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
-              <p className={styles.serviceName}>{bookingServiceData.name}</p>
+              <p className={styles.serviceName}>{name}</p>
               <Text fontSize="md" noOfLines={3}>
-                {bookingServiceData.description}
+                {description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {bookingServiceData.max_time && (
+                {maxTime && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {bookingServiceData.max_time}</p>}
+                    text={<p>Reserva máxima {maxTime}</p>}
                   />
                 )}
               </div>
-              {bookingServiceData.booking_type === 'REQUIRES_CONFIRMATION' && (
+              {bookingType === BookingType.RequiresConfirmation && (
                 <IconWithText
                   icon={<WarningIcon />}
                   text={<p>Requiere confirmación</p>}

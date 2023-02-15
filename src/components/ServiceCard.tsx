@@ -10,8 +10,10 @@ import { BookingType } from '../__generated__/graphql';
 interface Props {
   name: string;
   description: string;
-  maxTime?: number | null;
+  maxTime: number;
   bookingType: BookingType;
+  granularity: number;
+  id: string;
 }
 
 export default function ServiceCard({
@@ -19,6 +21,8 @@ export default function ServiceCard({
   description,
   maxTime,
   bookingType,
+  granularity,
+  id,
 }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -55,7 +59,16 @@ export default function ServiceCard({
         >
           <IconWithText icon={<CalendarIcon />} text={<p>Reservar</p>} />
         </Button>
-        <BookServiceModal isOpen={isOpen} onClose={onClose} />
+        <BookServiceModal
+          isOpen={isOpen}
+          onClose={onClose}
+          name={name}
+          description={description}
+          maxTime={maxTime}
+          bookingType={bookingType}
+          granularity={granularity}
+          id={id}
+        />
       </div>
     </>
   );
