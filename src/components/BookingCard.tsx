@@ -34,6 +34,7 @@ interface Props {
   service: {
     name: string;
     description: string;
+    tags: string[];
   };
 }
 
@@ -206,7 +207,7 @@ export default function BookingCard({
           <Text fontSize="md" noOfLines={3}>
             {service.description}
           </Text>
-          <ServiceTags className={styles.tagsContainer} />
+          <ServiceTags className={styles.tagsContainer} tags={service.tags} />
         </div>
         <div className={styles.reservationTimeContainer}>
           <Stack direction={'column'}>

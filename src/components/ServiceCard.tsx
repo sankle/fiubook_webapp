@@ -76,7 +76,7 @@ export default function ServiceCard({
         <Text fontSize="md" noOfLines={3}>
           {service.description}
         </Text>
-        <ServiceTags className={styles.tagsContainer} />
+        <ServiceTags className={styles.tagsContainer} tags={service.tags} />
       </div>
       <div className={styles.bookingContainer}>
         <IconWithText

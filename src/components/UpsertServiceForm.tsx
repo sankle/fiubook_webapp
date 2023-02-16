@@ -22,6 +22,7 @@ import {
 import { InfoIcon } from '@chakra-ui/icons';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
+import TagsInput from './TagsInput';
 
 const validationSchema = yup.object({
   name: yup
@@ -40,6 +41,7 @@ const validationSchema = yup.object({
   allowed_roles: yup
     .array()
     .of(yup.string().oneOf(['PROFESSOR', 'STUDENT', 'NODO'])),
+  tags: yup.array().of(yup.string()),
 });
 
 interface Props {
@@ -129,7 +131,18 @@ export default function UpsertServiceForm({
         </Stack>
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'3. Confirmación de la reserva '}
+            3. Etiquetas
+          </Heading>
+          <TagsInput
+            onChange={tags => {
+              void formik.setFieldValue('tags', tags);
+            }}
+            tags={formik.values.tags}
+          />
+        </Stack>
+        <Stack>
+          <Heading as="h2" size="sm" className={styles.fieldTitle}>
+            {'4. Confirmación de la reserva '}
             <Tooltip
               label={
                 'Las reservas automáticas se confirman de manera instantánea. Si esta opción está desactivada, tendrás que confirmar manualmente las reservas a este'
@@ -156,7 +169,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            4. Duración de los turnos
+            5. Duración de los turnos
           </Heading>
           <Stack direction={'row'} alignItems={'center'}>
             <NumberInput
@@ -232,7 +245,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'5. Cantidad máxima de turnos '}
+            {'6. Cantidad máxima de turnos '}
             <Tooltip
               label={
                 'Cantidad máxima de turnos seguidos que se pueden solicitar en una misma reserva'
@@ -271,7 +284,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            6. ¿Quienes pueden reservar este servicio?
+            7. ¿Quienes pueden reservar este servicio?
           </Heading>
           <CheckboxGroup
             colorScheme={'linkedin'}

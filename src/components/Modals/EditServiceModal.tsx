@@ -59,6 +59,7 @@ export default function EditServiceModal({
     granularity_minutes: 0,
     max_slots: 1,
     allowed_roles: ['PROFESSOR', 'STUDENT', 'NODO'],
+    tags: service.tags,
   };
 
   const toast = useToast();
@@ -93,6 +94,7 @@ export default function EditServiceModal({
             ? BookingType.Automatic
             : BookingType.RequiresConfirmation,
           allowed_roles: values.allowed_roles as UniversityRole[],
+          tags: values.tags,
         },
       },
     });

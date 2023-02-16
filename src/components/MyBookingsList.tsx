@@ -17,6 +17,7 @@ const myBookingsQuery = gql(/* GraphQL */ `
           service {
             name
             description
+            tags
           }
         }
       }

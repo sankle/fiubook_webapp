@@ -19,6 +19,7 @@ const initialValues = {
   granularity_minutes: 0,
   max_slots: 1,
   allowed_roles: ['PROFESSOR', 'STUDENT', 'NODO'],
+  tags: [],
 };
 
 const createServiceMutation = gql(/* GraphQL */ `
@@ -66,6 +67,7 @@ export default function NewServiceForm(): JSX.Element {
             ? BookingType.Automatic
             : BookingType.RequiresConfirmation,
           allowed_roles: values.allowed_roles as UniversityRole[],
+          tags: values.tags,
         },
       },
     });

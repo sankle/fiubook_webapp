@@ -22,6 +22,7 @@ const getMyServicesQuery = gql(/* GraphQL */ `
           max_time
           allowed_roles
           publisher_id
+          tags
         }
       }
       pageInfo {

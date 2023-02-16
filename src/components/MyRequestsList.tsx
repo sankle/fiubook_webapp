@@ -18,6 +18,7 @@ const myRequestsQuery = gql(/* GraphQL */ `
           service {
             name
             description
+            tags
           }
         }
       }
