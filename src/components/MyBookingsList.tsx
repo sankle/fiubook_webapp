@@ -18,6 +18,7 @@ const myBookingsQuery = gql(/* GraphQL */ `
             name
             description
             tags
+            image_url
           }
         }
       }

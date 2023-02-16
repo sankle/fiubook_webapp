@@ -35,6 +35,7 @@ interface Props {
     name: string;
     description: string;
     tags: string[];
+    image_url: string;
   };
 }
 
@@ -199,7 +200,10 @@ export default function BookingCard({
     <>
       <BookingStatusStrip status={bookingStatus} />
       <div className={styles.cardInfoContainer}>
-        <ServiceImage className={styles.imageContainer} />
+        <ServiceImage
+          className={styles.imageContainer}
+          url={service.image_url}
+        />
         <div className={styles.serviceNameAndDescriptionContainer}>
           <Heading as="h3" size="md" noOfLines={1}>
             {service.name}

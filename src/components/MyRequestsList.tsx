@@ -19,6 +19,7 @@ const myRequestsQuery = gql(/* GraphQL */ `
             name
             description
             tags
+            image_url
           }
         }
       }

@@ -316,8 +316,14 @@ export default function BookServiceModal({
               )}
             </div>
             <div className={styles.imageAndTagsContainer}>
-              <ServiceImage className={styles.imageContainer} />
-              <ServiceTags className={styles.tagsContainer} />
+              <ServiceImage
+                className={styles.imageContainer}
+                url={service.image_url}
+              />
+              <ServiceTags
+                className={styles.tagsContainer}
+                tags={service.tags}
+              />
             </div>
           </div>
           <Divider />

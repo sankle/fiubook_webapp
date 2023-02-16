@@ -113,6 +113,7 @@ export default function EditServiceModal({
             loading={loading}
             upsertedSuccessfully={upsertedSuccessfully}
             actionLabel="Editar"
+            showImageField={false}
           />
         </ModalBody>
         <ModalFooter />
