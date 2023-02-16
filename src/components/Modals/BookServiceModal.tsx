@@ -99,23 +99,36 @@ export default function BookServiceModal({
     return <></>;
   }
 
-  useQuery(BookServiceModalExistentBookingsQuery, {
-    variables: {
-      serviceId: service.id,
-      startDate: constants.existentBookingsQueryStartDate,
-      endDate: constants.existentBookingsQueryEndDate,
-    },
-    onCompleted: data => {
-      const existentEvents = data.conflictingBookings.map(
-        ({ start_date: start, end_date: end }) => ({
-          title: constants.existentBookingEventTitle,
-          start: new Date(start),
-          end: new Date(end),
-        })
-      );
-      setEvents(existentEvents);
-    },
-  });
+  const { startPolling, stopPolling } = useQuery(
+    BookServiceModalExistentBookingsQuery,
+    {
+      variables: {
+        serviceId: service.id,
+        startDate: constants.existentBookingsQueryStartDate,
+        endDate: constants.existentBookingsQueryEndDate,
+      },
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
+      onCompleted: data => {
+        const existentEvents = data.conflictingBookings.map(
+          ({ start_date: start, end_date: end }) => ({
+            title: constants.existentBookingEventTitle,
+            start: new Date(start),
+            end: new Date(end),
+          })
+        );
+        setEvents(existentEvents);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      startPolling(1000);
+    } else {
+      stopPolling();
+    }
+  }, [isOpen]);
 
   const toast = useToast();
 
