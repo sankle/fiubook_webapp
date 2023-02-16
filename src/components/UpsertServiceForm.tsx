@@ -52,8 +52,9 @@ interface Props {
   loading: boolean;
   onSubmit: any;
   upsertedSuccessfully: boolean;
-  images: ImageListType;
-  setImages: (images: ImageListType) => void;
+  showImageField: boolean;
+  images?: ImageListType;
+  setImages?: (images: ImageListType) => void;
 }
 
 export default function UpsertServiceForm({
@@ -64,6 +65,7 @@ export default function UpsertServiceForm({
   upsertedSuccessfully,
   images,
   setImages,
+  showImageField,
 }: Props): JSX.Element {
   const formik = useFormik({
     initialValues,
@@ -146,12 +148,17 @@ export default function UpsertServiceForm({
             tags={formik.values.tags}
           />
         </Stack>
-        <Stack>
-          <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            4. Imagen
-          </Heading>
-          <ImageUploader images={images} setImages={setImages} />
-        </Stack>
+        {showImageField && (
+          <Stack>
+            <Heading as="h2" size="sm" className={styles.fieldTitle}>
+              4. Imagen
+            </Heading>
+            <ImageUploader
+              images={images as ImageListType}
+              setImages={setImages as (images: ImageListType) => void}
+            />
+          </Stack>
+        )}
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
             {'4. Confirmación de la reserva '}

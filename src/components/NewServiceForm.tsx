@@ -104,6 +104,7 @@ export default function NewServiceForm(): JSX.Element {
       actionLabel="Crear"
       images={images}
       setImages={setImages}
+      showImageField={true}
     />
   );
 }
