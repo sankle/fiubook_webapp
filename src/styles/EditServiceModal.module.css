@@ -1,0 +1,6 @@
+.modalContent {
+  display: flex;
+  max-width: 800px !important;
+  align-items: center;
+  justify-content: center;
+}

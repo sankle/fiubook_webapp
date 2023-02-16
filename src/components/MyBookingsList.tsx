@@ -21,6 +21,7 @@ const myBookingsQuery = gql(/* GraphQL */ `
         }
       }
       pageInfo {
+        startCursor
         hasNextPage
         endCursor
       }

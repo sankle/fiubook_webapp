@@ -6,7 +6,7 @@ import { Button, Spinner } from '@chakra-ui/react';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
 import { EditIcon } from '@chakra-ui/icons';
-import BookServiceModal from './BookServiceModal';
+import EditServiceModal from './EditServiceModal';
 
 const getMyServicesQuery = gql(/* GraphQL */ `
   query GetMyServices($cursor: String, $queryTerm: String) {
@@ -67,7 +67,7 @@ export default function ServiceList(): JSX.Element {
                 service={service.node}
                 buttonLabel={'Editar'}
                 ButtonIcon={<EditIcon />}
-                ModalOnClickButton={BookServiceModal}
+                ModalOnClickButton={EditServiceModal}
               />
             </div>
           ))}
