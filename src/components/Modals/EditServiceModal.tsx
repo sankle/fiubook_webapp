@@ -41,6 +41,12 @@ const editServiceMutation = gql(/* GraphQL */ `
   }
 `);
 
+const getGranularityInitialValues = (granularity: number) => ({
+  granularity_days: Math.floor(granularity / (3600 * 24)),
+  granularity_hours: Math.floor((granularity % (3600 * 24)) / 3600),
+  granularity_minutes: Math.floor((granularity % 3600) / 60),
+});
+
 export default function EditServiceModal({
   isOpen,
   onClose,
@@ -54,12 +60,10 @@ export default function EditServiceModal({
     name: service.name,
     description: service.description,
     automatic_confirmation: service.booking_type === BookingType.Automatic,
-    granularity_days: 0,
-    granularity_hours: 1,
-    granularity_minutes: 0,
-    max_slots: 1,
-    allowed_roles: ['PROFESSOR', 'STUDENT', 'NODO'],
+    max_slots: service.max_time,
+    allowed_roles: service.allowed_roles,
     tags: service.tags,
+    ...getGranularityInitialValues(service.granularity),
   };
 
   const toast = useToast();

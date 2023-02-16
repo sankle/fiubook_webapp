@@ -97,7 +97,7 @@ export default function UpsertServiceForm({
               placeholder={'Nombre del servicio'}
               variant={'flushed'}
               fontSize={'sm'}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
             />
             {formik.touched.name && !!formik.errors.name && (
               <InputRightElement>
@@ -126,7 +126,7 @@ export default function UpsertServiceForm({
               resize={'none'}
               variant={'flushed'}
               fontSize={'sm'}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
             />
             {formik.touched.description && !!formik.errors.description && (
               <InputRightElement>
@@ -180,7 +180,7 @@ export default function UpsertServiceForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               checked={formik.values.automatic_confirmation}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
               defaultChecked={formik.values.automatic_confirmation}
             />
           </Stack>
@@ -196,7 +196,10 @@ export default function UpsertServiceForm({
               min={0}
               maxW={'16'}
               size={'sm'}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
+              onChange={(numberAsString, number) => {
+                void formik.setFieldValue('granularity_days', number);
+              }}
             >
               <NumberInputField
                 id="granularity_days"
@@ -219,7 +222,10 @@ export default function UpsertServiceForm({
               max={23}
               maxW={'16'}
               size={'sm'}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
+              onChange={(numberAsString, number) => {
+                void formik.setFieldValue('granularity_hours', number);
+              }}
             >
               <NumberInputField
                 name="granularity_hours"
@@ -242,7 +248,10 @@ export default function UpsertServiceForm({
               max={59}
               maxW={'16'}
               size={'sm'}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
+              onChange={(numberAsString, number) => {
+                void formik.setFieldValue('granularity_minutes', number);
+              }}
             >
               <NumberInputField
                 id="granularity_minutes"
@@ -279,7 +288,7 @@ export default function UpsertServiceForm({
               maxW={'16'}
               size={'sm'}
               defaultValue={formik.values.max_slots}
-              isDisabled={loading || upsertedSuccessfully}
+              isDisabled={loading}
               onChange={(numberAsString, number) => {
                 void formik.setFieldValue('max_slots', number);
               }}
@@ -312,7 +321,7 @@ export default function UpsertServiceForm({
               void formik.setFieldValue('allowed_roles', values);
             }}
             value={formik.values.allowed_roles}
-            isDisabled={loading || upsertedSuccessfully}
+            isDisabled={loading}
           >
             <Stack direction={'row'} spacing={'10'}>
               <Checkbox value="STUDENT">

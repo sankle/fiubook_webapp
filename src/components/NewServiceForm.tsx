@@ -69,10 +69,6 @@ export default function NewServiceForm(): JSX.Element {
       }
     }
 
-    console.log(
-      `A punto de enviar el servicio con la image url ${imageUrl as string}`
-    );
-
     await createService({
       variables: {
         creation_args: {
