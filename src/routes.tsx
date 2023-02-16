@@ -1,4 +1,4 @@
-import { makeRouteConfig, Route } from 'found';
+import { makeRouteConfig, Redirect, Route } from 'found';
 import LoginPage from './components/Pages/LoginPage/LoginPage';
 import HomePage from './components/Pages/HomePage/HomePage';
 import ServiceList from './components/ServiceList';
@@ -28,5 +28,6 @@ export default makeRouteConfig(
       <Route path="users" Component={AdminUserList} />
       <Route path="metrics" Component={AdminMetrics} />
     </Route>
+    <Redirect from="*" to="/services" />
   </>
 );
