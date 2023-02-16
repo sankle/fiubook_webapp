@@ -15,8 +15,7 @@
 .bookingContainer {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
+  justify-content: flex-start;
   width: 20%;
   gap: 3px;
 }
@@ -35,4 +34,13 @@
   margin-top: auto;
   align-self: center;
   width: 100%;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 4;
+  justify-content: flex-end;
+  justify-self: flex-end;
+  gap: 2px;
 }

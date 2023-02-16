@@ -78,3 +78,23 @@ export const serviceEditFailedToast = (
   duration: 9000,
   isClosable: true,
 });
+
+export const serviceDeletedSuccessfullyToast = (
+  name: string
+): UseToastOptions => ({
+  title: 'Servicio eliminado',
+  description: `Su servicio "${name}" ha sido eliminado exitosamente. Todas las reservas futuras han sido canceladas.`,
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const serviceDeletionFailedToast = (
+  errorDescription: string
+): UseToastOptions => ({
+  title: 'Error al eliminar el servicio',
+  description: errorDescription,
+  status: 'error',
+  duration: 9000,
+  isClosable: true,
+});

@@ -12,24 +12,59 @@ import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
 import { BookingType, Service } from '../__generated__/graphql';
 
-interface Props {
-  service: Service;
+interface ButtonProps {
   buttonLabel: string;
   ButtonIcon: JSX.Element;
-  ModalOnClickButton: any;
+  colorScheme: string;
+  Modal: any;
 }
+
+interface Props {
+  service: Service;
+  primaryButton: ButtonProps;
+  secondaryButton: ButtonProps | null;
+}
+
+const renderButtonAndModal = (
+  { ButtonIcon, buttonLabel, colorScheme, Modal }: ButtonProps,
+  service: Service,
+  isOpen: boolean,
+  onOpen: () => void,
+  onClose: () => void
+) => (
+  <div className={styles.modalButton}>
+    <Button
+      colorScheme={colorScheme}
+      disabled={false} // TODO: change this value
+      className={styles.bookingButton}
+      onClick={onOpen}
+    >
+      <IconWithText icon={ButtonIcon} text={<p>{buttonLabel}</p>} />
+    </Button>
+    <Modal isOpen={isOpen} onClose={onClose} service={service} />
+  </div>
+);
 
 export default function ServiceCard({
   service,
-  buttonLabel,
-  ButtonIcon,
-  ModalOnClickButton,
+  primaryButton,
+  secondaryButton,
 }: Props): JSX.Element {
   if (!service) {
     return <Spinner />;
   }
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenPrimaryModal,
+    onOpen: onOpenPrimaryModal,
+    onClose: onClosePrimaryModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenSecondaryModal,
+    onOpen: onOpenSecondaryModal,
+    onClose: onCloseSecondaryModal,
+  } = useDisclosure();
 
   return (
     <>
@@ -55,21 +90,23 @@ export default function ServiceCard({
               text={<p>Requiere confirmación</p>}
             />
         )}
-        <Button
-          colorScheme="linkedin"
-          disabled={false} // TODO: change this value
-          className={styles.bookingButton}
-          onClick={onOpen}
-        >
-          <IconWithText icon={ButtonIcon} text={<p>{buttonLabel}</p>} />
-        </Button>
-        {
-          <ModalOnClickButton
-            isOpen={isOpen}
-            onClose={onClose}
-            service={service}
-          />
-        }
+        <div className={styles.buttonsContainer}>
+          {renderButtonAndModal(
+            primaryButton,
+            service,
+            isOpenPrimaryModal,
+            onOpenPrimaryModal,
+            onClosePrimaryModal
+          )}
+          {secondaryButton &&
+            renderButtonAndModal(
+              secondaryButton,
+              service,
+              isOpenSecondaryModal,
+              onOpenSecondaryModal,
+              onCloseSecondaryModal
+            )}
+        </div>
       </div>
     </>
   );

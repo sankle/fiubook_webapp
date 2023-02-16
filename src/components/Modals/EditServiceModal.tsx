@@ -8,17 +8,19 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/EditServiceModal.module.css';
-import { BookingType, Service, UniversityRole } from '../__generated__/graphql';
-import { gql } from '../__generated__/gql';
+import {
+  BookingType,
+  Service,
+  UniversityRole,
+} from '../../__generated__/graphql';
+import { gql } from '../../__generated__/gql';
 import { useMutation } from '@apollo/client';
 import {
   serviceEditedSuccessfullyToast,
   serviceEditFailedToast,
-} from './notificationToasts';
+} from '../notificationToasts';
 import { useState } from 'react';
-import UpsertServiceForm from './UpsertServiceForm';
-
-// TODO: add some validations and disable booking button accordingly
+import UpsertServiceForm from '../UpsertServiceForm';
 
 interface Props {
   isOpen: boolean;

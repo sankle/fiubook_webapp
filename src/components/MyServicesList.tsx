@@ -5,8 +5,9 @@ import { useQuery } from '@apollo/client';
 import { Button, Spinner } from '@chakra-ui/react';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
-import { EditIcon } from '@chakra-ui/icons';
-import EditServiceModal from './EditServiceModal';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import EditServiceModal from './Modals/EditServiceModal';
+import DeleteServiceModal from './Modals/DeleteServiceModal';
 
 const getMyServicesQuery = gql(/* GraphQL */ `
   query GetMyServices($cursor: String, $queryTerm: String) {
@@ -65,9 +66,18 @@ export default function ServiceList(): JSX.Element {
             <div key={service.node.id} className={styles.cardContainer}>
               <ServiceCard
                 service={service.node}
-                buttonLabel={'Editar'}
-                ButtonIcon={<EditIcon />}
-                ModalOnClickButton={EditServiceModal}
+                primaryButton={{
+                  buttonLabel: 'Editar',
+                  ButtonIcon: <EditIcon />,
+                  colorScheme: 'linkedin',
+                  Modal: EditServiceModal,
+                }}
+                secondaryButton={{
+                  buttonLabel: 'Eliminar',
+                  ButtonIcon: <DeleteIcon />,
+                  colorScheme: 'red',
+                  Modal: DeleteServiceModal,
+                }}
               />
             </div>
           ))}
