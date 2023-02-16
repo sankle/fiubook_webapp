@@ -6,6 +6,11 @@ import MyBookingsList from './components/MyBookingsList';
 import NewServiceForm from './components/NewServiceForm';
 import MyRequestsList from './components/MyRequestsList';
 import MyServicesList from './components/MyServicesList';
+import AdminPage from './components/Pages/AdminPage/AdminPage';
+import AdminServiceList from './components/Pages/AdminPage/AdminServiceList';
+import AdminBookingList from './components/Pages/AdminPage/AdminBookingList';
+import AdminUserList from './components/Pages/AdminPage/AdminUserList';
+import AdminMetrics from './components/Pages/AdminPage/AdminMetrics';
 
 export default makeRouteConfig(
   <>
@@ -17,6 +22,11 @@ export default makeRouteConfig(
       <Route path="my-services" Component={MyServicesList} />
     </Route>
     <Route path="login" Component={LoginPage} />
-    {/* <Route path="admin" Component={AdminPage} /> */}
+    <Route path="admin" Component={AdminPage}>
+      <Route path="services" Component={AdminServiceList} />
+      <Route path="bookings" Component={AdminBookingList} />
+      <Route path="users" Component={AdminUserList} />
+      <Route path="metrics" Component={AdminMetrics} />
+    </Route>
   </>
 );

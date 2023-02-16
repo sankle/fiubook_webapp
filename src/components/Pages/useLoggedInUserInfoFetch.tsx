@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { gql } from '../../../__generated__/gql';
+import { gql } from '../../__generated__/gql';
 
 const getUserInfoQuery = gql(/* GraphQL */ `
   query GetUserInfo {

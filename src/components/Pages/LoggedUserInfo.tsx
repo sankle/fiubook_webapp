@@ -1,6 +1,6 @@
 import { Avatar, Badge } from '@chakra-ui/react';
 import styles from '@styles/LoggedUserInfo.module.css';
-import { Roles } from '../../../global/types';
+import { Roles } from '../../global/types';
 
 interface Props {
   dni: string;
