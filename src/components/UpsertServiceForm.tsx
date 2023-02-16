@@ -161,6 +161,12 @@ export default function UpsertServiceForm({
         )}
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
+            4. Imagen
+          </Heading>
+          <ImageUploader images={images} setImages={setImages} />
+        </Stack>
+        <Stack>
+          <Heading as="h2" size="sm" className={styles.fieldTitle}>
             {'4. Confirmación de la reserva '}
             <Tooltip
               label={
