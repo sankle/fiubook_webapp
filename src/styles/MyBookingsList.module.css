@@ -17,3 +17,8 @@
   box-shadow: 5px 5px 4px 0px rgba(214,214,214,1);
   margin-top: 10px;
 }
+
+.loadMoreButton {
+  align-self: center;
+  margin-top: 5px;
+}
