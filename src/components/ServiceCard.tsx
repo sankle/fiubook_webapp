@@ -1,29 +1,34 @@
-import { Heading, Text, Button, useDisclosure } from '@chakra-ui/react';
-import { CalendarIcon, TimeIcon, WarningIcon } from '@chakra-ui/icons';
+import {
+  Heading,
+  Text,
+  Button,
+  useDisclosure,
+  Spinner,
+} from '@chakra-ui/react';
+import { TimeIcon, WarningIcon } from '@chakra-ui/icons';
 import styles from '@styles/ServiceCard.module.css';
-import BookServiceModal from './BookServiceModal';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { BookingType } from '../__generated__/graphql';
+import { BookingType, Service } from '../__generated__/graphql';
 
 interface Props {
-  name: string;
-  description: string;
-  maxTime: number;
-  bookingType: BookingType;
-  granularity: number;
-  id: string;
+  service: Service;
+  buttonLabel: string;
+  ButtonIcon: JSX.Element;
+  ModalOnClickButton: any;
 }
 
 export default function ServiceCard({
-  name,
-  description,
-  maxTime,
-  bookingType,
-  granularity,
-  id,
+  service,
+  buttonLabel,
+  ButtonIcon,
+  ModalOnClickButton,
 }: Props): JSX.Element {
+  if (!service) {
+    return <Spinner />;
+  }
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -31,25 +36,24 @@ export default function ServiceCard({
       <ServiceImage className={styles.imageContainer} />
       <div className={styles.serviceNameAndDescriptionContainer}>
         <Heading as="h3" size="md" noOfLines={1}>
-          {name}
+          {service.name}
         </Heading>
         <Text fontSize="md" noOfLines={3}>
-          {description}
+          {service.description}
         </Text>
         <ServiceTags className={styles.tagsContainer} />
       </div>
       <div className={styles.bookingContainer}>
-        {maxTime && (
-          <IconWithText
-            icon={<TimeIcon />}
-            text={<p>Reserva máxima {maxTime}</p>}
-          />
-        )}
-        {bookingType === BookingType.RequiresConfirmation && (
-          <IconWithText
-            icon={<WarningIcon />}
-            text={<p>Requiere confirmación</p>}
-          />
+        <IconWithText
+          icon={<TimeIcon />}
+          text={<p>Reserva máxima {service.max_time}</p>}
+        />
+        {service &&
+          service.booking_type === BookingType.RequiresConfirmation && (
+            <IconWithText
+              icon={<WarningIcon />}
+              text={<p>Requiere confirmación</p>}
+            />
         )}
         <Button
           colorScheme="linkedin"
@@ -57,18 +61,15 @@ export default function ServiceCard({
           className={styles.bookingButton}
           onClick={onOpen}
         >
-          <IconWithText icon={<CalendarIcon />} text={<p>Reservar</p>} />
+          <IconWithText icon={ButtonIcon} text={<p>{buttonLabel}</p>} />
         </Button>
-        <BookServiceModal
-          isOpen={isOpen}
-          onClose={onClose}
-          name={name}
-          description={description}
-          maxTime={maxTime}
-          bookingType={bookingType}
-          granularity={granularity}
-          id={id}
-        />
+        {
+          <ModalOnClickButton
+            isOpen={isOpen}
+            onClose={onClose}
+            service={service}
+          />
+        }
       </div>
     </>
   );

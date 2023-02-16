@@ -14,15 +14,16 @@ import {
   CalendarIcon,
   HamburgerIcon,
   SearchIcon,
+  SettingsIcon,
 } from '@chakra-ui/icons';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
 import { useRouter } from 'found';
-import { useQuery } from '@apollo/client';
-import { gql } from '../../../__generated__/gql';
 import { Roles } from '../../../global/types';
 import { useState } from 'react';
+import useLoggedInUserInfoFetch from './useLoggedInUserInfoFetch';
+import { invalidateSession } from '../../../services/sessionService';
 
 export interface Props {
   defaultTabIndex: number;
@@ -31,20 +32,11 @@ export interface Props {
 export const tabIndexToRouteArray = [
   '/services',
   '/bookings',
+  '/my-services',
   '/create-service',
   '/requests',
+  '/admin',
 ];
-
-const getUserInfoQuery = gql(/* GraphQL */ `
-  query GetUserInfo {
-    me {
-      id
-      dni
-      roles
-      is_admin
-    }
-  }
-`);
 
 const PublisherTabs = ({
   isAdmin,
@@ -56,6 +48,10 @@ const PublisherTabs = ({
   if (canPublishServices || isAdmin) {
     return (
       <>
+        <Tab>
+          <SettingsIcon />
+          &nbsp;&nbsp;Mis Servicios
+        </Tab>
         <Tab>
           <AddIcon />
           &nbsp;&nbsp;Nuevo Servicio
@@ -72,11 +68,14 @@ const PublisherTabs = ({
 
 export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
   const { router } = useRouter();
-  const { data, loading } = useQuery(getUserInfoQuery, {
-    onError: error => {
-      console.log(JSON.stringify(error));
-    },
-  });
+
+  const { data, error, loading } = useLoggedInUserInfoFetch();
+
+  // TODO: check if we can move this to a common apollo handler
+  if (error) {
+    invalidateSession();
+    router.replace('/login');
+  }
 
   const [tabIndex, setTabIndex] = useState(defaultTabIndex);
   const [searchStringValue, setSearchStringValue] = useState('');
@@ -133,7 +132,7 @@ export function NavigationBar({ defaultTabIndex }: Props): JSX.Element {
             {!loading && data ? (
               <PublisherTabs
                 isAdmin={data.me.is_admin}
-                canPublishServices={true}
+                canPublishServices={data.me.can_publish_services}
               />
             ) : null}
           </TabList>

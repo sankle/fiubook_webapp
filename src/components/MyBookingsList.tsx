@@ -7,7 +7,7 @@ import { Service } from 'src/__generated__/graphql';
 
 const myBookingsQuery = gql(/* GraphQL */ `
   query MyBookingsQuery($cursor: String) {
-    myBookings(first: 3, after: $cursor) {
+    myBookings(first: 6, after: $cursor) {
       edges {
         node {
           id

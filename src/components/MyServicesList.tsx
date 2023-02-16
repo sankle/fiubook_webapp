@@ -5,12 +5,12 @@ import { useQuery } from '@apollo/client';
 import { Button, Spinner } from '@chakra-ui/react';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
-import { CalendarIcon } from '@chakra-ui/icons';
+import { EditIcon } from '@chakra-ui/icons';
 import BookServiceModal from './BookServiceModal';
 
-const getServicesQuery = gql(/* GraphQL */ `
-  query GetServices($cursor: String, $queryTerm: String) {
-    services(first: 6, after: $cursor, query_term: $queryTerm) {
+const getMyServicesQuery = gql(/* GraphQL */ `
+  query GetMyServices($cursor: String, $queryTerm: String) {
+    myServices(first: 6, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
@@ -33,16 +33,9 @@ const getServicesQuery = gql(/* GraphQL */ `
 `);
 
 export default function ServiceList(): JSX.Element {
-  // const [isPending, startTransition] = useTransition();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const onLoadMore = () =>
-  //   startTransition(() => {
-  //     loadNext(3);
-  //   });
-
   const { match } = useRouter();
 
-  const { data, loading, fetchMore, refetch } = useQuery(getServicesQuery, {
+  const { data, loading, fetchMore, refetch } = useQuery(getMyServicesQuery, {
     variables: {
       queryTerm: match.location.query.search,
     },
@@ -62,18 +55,18 @@ export default function ServiceList(): JSX.Element {
     );
   }
 
-  const pageInfo = data.services.pageInfo;
+  const pageInfo = data.myServices.pageInfo;
 
   return (
     <div className={styles.servicesContainer}>
-      {data.services.edges.length ? (
+      {data.myServices.edges.length ? (
         <>
-          {data.services.edges.map((service: any) => (
+          {data.myServices.edges.map((service: any) => (
             <div key={service.node.id} className={styles.cardContainer}>
               <ServiceCard
                 service={service.node}
-                buttonLabel={'Reservar'}
-                ButtonIcon={<CalendarIcon />}
+                buttonLabel={'Editar'}
+                ButtonIcon={<EditIcon />}
                 ModalOnClickButton={BookServiceModal}
               />
             </div>

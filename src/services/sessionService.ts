@@ -36,6 +36,11 @@ export const getToken = (): string | null => {
   return localStorageSessionToken || (sessionCookie && sessionCookie.token);
 };
 
+export const invalidateSession = () => {
+  Cookies.remove('session');
+  localStorage.removeItem('token');
+};
+
 export const isUserLoggedIn = (): boolean => {
   return !!getToken();
 };
