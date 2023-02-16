@@ -68,7 +68,7 @@ export default function ServiceCard({
 
   return (
     <>
-      <ServiceImage className={styles.imageContainer} />
+      <ServiceImage className={styles.imageContainer} url={service.image_url} />
       <div className={styles.serviceNameAndDescriptionContainer}>
         <Heading as="h3" size="md" noOfLines={1}>
           {service.name}
