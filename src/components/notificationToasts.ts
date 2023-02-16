@@ -58,3 +58,23 @@ export const serviceCreationFailedToast = (
   duration: 9000,
   isClosable: true,
 });
+
+export const serviceEditedSuccessfullyToast = (
+  name: string
+): UseToastOptions => ({
+  title: 'Servicio modificado',
+  description: `Su servicio "${name}" ha sido modificado exitosamente.`,
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const serviceEditFailedToast = (
+  errorDescription: string
+): UseToastOptions => ({
+  title: 'Error al modificar el servicio',
+  description: errorDescription,
+  status: 'error',
+  duration: 9000,
+  isClosable: true,
+});

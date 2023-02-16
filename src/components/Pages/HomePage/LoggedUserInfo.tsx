@@ -45,17 +45,10 @@ export default function loggedUserInfo({
   roles,
   isAdmin,
 }: Props): JSX.Element {
-  const data = {
-    me: {
-      dni: '41010465',
-      is_admin: true,
-      roles: ['STUDENT'],
-    },
-  };
   return (
     <div className={styles.loggedUserInfoContainer}>
       <div className={styles.nameAndBadgesContainer}>
-        <p className={styles.userName}>{data.me.dni}</p>
+        <p className={styles.userName}>{dni}</p>
         <div className={styles.badgeStack}>
           {roles.map(getBadgeComponent)}
           {isAdmin ? getBadgeComponent(Roles.SystemAdmin) : null}

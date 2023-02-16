@@ -8,7 +8,7 @@ import { Button } from '@chakra-ui/button';
 
 const myRequestsQuery = gql(/* GraphQL */ `
   query MyRequestsQuery($cursor: String) {
-    myBookingsForPublisher(first: 3, after: $cursor) {
+    myBookingsForPublisher(first: 6, after: $cursor) {
       edges {
         node {
           id

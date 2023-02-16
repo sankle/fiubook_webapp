@@ -29,7 +29,7 @@ import {
   normalizeBookingSlot,
 } from '../utils/dateRangeUtils';
 import constants from '../constants';
-import { BookingType } from '../__generated__/graphql';
+import { BookingType, Service } from '../__generated__/graphql';
 import { gql } from '../__generated__/gql';
 import { useMutation, useQuery } from '@apollo/client';
 import {
@@ -42,12 +42,7 @@ import {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  id: string;
-  name: string;
-  description: string;
-  granularity: number;
-  maxTime: number;
-  bookingType: BookingType;
+  service: Service;
 }
 
 const BookServiceModalExistentBookingsQuery = gql(/* GraphQL */ `
@@ -96,18 +91,17 @@ const localizer = dayjsLocalizer(dayjs);
 export default function BookServiceModal({
   isOpen,
   onClose,
-  name,
-  description,
-  granularity,
-  maxTime,
-  bookingType,
-  id,
+  service,
 }: Props): JSX.Element {
   const [events, setEvents] = useState<Event[]>([]);
 
+  if (!service) {
+    return <></>;
+  }
+
   useQuery(BookServiceModalExistentBookingsQuery, {
     variables: {
-      serviceId: id,
+      serviceId: service.id,
       startDate: constants.existentBookingsQueryStartDate,
       endDate: constants.existentBookingsQueryEndDate,
     },
@@ -122,17 +116,18 @@ export default function BookServiceModal({
       setEvents(existentEvents);
     },
   });
+
   const toast = useToast();
 
   const [bookService, { loading }] = useMutation(BookServiceMutation, {
     onError: error => {
       console.log(JSON.stringify(error));
-      toast(serviceBookFailedToast(name, error.message));
+      toast(serviceBookFailedToast(service.name, error.message));
     },
     onCompleted: data => {
       toast(
         serviceBookedSuccessfullyToast(
-          name,
+          service.name,
           data.createBooking.bookingEdge.node.start_date,
           data.createBooking.bookingEdge.node.end_date
         )
@@ -155,9 +150,9 @@ export default function BookServiceModal({
         normalizeBookingSlot(
           currentDateString,
           currentDateString,
-          granularity,
+          service.granularity,
           1,
-          maxTime,
+          service.max_time,
           false
         );
 
@@ -185,9 +180,9 @@ export default function BookServiceModal({
         newToDate: convertToLocaleString(slotInfo.end),
         prevFromDate: fromDate,
         prevToDate: toDate,
-        granularity,
+        granularity: service.granularity,
         minSlots: 1,
-        maxSlots: maxTime,
+        maxSlots: service.max_time,
         setFromDate,
         setToDate,
       }),
@@ -201,9 +196,9 @@ export default function BookServiceModal({
         newToDate: null,
         prevFromDate: fromDate,
         prevToDate: toDate,
-        granularity,
+        granularity: service.granularity,
         minSlots: 1,
-        maxSlots: maxTime,
+        maxSlots: service.max_time,
         setFromDate,
         setToDate,
       }),
@@ -217,9 +212,9 @@ export default function BookServiceModal({
         newToDate: null,
         prevFromDate: fromDate,
         prevToDate: toDate,
-        granularity,
+        granularity: service.granularity,
         minSlots: 1,
-        maxSlots: maxTime,
+        maxSlots: service.max_time,
         setFromDate,
         setToDate,
       }),
@@ -233,9 +228,9 @@ export default function BookServiceModal({
         newToDate: newValue.target.value,
         prevFromDate: fromDate,
         prevToDate: toDate,
-        granularity,
+        granularity: service.granularity,
         minSlots: 1,
-        maxSlots: maxTime,
+        maxSlots: service.max_time,
         setFromDate,
         setToDate,
       }),
@@ -262,9 +257,9 @@ export default function BookServiceModal({
     const { start, end } = normalizeBookingSlot(
       fromDate,
       toDate,
-      granularity,
+      service.granularity,
       1,
-      maxTime,
+      service.max_time,
       false
     );
 
@@ -301,19 +296,19 @@ export default function BookServiceModal({
         <ModalBody>
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
-              <p className={styles.serviceName}>{name}</p>
+              <p className={styles.serviceName}>{service.name}</p>
               <Text fontSize="md" noOfLines={3}>
-                {description}
+                {service.description}
               </Text>
               <div className={styles.serviceBookingLimitsContainer}>
-                {maxTime && (
+                {service.max_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {maxTime}</p>}
+                    text={<p>Reserva máxima {service.max_time}</p>}
                   />
                 )}
               </div>
-              {bookingType === BookingType.RequiresConfirmation && (
+              {service.booking_type === BookingType.RequiresConfirmation && (
                 <IconWithText
                   icon={<WarningIcon />}
                   text={<p>Requiere confirmación</p>}
@@ -337,7 +332,7 @@ export default function BookServiceModal({
                     value={fromDate}
                     onChange={handleFromDateChange}
                     min={initialFromDateString}
-                    step={granularity}
+                    step={service.granularity}
                   />
                   <FormHelperText>
                     Seleccione la fecha de inicio del servicio
@@ -391,7 +386,7 @@ export default function BookServiceModal({
             onClick={() => {
               void bookService({
                 variables: {
-                  service_id: id,
+                  service_id: service.id,
                   start_date: new Date(fromDate),
                   end_date: new Date(toDate),
                 },
