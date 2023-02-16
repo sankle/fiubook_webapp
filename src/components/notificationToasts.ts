@@ -98,3 +98,23 @@ export const serviceDeletionFailedToast = (
   duration: 9000,
   isClosable: true,
 });
+
+export const userPermissionsModifiedSuccessfullyToast = (
+  id: string
+): UseToastOptions => ({
+  title: 'Permisos de usuario modificados',
+  description: `Los permisos del usuario "${id}" han sido modificados exitosamente.`,
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const userPermissionsModificationFailedToast = (
+  errorDescription: string
+): UseToastOptions => ({
+  title: 'Error al modificar permisos de usuario',
+  description: errorDescription,
+  status: 'error',
+  duration: 9000,
+  isClosable: true,
+});

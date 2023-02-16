@@ -10,10 +10,15 @@ import {
   Th,
   Thead,
   Tr,
+  useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/AdminUserList.module.css';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
+import {
+  userPermissionsModificationFailedToast,
+  userPermissionsModifiedSuccessfullyToast,
+} from '../../notificationToasts';
 
 const getUsersAdminQuery = gql(/* GraphQL */ `
   query GetUsersAdmin($cursor: String) {
@@ -48,6 +53,7 @@ const updateUserMutation = gql(/* GraphQL */ `
 
 export default function AdminBookingList(): JSX.Element {
   const { match } = useRouter();
+  const toast = useToast();
 
   const { data, loading, fetchMore, refetch } = useQuery(getUsersAdminQuery, {
     variables: {
@@ -65,6 +71,12 @@ export default function AdminBookingList(): JSX.Element {
     updateUserMutation,
     {
       refetchQueries: ['GetUsersAdmin'],
+      onCompleted: response => {
+        toast(userPermissionsModifiedSuccessfullyToast(response.updateUser.id));
+      },
+      onError: error => {
+        toast(userPermissionsModificationFailedToast(error.message));
+      },
     }
   );
 
