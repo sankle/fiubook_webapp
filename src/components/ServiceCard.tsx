@@ -12,11 +12,12 @@ import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
 import { BookingType, Service } from '../__generated__/graphql';
 
-interface ButtonProps {
+export interface ButtonProps {
   buttonLabel: string;
   ButtonIcon: JSX.Element;
   colorScheme: string;
   Modal: any;
+  modalProps: any;
 }
 
 interface Props {
@@ -25,9 +26,8 @@ interface Props {
   secondaryButton: ButtonProps | null;
 }
 
-const renderButtonAndModal = (
-  { ButtonIcon, buttonLabel, colorScheme, Modal }: ButtonProps,
-  service: Service,
+export const renderButtonAndModal = (
+  { ButtonIcon, buttonLabel, colorScheme, Modal, modalProps }: ButtonProps,
   isOpen: boolean,
   onOpen: () => void,
   onClose: () => void
@@ -41,7 +41,7 @@ const renderButtonAndModal = (
     >
       <IconWithText icon={ButtonIcon} text={<p>{buttonLabel}</p>} />
     </Button>
-    <Modal isOpen={isOpen} onClose={onClose} service={service} />
+    <Modal isOpen={isOpen} onClose={onClose} {...modalProps} />
   </div>
 );
 
@@ -93,7 +93,6 @@ export default function ServiceCard({
         <div className={styles.buttonsContainer}>
           {renderButtonAndModal(
             primaryButton,
-            service,
             isOpenPrimaryModal,
             onOpenPrimaryModal,
             onClosePrimaryModal
@@ -101,7 +100,6 @@ export default function ServiceCard({
           {secondaryButton &&
             renderButtonAndModal(
               secondaryButton,
-              service,
               isOpenSecondaryModal,
               onOpenSecondaryModal,
               onCloseSecondaryModal

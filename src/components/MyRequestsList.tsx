@@ -71,7 +71,7 @@ export default function MyRequestsList(): JSX.Element {
                 }
               }}
             >
-              Mas
+              Más
             </Button>
           )}
         </>

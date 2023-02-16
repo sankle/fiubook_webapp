@@ -79,6 +79,7 @@ export default function ServiceList(): JSX.Element {
                   buttonLabel: 'Reservar',
                   ButtonIcon: <CalendarIcon />,
                   Modal: BookServiceModal,
+                  modalProps: { service: service.node },
                 }}
                 secondaryButton={null}
               />
@@ -99,7 +100,7 @@ export default function ServiceList(): JSX.Element {
                 }
               }}
             >
-              Mas
+              Más
             </Button>
           )}
         </>

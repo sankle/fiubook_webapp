@@ -39,10 +39,11 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        services: relayStylePagination(),
+        bookings: relayStylePagination(),
         myServices: relayStylePagination(),
         myBookings: relayStylePagination(),
         myBookingsForPublisher: relayStylePagination(),
+        services: relayStylePagination(),
       },
     },
   },

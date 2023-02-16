@@ -1,7 +1,14 @@
 import { NavigationBar } from '../NavigationBar';
 import styles from '@styles/AdminPage.module.css';
-import { TabList, Tab, Tabs } from '@chakra-ui/react';
-import { SettingsIcon } from '@chakra-ui/icons';
+import {
+  TabList,
+  Tab,
+  Tabs,
+  InputGroup,
+  InputLeftElement,
+  Input,
+} from '@chakra-ui/react';
+import { SearchIcon, SettingsIcon } from '@chakra-ui/icons';
 import { useRouter } from 'found';
 import { useState } from 'react';
 import useLoggedInUserInfoFetch from '../useLoggedInUserInfoFetch';
@@ -30,9 +37,35 @@ export default function AdminPage(props: any): JSX.Element {
   }
 
   const [tabIndex, setTabIndex] = useState(defaultTabIndex);
+  const [searchStringValue, setSearchStringValue] = useState('');
 
   const getInputGroup = () => {
-    return <></>;
+    return (
+      <InputGroup>
+        <InputLeftElement pointerEvents="none">
+          <SearchIcon />
+        </InputLeftElement>
+        <Input
+          placeholder="Buscar Servicios"
+          onChange={event => setSearchStringValue(event.target.value)}
+          onKeyDown={event => {
+            if (event.key === 'Enter') {
+              setTabIndex(tabIndexToRouteArray.indexOf('/admin/services'));
+              console.log(
+                `setting index to ${tabIndexToRouteArray.indexOf(
+                  '/admin/services'
+                )}`
+              );
+              if (searchStringValue !== '') {
+                router.replace(`/admin/services?search=${searchStringValue}`);
+              } else {
+                router.replace(`/admin/services`);
+              }
+            }
+          }}
+        />
+      </InputGroup>
+    );
   };
 
   const getTabs = () => {

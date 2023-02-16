@@ -73,12 +73,14 @@ export default function ServiceList(): JSX.Element {
                   ButtonIcon: <EditIcon />,
                   colorScheme: 'linkedin',
                   Modal: EditServiceModal,
+                  modalProps: { service: service.node },
                 }}
                 secondaryButton={{
                   buttonLabel: 'Eliminar',
                   ButtonIcon: <DeleteIcon />,
                   colorScheme: 'red',
                   Modal: DeleteServiceModal,
+                  modalProps: { service: service.node },
                 }}
               />
             </div>
@@ -98,7 +100,7 @@ export default function ServiceList(): JSX.Element {
                 }
               }}
             >
-              Mas
+              Más
             </Button>
           )}
         </>

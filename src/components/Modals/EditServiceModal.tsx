@@ -79,7 +79,7 @@ export default function EditServiceModal({
     onError: error => {
       toast(serviceEditFailedToast(error.message));
     },
-    refetchQueries: ['GetServices', 'GetMyServices'],
+    refetchQueries: ['GetServices', 'GetMyServices', 'GetServicesAdmin'],
   });
 
   const onSubmit = (values: any) => {

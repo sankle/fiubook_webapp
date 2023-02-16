@@ -39,7 +39,12 @@ export default function DeleteServiceModal({
       console.error(`error: ${JSON.stringify(error)}`);
       toast(serviceDeletionFailedToast(error.message));
     },
-    refetchQueries: ['GetServices', 'GetMyServices', 'MyBookingsQuery'],
+    refetchQueries: [
+      'GetServices',
+      'GetMyServices',
+      'MyBookingsQuery',
+      'GetServicesAdmin',
+    ],
   });
 
   const onDelete = () => {

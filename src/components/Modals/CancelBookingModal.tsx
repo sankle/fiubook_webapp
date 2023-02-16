@@ -32,7 +32,7 @@ export default function CancelBookingModal({
     onCompleted: () => {
       onClose();
     },
-    refetchQueries: ['MyBookingsQuery'],
+    refetchQueries: ['MyBookingsQuery', 'GetBookingsAdmin'],
   });
 
   const onDelete = () => {

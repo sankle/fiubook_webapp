@@ -69,7 +69,7 @@ export default function MyBookingsList(): JSX.Element {
                 });
               }}
             >
-              Mas
+              Más
             </Button>
           )}
         </>

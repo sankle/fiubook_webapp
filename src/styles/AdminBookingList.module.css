@@ -1,0 +1,17 @@
+.bookingsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.loadMoreButton {
+  align-self: center;
+  margin-top: 5px;
+}
+
+.actionButtonsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
