@@ -9,7 +9,7 @@ import styles from '@styles/BookingCard.module.css';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import CancelBookingModal from './CancelBookingModal';
+import CancelBookingModal from './Modals/CancelBookingModal';
 import { gql } from '../__generated__/gql';
 import { useMutation } from '@apollo/client';
 
@@ -243,7 +243,7 @@ export default function BookingCard({
         isOpen={isOpen}
         onClose={onClose}
         id={id}
-        startDate={startDate}
+        startDateString={startDate}
         serviceName={service.name}
       />
     </>

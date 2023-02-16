@@ -17,9 +17,9 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/BookServiceModal.module.css';
-import IconWithText from './IconWithText';
-import ServiceImage from './ServiceImage';
-import ServiceTags from './ServiceTags';
+import IconWithText from '../IconWithText';
+import ServiceImage from '../ServiceImage';
+import ServiceTags from '../ServiceTags';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, Event, dayjsLocalizer, SlotInfo } from 'react-big-calendar';
 import dayjs from 'dayjs';
@@ -27,15 +27,15 @@ import {
   changeBookingSlot,
   convertToLocaleString,
   normalizeBookingSlot,
-} from '../utils/dateRangeUtils';
-import constants from '../constants';
-import { BookingType, Service } from '../__generated__/graphql';
-import { gql } from '../__generated__/gql';
+} from '../../utils/dateRangeUtils';
+import constants from '../../constants';
+import { BookingType, Service } from '../../__generated__/graphql';
+import { gql } from '../../__generated__/gql';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   serviceBookedSuccessfullyToast,
   serviceBookFailedToast,
-} from './notificationToasts';
+} from '../notificationToasts';
 
 // TODO: add some validations and disable booking button accordingly
 

@@ -40,6 +40,7 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         services: relayStylePagination(),
+        myServices: relayStylePagination(),
         myBookings: relayStylePagination(),
         myBookingsForPublisher: relayStylePagination(),
       },
