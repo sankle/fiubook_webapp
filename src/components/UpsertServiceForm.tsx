@@ -23,6 +23,8 @@ import { InfoIcon } from '@chakra-ui/icons';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import TagsInput from './TagsInput';
+import ImageUploader from './ImageUploader';
+import { ImageListType } from 'react-images-uploading';
 
 const validationSchema = yup.object({
   name: yup
@@ -50,6 +52,8 @@ interface Props {
   loading: boolean;
   onSubmit: any;
   upsertedSuccessfully: boolean;
+  images: ImageListType;
+  setImages: (images: ImageListType) => void;
 }
 
 export default function UpsertServiceForm({
@@ -58,6 +62,8 @@ export default function UpsertServiceForm({
   loading,
   onSubmit,
   upsertedSuccessfully,
+  images,
+  setImages,
 }: Props): JSX.Element {
   const formik = useFormik({
     initialValues,
@@ -139,6 +145,12 @@ export default function UpsertServiceForm({
             }}
             tags={formik.values.tags}
           />
+        </Stack>
+        <Stack>
+          <Heading as="h2" size="sm" className={styles.fieldTitle}>
+            4. Imagen
+          </Heading>
+          <ImageUploader images={images} setImages={setImages} />
         </Stack>
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>

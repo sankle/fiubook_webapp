@@ -9,6 +9,8 @@ import { useMutation } from '@apollo/client';
 import { BookingType, UniversityRole } from '../__generated__/graphql';
 import UpsertServiceForm from './UpsertServiceForm';
 import { useRouter } from 'found';
+import { ImageListType } from 'react-images-uploading';
+import { uploadImage } from '../utils/imageUtils';
 
 const initialValues = {
   name: '',
@@ -40,6 +42,9 @@ export default function NewServiceForm(): JSX.Element {
 
   const [upsertedSuccessfully, setUpsertedSuccessfully] = useState(false);
 
+  const [images, setImages] = useState<ImageListType>([]);
+  const [imageUploading, setImageUploading] = useState(false);
+
   const [createService, { loading }] = useMutation(createServiceMutation, {
     onCompleted: response => {
       setUpsertedSuccessfully(true);
@@ -52,8 +57,23 @@ export default function NewServiceForm(): JSX.Element {
     refetchQueries: ['GetServices', 'GetMyServices'],
   });
 
-  const onSubmit = (values: any) => {
-    void createService({
+  const onSubmit = async (values: any) => {
+    let imageUrl;
+    if (images.length > 0) {
+      setImageUploading(true);
+      try {
+        imageUrl = await uploadImage(images[0].file as File);
+      } catch (err) {
+        console.log('Error uploading image.');
+        console.log(JSON.stringify(err));
+      }
+    }
+
+    console.log(
+      `A punto de enviar el servicio con la image url ${imageUrl as string}`
+    );
+
+    await createService({
       variables: {
         creation_args: {
           name: values.name,
@@ -68,6 +88,7 @@ export default function NewServiceForm(): JSX.Element {
             : BookingType.RequiresConfirmation,
           allowed_roles: values.allowed_roles as UniversityRole[],
           tags: values.tags,
+          image_url: imageUrl,
         },
       },
     });
@@ -78,9 +99,11 @@ export default function NewServiceForm(): JSX.Element {
     <UpsertServiceForm
       onSubmit={onSubmit}
       initialValues={initialValues}
-      loading={loading}
+      loading={loading || imageUploading}
       upsertedSuccessfully={upsertedSuccessfully}
       actionLabel="Crear"
+      images={images}
+      setImages={setImages}
     />
   );
 }

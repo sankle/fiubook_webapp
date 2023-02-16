@@ -1,23 +1,16 @@
 import { Image } from '@chakra-ui/react';
 import styles from '@styles/ServiceImage.module.css';
-import constants from '../constants';
-// import { graphql } from 'relay-runtime';
 
-// const ServiceImageFragment = graphql`
-//   fragment ServiceImageFragment on Service {
-
-//   }
-// `;
-
-// TODO: Missing server-side implementation
-export default function ServiceImage({
-  className,
-}: {
+interface Props {
   className: string;
-}): JSX.Element {
+  url: string;
+}
+
+export default function ServiceImage({ className, url }: Props): JSX.Element {
+  console.log(url);
   return (
     <div className={className}>
-      <Image src={constants.placeholderImage} className={styles.serviceImage} />
+      <Image src={url} className={styles.serviceImage} />
     </div>
   );
 }

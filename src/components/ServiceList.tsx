@@ -22,6 +22,7 @@ const getServicesQuery = gql(/* GraphQL */ `
           allowed_roles
           publisher_id
           tags
+          image_url
         }
       }
       pageInfo {
