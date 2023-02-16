@@ -89,7 +89,7 @@ export default function AdminServiceList(): JSX.Element {
     <div className={styles.servicesContainer}>
       {data.services.edges.length ? (
         <TableContainer>
-          <Table variant="simple" colorScheme="linkedin">
+          <Table variant="striped" colorScheme="linkedin">
             <Thead>
               <Tr>
                 <Th>ID</Th>

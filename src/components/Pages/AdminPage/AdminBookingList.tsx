@@ -82,7 +82,7 @@ export default function AdminBookingList(): JSX.Element {
     <div className={styles.bookingsContainer}>
       {data.bookings.edges.length ? (
         <TableContainer>
-          <Table variant="simple" colorScheme="linkedin">
+          <Table variant="striped" colorScheme="linkedin">
             <Thead>
               <Tr>
                 <Th>ID</Th>

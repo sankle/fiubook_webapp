@@ -3,6 +3,8 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 5px;
+  background-color: white;
+  border-radius: 5px;
 }
 
 .loadMoreButton {
