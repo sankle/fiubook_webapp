@@ -1,4 +1,4 @@
-.servicesContainer {
+.usersContainer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -13,8 +13,9 @@
   margin-top: 5px;
 }
 
-.actionButtonsContainer {
+.checkboxContainer {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
 }
