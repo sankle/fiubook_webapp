@@ -161,13 +161,7 @@ export default function UpsertServiceForm({
         )}
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            4. Imagen
-          </Heading>
-          <ImageUploader images={images} setImages={setImages} />
-        </Stack>
-        <Stack>
-          <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'4. Confirmación de la reserva '}
+            {'5. Confirmación de la reserva '}
             <Tooltip
               label={
                 'Las reservas automáticas se confirman de manera instantánea. Si esta opción está desactivada, tendrás que confirmar manualmente las reservas a este'
@@ -194,7 +188,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            5. Duración de los turnos
+            6. Duración de los turnos
           </Heading>
           <Stack direction={'row'} alignItems={'center'}>
             <NumberInput
@@ -270,7 +264,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'6. Cantidad máxima de turnos '}
+            {'7. Cantidad máxima de turnos '}
             <Tooltip
               label={
                 'Cantidad máxima de turnos seguidos que se pueden solicitar en una misma reserva'
@@ -309,7 +303,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            7. ¿Quienes pueden reservar este servicio?
+            8. ¿Quienes pueden reservar este servicio?
           </Heading>
           <CheckboxGroup
             colorScheme={'linkedin'}
