@@ -1,4 +1,4 @@
-import { Button, Image, Spinner, VStack } from '@chakra-ui/react';
+import { Button, HStack, Image, Spinner, VStack } from '@chakra-ui/react';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
@@ -27,19 +27,37 @@ export function NavigationBar({ getInputGroup, getTabs }: Props): JSX.Element {
     router.replace('/login');
   };
 
+  const onAdminClick = () => {
+    router.replace('/admin/services');
+  };
+
   return (
     <div className={styles.navigationContainer}>
       <div className={styles.leftNavigationContainer}>
         <VStack align={'flex-start'}>
-          <h1 className={styles.logoTitle}>FIUBOOK</h1>
-          <Button
-            size={'sm'}
-            variant={'outline'}
-            colorScheme={'linkedin'}
-            onClick={onLogoutClick}
-          >
-            Cerrar sesión
-          </Button>
+          <h1 className={styles.logoTitle}>
+            <a href={'/'}>FIUBOOK</a>
+          </h1>
+          <HStack>
+            <Button
+              size={'sm'}
+              variant={'outline'}
+              colorScheme={'linkedin'}
+              onClick={onLogoutClick}
+            >
+              Cerrar sesión
+            </Button>
+            {data?.me.is_admin && (
+              <Button
+                size={'sm'}
+                variant={'outline'}
+                colorScheme={'linkedin'}
+                onClick={onAdminClick}
+              >
+                Administración
+              </Button>
+            )}
+          </HStack>
         </VStack>
       </div>
       <div className={styles.centerNavigationContainer}>
