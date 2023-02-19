@@ -118,6 +118,7 @@ export default function BookServiceModal({
           })
         );
         setEvents(existentEvents);
+        renderBookingSlot();
       },
     }
   );
@@ -186,6 +187,39 @@ export default function BookServiceModal({
   const [toDate, setToDate] = useState(initialToDateString);
   const [calendarDate, setCalendarDate] = useState(currentDate);
 
+  const renderBookingSlot = useCallback(() => {
+    const { start, end } = normalizeBookingSlot(
+      fromDate,
+      toDate,
+      service.granularity,
+      1,
+      service.max_time,
+      false
+    );
+
+    setCalendarDate(start || end || currentDate);
+
+    if (start && end) {
+      // add event of current booking
+      setEvents(prevEvents => [
+        ...prevEvents.filter(
+          event => event.title !== constants.currentBookingEventTitle
+        ),
+        {
+          title: constants.currentBookingEventTitle,
+          start,
+          end,
+        },
+      ]);
+    } else {
+      // remove booking event from calendar since it is no delimited
+      setEvents(prevEvents =>
+        prevEvents.filter(
+          event => event.title !== constants.currentBookingEventTitle
+        )
+      );
+    }
+  }, [fromDate, toDate]);
   const onSelectSlot = useCallback(
     (slotInfo: SlotInfo) =>
       changeBookingSlot({
