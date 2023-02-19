@@ -6,6 +6,7 @@
   background-color: white;
   border-radius: 5px;
   padding-bottom: 10px;
+  max-width: 95vw;
 }
 
 .loadMoreButton {
