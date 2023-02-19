@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client';
 import { Spinner } from '@chakra-ui/spinner';
 import { Service } from '../__generated__/graphql';
 import { Button } from '@chakra-ui/button';
+import { useEffect } from 'react';
 
 const myRequestsQuery = gql(/* GraphQL */ `
   query MyRequestsQuery($cursor: String) {
@@ -32,7 +33,11 @@ const myRequestsQuery = gql(/* GraphQL */ `
 `);
 
 export default function MyRequestsList(): JSX.Element {
-  const { data, loading, fetchMore } = useQuery(myRequestsQuery);
+  const { data, loading, fetchMore, startPolling } = useQuery(myRequestsQuery);
+
+  useEffect(() => {
+    startPolling(1000);
+  }, []);
 
   if (loading || !data) {
     return <Spinner />;
