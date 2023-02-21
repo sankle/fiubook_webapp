@@ -21,6 +21,7 @@ import {
 } from '../notificationToasts';
 import { useState } from 'react';
 import UpsertServiceForm from '../UpsertServiceForm';
+import { getErrorMessage } from '../../utils/errorUtils';
 
 interface Props {
   isOpen: boolean;
@@ -77,7 +78,8 @@ export default function EditServiceModal({
       toast(serviceEditedSuccessfullyToast(response.updateService.name));
     },
     onError: error => {
-      toast(serviceEditFailedToast(error.message));
+      console.error(JSON.stringify(error));
+      toast(serviceEditFailedToast(getErrorMessage(error)));
     },
     refetchQueries: ['GetServices', 'GetMyServices', 'GetServicesAdmin'],
   });

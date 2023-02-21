@@ -15,6 +15,7 @@ import {
 import styles from '@styles/AdminUserList.module.css';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
+import { getErrorMessage } from '../../../utils/errorUtils';
 import {
   userPermissionsModificationFailedToast,
   userPermissionsModifiedSuccessfullyToast,
@@ -75,7 +76,8 @@ export default function AdminBookingList(): JSX.Element {
         toast(userPermissionsModifiedSuccessfullyToast(response.updateUser.id));
       },
       onError: error => {
-        toast(userPermissionsModificationFailedToast(error.message));
+        console.error(JSON.stringify(error));
+        toast(userPermissionsModificationFailedToast(getErrorMessage(error)));
       },
     }
   );

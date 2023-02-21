@@ -7,6 +7,7 @@ import {
   serviceDeletedSuccessfullyToast,
   serviceDeletionFailedToast,
 } from '../notificationToasts';
+import { getErrorMessage } from '../../utils/errorUtils';
 
 const deleteServiceMutation = gql(/* GraphQL */ `
   mutation DeleteServiceMutation($service_id: String!) {
@@ -36,8 +37,8 @@ export default function DeleteServiceModal({
       toast(serviceDeletedSuccessfullyToast(service.name));
     },
     onError: error => {
-      console.error(`error: ${JSON.stringify(error)}`);
-      toast(serviceDeletionFailedToast(error.message));
+      console.error(JSON.stringify(error));
+      toast(serviceDeletionFailedToast(getErrorMessage(error)));
     },
     refetchQueries: [
       'GetServices',

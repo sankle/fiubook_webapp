@@ -11,6 +11,7 @@ import UpsertServiceForm from './UpsertServiceForm';
 import { useRouter } from 'found';
 import { ImageListType } from 'react-images-uploading';
 import { uploadImage } from '../utils/imageUtils';
+import { getErrorMessage } from '../utils/errorUtils';
 
 const initialValues = {
   name: '',
@@ -52,7 +53,7 @@ export default function NewServiceForm(): JSX.Element {
       toast(serviceCreatedSuccessfullyToast(response.createService.name));
     },
     onError: error => {
-      toast(serviceCreationFailedToast(error.message));
+      toast(serviceCreationFailedToast(getErrorMessage(error)));
     },
     refetchQueries: ['GetServices', 'GetMyServices'],
   });

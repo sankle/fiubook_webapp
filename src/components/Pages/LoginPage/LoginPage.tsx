@@ -5,13 +5,12 @@ import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
 import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
-// import { setToken } from '../../../services/sessionService';
-// import { useRouter } from 'found';
 import constants from '../../../constants';
 import { useMutation } from '@apollo/client';
 import { setToken } from '../../../services/sessionService';
 import { useRouter } from 'found';
 import { gql } from '../../../__generated__/gql';
+import { getErrorMessage } from '../../../utils/errorUtils';
 
 const validationSchema = yup.object({
   dni: yup.number().required('Debe ingresar su email'),
@@ -46,7 +45,7 @@ export default function LoginPage(): JSX.Element {
     onError: error => {
       setFailedLoginAttempt({
         showFailedLoginError: true,
-        errorMsg: error.message,
+        errorMsg: getErrorMessage(error),
       });
     },
   });

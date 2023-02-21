@@ -36,6 +36,7 @@ import {
   serviceBookedSuccessfullyToast,
   serviceBookFailedToast,
 } from '../notificationToasts';
+import { getErrorMessage } from '../../utils/errorUtils';
 
 // TODO: add some validations and disable booking button accordingly
 
@@ -135,8 +136,8 @@ export default function BookServiceModal({
 
   const [bookService, { loading }] = useMutation(BookServiceMutation, {
     onError: error => {
-      console.log(JSON.stringify(error));
-      toast(serviceBookFailedToast(service.name, error.message));
+      console.error(JSON.stringify(error));
+      toast(serviceBookFailedToast(service.name, getErrorMessage(error)));
     },
     onCompleted: data => {
       toast(

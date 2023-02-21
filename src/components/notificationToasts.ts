@@ -33,7 +33,7 @@ export const serviceBookFailedToast = (
   errorDescription: string
 ): UseToastOptions => ({
   title: `No se pudo reservar ${name}`,
-  description: `Error: ${errorDescription}`,
+  description: errorDescription,
   status: 'error',
   duration: 9000,
   isClosable: true,
