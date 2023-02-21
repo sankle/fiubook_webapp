@@ -22,6 +22,7 @@ import {
 import { useState } from 'react';
 import UpsertServiceForm from '../UpsertServiceForm';
 import { getErrorMessage } from '../../utils/errorUtils';
+import { getGranularityInDHM } from '../../utils/dateUtils';
 
 interface Props {
   isOpen: boolean;
@@ -42,12 +43,6 @@ const editServiceMutation = gql(/* GraphQL */ `
   }
 `);
 
-const getGranularityInitialValues = (granularity: number) => ({
-  granularity_days: Math.floor(granularity / (3600 * 24)),
-  granularity_hours: Math.floor((granularity % (3600 * 24)) / 3600),
-  granularity_minutes: Math.floor((granularity % 3600) / 60),
-});
-
 export default function EditServiceModal({
   isOpen,
   onClose,
@@ -64,7 +59,7 @@ export default function EditServiceModal({
     max_slots: service.max_time,
     allowed_roles: service.allowed_roles,
     tags: service.tags,
-    ...getGranularityInitialValues(service.granularity),
+    ...getGranularityInDHM(service.granularity),
   };
 
   const toast = useToast();

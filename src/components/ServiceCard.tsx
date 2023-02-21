@@ -11,6 +11,7 @@ import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
 import { BookingType, Service } from '../__generated__/graphql';
+import { getGranularityString } from '../utils/dateUtils';
 
 export interface ButtonProps {
   buttonLabel: string;
@@ -81,7 +82,16 @@ export default function ServiceCard({
       <div className={styles.bookingContainer}>
         <IconWithText
           icon={<TimeIcon />}
-          text={<p>Reserva máxima {service.max_time}</p>}
+          text={<p>Slots de {getGranularityString(service.granularity)}</p>}
+        />
+        <IconWithText
+          icon={<TimeIcon />}
+          text={
+            <p>
+              Reserva máxima {service.max_time} slot
+              {service.max_time > 1 ? 's' : ''}
+            </p>
+          }
         />
         {service &&
           service.booking_type === BookingType.RequiresConfirmation && (

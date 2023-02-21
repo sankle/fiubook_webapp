@@ -64,7 +64,6 @@ export const changeBookingSlot = ({
   prevFromDate,
   prevToDate,
   granularity,
-  minSlots,
   maxSlots,
   setFromDate,
   setToDate,
@@ -74,7 +73,6 @@ export const changeBookingSlot = ({
   prevFromDate: string;
   prevToDate: string;
   granularity: number;
-  minSlots: number;
   maxSlots: number | null;
   setFromDate: any;
   setToDate: any;
@@ -100,4 +98,19 @@ export const changeBookingSlot = ({
   if (end) {
     setToDate(convertToLocaleString(end));
   }
+};
+
+export const getGranularityInDHM = (granularity: number) => ({
+  granularity_days: Math.floor(granularity / (3600 * 24)),
+  granularity_hours: Math.floor((granularity % (3600 * 24)) / 3600),
+  granularity_minutes: Math.floor((granularity % 3600) / 60),
+});
+
+export const getGranularityString = (granularity: number) => {
+  const { granularity_days, granularity_hours, granularity_minutes } =
+    getGranularityInDHM(granularity);
+
+  return `${granularity_days > 0 ? `${granularity_days}d ` : ''}${
+    granularity_hours > 0 ? `${granularity_hours}h ` : ''
+  }${granularity_minutes > 0 ? `${granularity_minutes}m ` : ''}`;
 };

@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 5px;
-  width: 60%;
+  width: 58%;
 }
 
 .imageContainer {
@@ -12,13 +12,6 @@
   justify-content: center;
 }
 
-.bookingContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 20%;
-  gap: 3px;
-}
 
 .tagsContainer {
   display: flex;
@@ -30,17 +23,20 @@
   align-self: center;
 }
 
-.bookingButton {
-  margin-top: auto;
-  align-self: center;
-  width: 100%;
+.bookingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 22%;
+  gap: 3px;
 }
 
 .buttonsContainer {
   display: flex;
-  flex-direction: column;
-  flex-grow: 4;
-  justify-content: flex-end;
-  justify-self: flex-end;
-  gap: 2px;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: auto;
+  gap: 5px;
+  min-width: 100px;
 }

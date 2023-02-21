@@ -26,8 +26,9 @@ import dayjs from 'dayjs';
 import {
   changeBookingSlot,
   convertToLocaleString,
+  getGranularityString,
   normalizeBookingSlot,
-} from '../../utils/dateRangeUtils';
+} from '../../utils/dateUtils';
 import constants from '../../constants';
 import { BookingType, Service } from '../../__generated__/graphql';
 import { gql } from '../../__generated__/gql';
@@ -229,7 +230,6 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity: service.granularity,
-        minSlots: 1,
         maxSlots: service.max_time,
         setFromDate,
         setToDate,
@@ -245,7 +245,6 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity: service.granularity,
-        minSlots: 1,
         maxSlots: service.max_time,
         setFromDate,
         setToDate,
@@ -261,7 +260,6 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity: service.granularity,
-        minSlots: 1,
         maxSlots: service.max_time,
         setFromDate,
         setToDate,
@@ -277,7 +275,6 @@ export default function BookServiceModal({
         prevFromDate: fromDate,
         prevToDate: toDate,
         granularity: service.granularity,
-        minSlots: 1,
         maxSlots: service.max_time,
         setFromDate,
         setToDate,
@@ -352,7 +349,11 @@ export default function BookServiceModal({
                 {service.max_time && (
                   <IconWithText
                     icon={<TimeIcon />}
-                    text={<p>Reserva máxima {service.max_time}</p>}
+                    text={
+                      <p>
+                        Slots de {getGranularityString(service.granularity)}
+                      </p>
+                    }
                   />
                 )}
               </div>
