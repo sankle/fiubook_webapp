@@ -12,17 +12,6 @@
   justify-content: center;
 }
 
-
-.tagsContainer {
-  display: flex;
-  gap: 5px;
-  margin-top: auto;
-}
-
-.tagsIcon {
-  align-self: center;
-}
-
 .bookingContainer {
   display: flex;
   flex-direction: column;
@@ -39,4 +28,8 @@
   margin-top: auto;
   gap: 5px;
   min-width: 100px;
+}
+
+.tagsContainer {
+  margin-top: auto;
 }

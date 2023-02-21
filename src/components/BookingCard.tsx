@@ -213,10 +213,12 @@ export default function BookingCard({
           <Heading as="h3" size="md" noOfLines={1}>
             {service.name}
           </Heading>
-          <Text fontSize="md" noOfLines={3}>
+          <Text fontSize="md" noOfLines={3} overflow="scroll">
             {service.description}
           </Text>
-          <ServiceTags className={styles.tagsContainer} tags={service.tags} />
+          <div className={styles.tagsContainer}>
+            <ServiceTags tags={service.tags} />
+          </div>
         </div>
         <div className={styles.reservationTimeContainer}>
           {isPublisher && (

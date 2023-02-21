@@ -6,7 +6,7 @@
 
 .serviceContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 
@@ -21,35 +21,30 @@
 
 .imageContainer {
   display: flex;
-  width: 60%;
+  width: 70%;
   justify-content: center;
 }
 
 .tagsContainer {
-  display: flex;
-  gap: 5px;
   margin-top: auto;
+  width: 100%;
 }
 
 .nameAndDescriptionContainer {
   display: flex;
   flex-direction: column;
-  width: 80%;
-  gap: 13px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 78%;
+  gap: 5px;
 }
 
 .imageAndTagsContainer {
   display: flex;
   flex-direction: column;
-  width: 20%;
+  width: 22%;
   align-items: center;
-  gap: 5px;
-}
-
-.serviceBookingLimitsContainer {
-  display: flex;
-  flex-direction: row;
-  gap: 40px;
+  justify-content: space-between;
 }
 
 .bookingDateContainer {
@@ -68,8 +63,8 @@
 }
 
 .calendarContainer {
-  width: 700px;
-  height: 500px;
+  width: 770px;
+  height: 510px;
 }
 
 .input {

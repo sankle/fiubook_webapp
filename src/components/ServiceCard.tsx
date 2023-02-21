@@ -5,13 +5,12 @@ import {
   useDisclosure,
   Spinner,
 } from '@chakra-ui/react';
-import { TimeIcon, WarningIcon } from '@chakra-ui/icons';
 import styles from '@styles/ServiceCard.module.css';
 import IconWithText from './IconWithText';
 import ServiceImage from './ServiceImage';
 import ServiceTags from './ServiceTags';
-import { BookingType, Service } from '../__generated__/graphql';
-import { getGranularityString } from '../utils/dateUtils';
+import { Service } from '../__generated__/graphql';
+import ServiceBookingLimits from './ServiceBookingLimits';
 
 export interface ButtonProps {
   buttonLabel: string;
@@ -74,32 +73,15 @@ export default function ServiceCard({
         <Heading as="h3" size="md" noOfLines={1}>
           {service.name}
         </Heading>
-        <Text fontSize="md" noOfLines={3}>
+        <Text fontSize="md" noOfLines={3} overflow="scroll">
           {service.description}
         </Text>
-        <ServiceTags className={styles.tagsContainer} tags={service.tags} />
+        <div className={styles.tagsContainer}>
+          <ServiceTags tags={service.tags} />
+        </div>
       </div>
       <div className={styles.bookingContainer}>
-        <IconWithText
-          icon={<TimeIcon />}
-          text={<p>Slots de {getGranularityString(service.granularity)}</p>}
-        />
-        <IconWithText
-          icon={<TimeIcon />}
-          text={
-            <p>
-              Reserva máxima {service.max_time} slot
-              {service.max_time > 1 ? 's' : ''}
-            </p>
-          }
-        />
-        {service &&
-          service.booking_type === BookingType.RequiresConfirmation && (
-            <IconWithText
-              icon={<WarningIcon />}
-              text={<p>Requiere confirmación</p>}
-            />
-        )}
+        <ServiceBookingLimits service={service} />
         <div className={styles.buttonsContainer}>
           {renderButtonAndModal(
             primaryButton,

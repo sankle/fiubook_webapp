@@ -1,4 +1,3 @@
-import { TimeIcon, WarningIcon } from '@chakra-ui/icons';
 import {
   Button,
   Divider,
@@ -17,7 +16,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import styles from '@styles/BookServiceModal.module.css';
-import IconWithText from '../IconWithText';
 import ServiceImage from '../ServiceImage';
 import ServiceTags from '../ServiceTags';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -26,11 +24,10 @@ import dayjs from 'dayjs';
 import {
   changeBookingSlot,
   convertToLocaleString,
-  getGranularityString,
   normalizeBookingSlot,
 } from '../../utils/dateUtils';
 import constants from '../../constants';
-import { BookingType, Service } from '../../__generated__/graphql';
+import { Service } from '../../__generated__/graphql';
 import { gql } from '../../__generated__/gql';
 import { useMutation, useQuery } from '@apollo/client';
 import {
@@ -38,6 +35,7 @@ import {
   serviceBookFailedToast,
 } from '../notificationToasts';
 import { getErrorMessage } from '../../utils/errorUtils';
+import ServiceBookingLimits from '../ServiceBookingLimits';
 
 // TODO: add some validations and disable booking button accordingly
 
@@ -283,7 +281,7 @@ export default function BookServiceModal({
   );
 
   const eventPropGetter = useCallback(
-    (event: Event, start: Date, end: Date, isSelected: Boolean) => ({
+    (event: Event, _start: Date, _end: Date, _isSelected: Boolean) => ({
       ...(event.title === constants.currentBookingEventTitle && {
         style: {
           backgroundColor: '#537D08',
@@ -342,37 +340,19 @@ export default function BookServiceModal({
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
               <p className={styles.serviceName}>{service.name}</p>
-              <Text fontSize="md" noOfLines={3}>
+              <Text fontSize="md" noOfLines={3} overflow="scroll">
                 {service.description}
               </Text>
-              <div className={styles.serviceBookingLimitsContainer}>
-                {service.max_time && (
-                  <IconWithText
-                    icon={<TimeIcon />}
-                    text={
-                      <p>
-                        Slots de {getGranularityString(service.granularity)}
-                      </p>
-                    }
-                  />
-                )}
-              </div>
-              {service.booking_type === BookingType.RequiresConfirmation && (
-                <IconWithText
-                  icon={<WarningIcon />}
-                  text={<p>Requiere confirmación</p>}
-                />
-              )}
+              <ServiceBookingLimits service={service} />
             </div>
             <div className={styles.imageAndTagsContainer}>
               <ServiceImage
                 className={styles.imageContainer}
                 url={service.image_url}
               />
-              <ServiceTags
-                className={styles.tagsContainer}
-                tags={service.tags}
-              />
+              <div className={styles.tagsContainer}>
+                <ServiceTags tags={service.tags} />
+              </div>
             </div>
           </div>
           <Divider />
