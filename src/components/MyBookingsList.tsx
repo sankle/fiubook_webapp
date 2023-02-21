@@ -3,7 +3,7 @@ import BookingCard from './BookingCard';
 import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
 import { Button, Spinner } from '@chakra-ui/react';
-import { Service } from 'src/__generated__/graphql';
+import { Service, User } from 'src/__generated__/graphql';
 
 const myBookingsQuery = gql(/* GraphQL */ `
   query MyBookingsQuery($cursor: String) {
@@ -19,6 +19,9 @@ const myBookingsQuery = gql(/* GraphQL */ `
             description
             tags
             image_url
+          }
+          requestor {
+            dni
           }
         }
       }
@@ -53,6 +56,7 @@ export default function MyBookingsList(): JSX.Element {
                 bookingStatus={booking.node.booking_status}
                 service={booking.node.service as Service}
                 id={booking.node.id}
+                requestor={booking.node.requestor as User}
               />
             </div>
           ))}
@@ -74,7 +78,7 @@ export default function MyBookingsList(): JSX.Element {
           )}
         </>
       ) : (
-        <p>No hay servicios disponibles</p>
+        <p>Aún no tienes ninguna reserva</p>
       )}
     </div>
   );

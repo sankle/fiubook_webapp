@@ -3,6 +3,7 @@ import {
   CalendarIcon,
   CheckIcon,
   CloseIcon,
+  InfoIcon,
   InfoOutlineIcon,
 } from '@chakra-ui/icons';
 import styles from '@styles/BookingCard.module.css';
@@ -36,6 +37,9 @@ interface Props {
     description: string;
     tags: string[];
     image_url: string;
+  };
+  requestor: {
+    dni: string;
   };
 }
 
@@ -165,6 +169,7 @@ export default function BookingCard({
   bookingStatus,
   service,
   id,
+  requestor,
 }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -214,6 +219,14 @@ export default function BookingCard({
           <ServiceTags className={styles.tagsContainer} tags={service.tags} />
         </div>
         <div className={styles.reservationTimeContainer}>
+          {isPublisher && (
+            <Stack direction={'row'}>
+              <Text size="sm" noOfLines={1}>
+                <InfoIcon />
+                &nbsp;DNI:&nbsp;{requestor.dni}
+              </Text>
+            </Stack>
+          )}
           <Stack direction={'column'}>
             <Heading as="h4" size="sm" noOfLines={1}>
               <CalendarIcon />

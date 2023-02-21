@@ -105,7 +105,7 @@ export default function ServiceList(): JSX.Element {
           )}
         </>
       ) : (
-        <p>No hay servicios disponibles</p>
+        <p>Aún no has publicado servicios</p>
       )}
     </div>
   );
