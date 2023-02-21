@@ -44,24 +44,17 @@ export default function ServiceList(): JSX.Element {
 
   const { match } = useRouter();
 
-  const { data, loading, fetchMore, refetch, startPolling } = useQuery(
-    getServicesQuery,
-    {
-      variables: {
-        queryTerm: match.location.query.search,
-      },
-    }
-  );
+  const { data, loading, fetchMore, refetch } = useQuery(getServicesQuery, {
+    variables: {
+      queryTerm: match.location.query.search,
+    },
+  });
 
   useEffect(() => {
     void refetch({
       queryTerm: match.location.query.search,
     });
   }, [match.location.query.search]);
-
-  useEffect(() => {
-    startPolling(1000);
-  }, []);
 
   if (loading || !data) {
     return (
