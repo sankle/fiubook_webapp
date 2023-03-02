@@ -24,7 +24,7 @@ const WrongLoginAlert = ({
     >
       <AlertIcon />
       <Box>
-        <AlertTitle>Error al Iniciar Sesion</AlertTitle>
+        <AlertTitle>Error al Iniciar Sesión</AlertTitle>
         <AlertDescription>{errorMsg}</AlertDescription>
       </Box>
     </Alert>

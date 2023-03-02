@@ -25,6 +25,7 @@ export const getSessionCookie = (): Session | null => {
 
 export const setToken = (token: string): void => {
   setSessionCookie({ token });
+  localStorage.removeItem('token');
   localStorage.setItem('token', token);
 };
 

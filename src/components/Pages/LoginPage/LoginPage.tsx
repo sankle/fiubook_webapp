@@ -13,7 +13,10 @@ import { gql } from '../../../__generated__/gql';
 import { getErrorMessage } from '../../../utils/errorUtils';
 
 const validationSchema = yup.object({
-  dni: yup.number().required('Debe ingresar su email'),
+  dni: yup
+    .number()
+    .required('Debe ingresar su DNI')
+    .typeError('El DNI debe ser numérico'),
   password: yup
     .string()
     .min(8, 'La contraseña debe tener al menos 8 caracteres')
@@ -84,7 +87,14 @@ export default function LoginPage(): JSX.Element {
               failedLoginAttempt.showFailedLoginError
             }
             isDisabled={loading}
+            onBlur={() => {
+              void formik.setFieldTouched('dni', true);
+              
+            }}
           />
+          {formik.touched.dni && formik.errors.dni ? (
+            <div className={styles.errorMessage}>{formik.errors.dni}</div>
+          ) : null}
           <Input
             id="password"
             name="password"
@@ -97,14 +107,21 @@ export default function LoginPage(): JSX.Element {
               failedLoginAttempt.showFailedLoginError
             }
             isDisabled={loading}
+            onBlur={() => {
+              void formik.setFieldTouched('password', true);
+              
+            }}
           />
+          {formik.touched.password && formik.errors.password ? (
+            <div className={styles.errorMessage}>{formik.errors.password}</div>
+          ) : null}
           <Button
             colorScheme="primary"
             type="submit"
-            isDisabled={loading}
+            isDisabled={loading || !formik.dirty || !formik.isValid}
             isLoading={loading}
           >
-            Iniciar Sesion
+            Iniciar Sesión
           </Button>
         </form>
       </Flex>

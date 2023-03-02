@@ -41,14 +41,11 @@ export default function NewServiceForm(): JSX.Element {
   const { router } = useRouter();
   const toast = useToast();
 
-  const [upsertedSuccessfully, setUpsertedSuccessfully] = useState(false);
-
   const [images, setImages] = useState<ImageListType>([]);
   const [imageUploading, setImageUploading] = useState(false);
 
   const [createService, { loading }] = useMutation(createServiceMutation, {
     onCompleted: response => {
-      setUpsertedSuccessfully(true);
       router.replace('/my-services');
       toast(serviceCreatedSuccessfullyToast(response.createService.name));
     },
@@ -65,10 +62,11 @@ export default function NewServiceForm(): JSX.Element {
       try {
         imageUrl = await uploadImage(images[0].file as File);
       } catch (err) {
-        console.log('Error uploading image.');
-        console.log(JSON.stringify(err));
+        console.error('Error uploading image: ', JSON.stringify(err));
       }
     }
+
+    setImageUploading(false);
 
     await createService({
       variables: {
@@ -89,7 +87,6 @@ export default function NewServiceForm(): JSX.Element {
         },
       },
     });
-    setUpsertedSuccessfully(true);
   };
 
   return (
@@ -97,7 +94,6 @@ export default function NewServiceForm(): JSX.Element {
       onSubmit={onSubmit}
       initialValues={initialValues}
       loading={loading || imageUploading}
-      upsertedSuccessfully={upsertedSuccessfully}
       actionLabel="Crear"
       images={images}
       setImages={setImages}

@@ -51,7 +51,6 @@ interface Props {
   initialValues: any;
   loading: boolean;
   onSubmit: any;
-  upsertedSuccessfully: boolean;
   showImageField: boolean;
   images?: ImageListType;
   setImages?: (images: ImageListType) => void;
@@ -62,7 +61,6 @@ export default function UpsertServiceForm({
   initialValues,
   loading,
   onSubmit,
-  upsertedSuccessfully,
   images,
   setImages,
   showImageField,
@@ -341,7 +339,7 @@ export default function UpsertServiceForm({
           <Button
             colorScheme={'linkedin'}
             type="submit"
-            isDisabled={loading}
+            isDisabled={loading || !formik.dirty || !formik.isValid}
             isLoading={loading}
           >
             {actionLabel} Servicio

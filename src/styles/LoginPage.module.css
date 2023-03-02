@@ -43,3 +43,7 @@
   font-size: 40pt;
   color: #01a0e4;
 }
+
+.errorMessage {
+  color: red;
+}

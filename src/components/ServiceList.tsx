@@ -35,13 +35,6 @@ const getServicesQuery = gql(/* GraphQL */ `
 `);
 
 export default function ServiceList(): JSX.Element {
-  // const [isPending, startTransition] = useTransition();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const onLoadMore = () =>
-  //   startTransition(() => {
-  //     loadNext(3);
-  //   });
-
   const { match } = useRouter();
 
   const { data, loading, fetchMore, refetch } = useQuery(getServicesQuery, {
