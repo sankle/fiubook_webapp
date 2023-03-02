@@ -5,6 +5,7 @@ import {
   CloseIcon,
   InfoIcon,
   InfoOutlineIcon,
+  WarningIcon,
 } from '@chakra-ui/icons';
 import styles from '@styles/BookingCard.module.css';
 import IconWithText from './IconWithText';
@@ -26,6 +27,24 @@ const bookingConfirmOrRejectMutation = gql(/* GraphQL */ `
   }
 `);
 
+const deliverBookingObjectMutation = gql(/* GraphQL */ `
+  mutation BookingCardDeliverBookingObjectMutation($booking_id: String!) {
+    deliverBookingObject(booking_id: $booking_id) {
+      id
+      booking_status
+    }
+  }
+`);
+
+const returnBookingObjectMutation = gql(/* GraphQL */ `
+  mutation BookingCardReturnBookingObjectMutation($booking_id: String!) {
+    returnBookingObject(booking_id: $booking_id) {
+      id
+      booking_status
+    }
+  }
+`);
+
 interface Props {
   isPublisher: boolean;
   bookingStatus: string;
@@ -37,6 +56,7 @@ interface Props {
     description: string;
     tags: string[];
     image_url: string;
+    returnable: boolean;
   };
   requestor: {
     dni: string;
@@ -50,19 +70,30 @@ const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
 
   switch (status) {
     case 'PENDING_CONFIRMATION':
-      color = '#01A0E4';
+      color = '#FFC93C';
       caption = 'Pendiente de Confirmacion';
       icon = <InfoOutlineIcon />;
-      break;
-    case 'CONFIRMED':
-      color = '#2AA100';
-      caption = 'Confirmada';
-      icon = <CheckIcon />;
       break;
     case 'CANCELLED':
       color = '#EC3E3E';
       caption = 'Cancelada';
       icon = <CloseIcon />;
+      break;
+    case 'PENDING_RETURN':
+      color = '#C05621';
+      caption = 'Pendiente de Devolución';
+      icon = <WarningIcon />;
+      break;
+    case 'RETURNED':
+      color = '#38A169';
+      caption = 'Devuelto';
+      icon = <CheckIcon />;
+      break;
+    // TODO: DISTINGUISH NON-RETURNABLE/PAST CONFIRMED/FUTURE CONFIRMED/ETC.
+    case 'CONFIRMED':
+      color = '#01A0E4';
+      caption = 'Confirmada';
+      icon = <CheckIcon />;
       break;
   }
 
@@ -95,14 +126,20 @@ const ButtonGroup = ({
   onCancelClick,
   onAcceptClick,
   onRejectClick,
+  onDeliverClick,
+  onReturnClick,
   isMutationInFlight,
+  returnableService,
 }: {
   isPublisher: boolean;
   bookingStatus: string;
   onCancelClick: () => void;
   onAcceptClick: () => void;
   onRejectClick: () => void;
+  onDeliverClick: () => void;
+  onReturnClick: () => void;
   isMutationInFlight: boolean;
+  returnableService: boolean;
 }): JSX.Element | null => {
   if (isPublisher) {
     switch (bookingStatus) {
@@ -131,14 +168,40 @@ const ButtonGroup = ({
         );
       case 'CONFIRMED':
         return (
+          <>
+            {returnableService ? (
+              <Button
+                colorScheme="orange"
+                onClick={onDeliverClick}
+                className={styles.button}
+                isLoading={isMutationInFlight}
+                isDisabled={isMutationInFlight}
+              >
+                <IconWithText icon={<WarningIcon />} text={<p>Entregar</p>} />
+              </Button>
+            ) : null}
+            <Button
+              colorScheme="red"
+              onClick={onCancelClick}
+              className={styles.button}
+              isLoading={isMutationInFlight}
+              isDisabled={isMutationInFlight}
+            >
+              <IconWithText icon={<CloseIcon />} text={<p>Cancelar</p>} />
+            </Button>
+          </>
+        );
+
+      case 'PENDING_RETURN':
+        return (
           <Button
-            colorScheme="red"
-            onClick={onCancelClick}
+            colorScheme="green"
+            onClick={onReturnClick}
             className={styles.button}
             isLoading={isMutationInFlight}
             isDisabled={isMutationInFlight}
           >
-            <IconWithText icon={<CloseIcon />} text={<p>Cancelar</p>} />
+            <IconWithText icon={<WarningIcon />} text={<p>Devolver</p>} />
           </Button>
         );
     }
@@ -176,8 +239,20 @@ export default function BookingCard({
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
 
-  const [confirmBooking, { loading }] = useMutation(
+  const [confirmBooking, { loading: confirmOrRejectLoading }] = useMutation(
     bookingConfirmOrRejectMutation,
+    {
+      refetchQueries: ['MyRequestsQuery', 'MyBookingsQuery'],
+    }
+  );
+  const [deliverBookingObject, { loading: deliverLoading }] = useMutation(
+    deliverBookingObjectMutation,
+    {
+      refetchQueries: ['MyRequestsQuery', 'MyBookingsQuery'],
+    }
+  );
+  const [returnBookingObject, { loading: returnLoading }] = useMutation(
+    returnBookingObjectMutation,
     {
       refetchQueries: ['MyRequestsQuery', 'MyBookingsQuery'],
     }
@@ -197,6 +272,22 @@ export default function BookingCard({
       variables: {
         booking_id: id,
         confirmed: false,
+      },
+    });
+  };
+
+  const onDeliver = () => {
+    void deliverBookingObject({
+      variables: {
+        booking_id: id,
+      },
+    });
+  };
+
+  const onReturn = () => {
+    void returnBookingObject({
+      variables: {
+        booking_id: id,
       },
     });
   };
@@ -255,7 +346,12 @@ export default function BookingCard({
             onCancelClick={onOpen}
             onAcceptClick={onAccept}
             onRejectClick={onReject}
-            isMutationInFlight={loading}
+            onDeliverClick={onDeliver}
+            onReturnClick={onReturn}
+            isMutationInFlight={
+              confirmOrRejectLoading || deliverLoading || returnLoading
+            }
+            returnableService={service.returnable}
           />
         </div>
       </div>

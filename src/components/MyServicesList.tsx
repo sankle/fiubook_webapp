@@ -24,6 +24,7 @@ const getMyServicesQuery = gql(/* GraphQL */ `
           publisher_id
           tags
           image_url
+          returnable
         }
       }
       pageInfo {

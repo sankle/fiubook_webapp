@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 **/__generated__/**
 /src/styles/*.css.d.ts
+
+config/local.ts

@@ -21,6 +21,7 @@ const myBookingsQuery = gql(/* GraphQL */ `
             description
             tags
             image_url
+            returnable
           }
           requestor {
             dni

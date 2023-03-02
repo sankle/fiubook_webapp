@@ -19,7 +19,6 @@ import {
   serviceEditedSuccessfullyToast,
   serviceEditFailedToast,
 } from '../notificationToasts';
-import { useState } from 'react';
 import UpsertServiceForm from '../UpsertServiceForm';
 import { getErrorMessage } from '../../utils/errorUtils';
 import { getGranularityInDHM } from '../../utils/dateUtils';
@@ -65,11 +64,8 @@ export default function EditServiceModal({
 
   const toast = useToast();
 
-  const [upsertedSuccessfully, setUpsertedSuccessfully] = useState(false);
-
   const [editService, { loading }] = useMutation(editServiceMutation, {
     onCompleted: response => {
-      setUpsertedSuccessfully(true);
       onClose();
       toast(serviceEditedSuccessfullyToast(response.updateService.name));
     },
@@ -95,12 +91,12 @@ export default function EditServiceModal({
           booking_type: values.automatic_confirmation
             ? BookingType.Automatic
             : BookingType.RequiresConfirmation,
+          returnable: values.returnable,
           allowed_roles: values.allowed_roles as UniversityRole[],
           tags: values.tags,
         },
       },
     });
-    setUpsertedSuccessfully(true);
   };
 
   return (
@@ -113,7 +109,6 @@ export default function EditServiceModal({
             onSubmit={onSubmit}
             initialValues={initialValues}
             loading={loading}
-            upsertedSuccessfully={upsertedSuccessfully}
             actionLabel="Editar"
             showImageField={false}
           />
