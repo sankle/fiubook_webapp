@@ -10,7 +10,7 @@ import BookServiceModal from './Modals/BookServiceModal';
 
 const getServicesQuery = gql(/* GraphQL */ `
   query GetServices($cursor: String, $queryTerm: String) {
-    services(first: 2, after: $cursor, query_term: $queryTerm) {
+    services(first: 6, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
