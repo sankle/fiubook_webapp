@@ -58,9 +58,27 @@ const PublisherTabs = ({
   return null;
 };
 
+const getSearchbarPlaceholder = (pathname: string) => {
+  if (pathname === '/bookings') {
+    return 'Buscar Reservas';
+  }
+  if (pathname === '/requests') {
+    return 'Buscar Solicitudes';
+  }
+  return 'Buscar Servicios';
+};
+
+const getSearchPath = (pathname: string, searchString: string) => {
+  if (searchString !== '') {
+    return `${pathname}?search=${searchString}`;
+  }
+  return pathname;
+};
+
 export default function HomePage(props: any): JSX.Element {
   const { match, router } = useRouter();
 
+  console.log(match.location.pathname);
   const defaultTabIndex = tabIndexToRouteArray.findIndex(
     route => match.location.pathname === route
   );
@@ -83,19 +101,21 @@ export default function HomePage(props: any): JSX.Element {
           <SearchIcon />
         </InputLeftElement>
         <Input
-          placeholder="Buscar Servicios"
+          placeholder={getSearchbarPlaceholder(match.location.pathname)}
           onChange={event => setSearchStringValue(event.target.value)}
+          disabled={match.location.pathname === '/create-service'}
+          value={searchStringValue}
           onKeyDown={event => {
             if (event.key === 'Enter') {
-              setTabIndex(tabIndexToRouteArray.indexOf('/services'));
               console.log(
                 `setting index to ${tabIndexToRouteArray.indexOf('/services')}`
               );
-              if (searchStringValue !== '') {
-                router.replace(`/services?search=${searchStringValue}`);
-              } else {
-                router.replace(`/services`);
-              }
+              router.replace(
+                getSearchPath(match.location.pathname, searchStringValue)
+              );
+              setTabIndex(
+                tabIndexToRouteArray.indexOf(match.location.pathname)
+              );
             }
           }}
         />
@@ -109,6 +129,7 @@ export default function HomePage(props: any): JSX.Element {
         defaultIndex={defaultTabIndex}
         isLazy
         onChange={index => {
+          setSearchStringValue('');
           setTabIndex(index);
           router.replace(tabIndexToRouteArray[index]);
         }}
