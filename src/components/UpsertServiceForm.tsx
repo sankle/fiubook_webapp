@@ -35,6 +35,7 @@ const validationSchema = yup.object({
     .string()
     .min(8, 'La descripción debe tener al menos 8 caracteres')
     .required('La descripción no puede estar vacía'),
+  returnable: yup.boolean().required(),
   automatic_confirmation: yup.boolean().required(),
   granularity_days: yup.number().min(0).required(),
   granularity_hours: yup.number().min(0).max(23).required(),
@@ -159,7 +160,7 @@ export default function UpsertServiceForm({
         )}
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'5. Confirmación de la reserva '}
+            5. Confirmación de la reserva&nbsp;
             <Tooltip
               label={
                 'Las reservas automáticas se confirman de manera instantánea. Si esta opción está desactivada, tendrás que confirmar manualmente las reservas a este'
@@ -183,10 +184,36 @@ export default function UpsertServiceForm({
             />
           </Stack>
         </Stack>
+        <Stack>
+          <Heading as="h2" size="sm" className={styles.fieldTitle}>
+            6. Retornable&nbsp;
+            <Tooltip
+              label={
+                'El servicio es un objeto material que debe ser retornado, por lo que a las reservas del mismo se les agregan los estados de "Pendiente de retorno" y "Retornado". El administrador del servicio debe confirmar la devolución del objeto prestado.'
+              }
+            >
+              <InfoIcon />
+            </Tooltip>
+          </Heading>
+          <Stack direction="row">
+            <Text fontSize={'sm'} className={styles.text}>
+              Retornable
+            </Text>
+            <Switch
+              name="returnable"
+              id="returnable"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              checked={formik.values.returnable}
+              isDisabled={loading}
+              defaultChecked={formik.values.returnable}
+            />
+          </Stack>
+        </Stack>
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            6. Duración de los turnos
+            7. Duración de los turnos
           </Heading>
           <Stack direction={'row'} alignItems={'center'}>
             <NumberInput
@@ -271,7 +298,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            {'7. Cantidad máxima de turnos '}
+            8. Cantidad máxima de turnos&nbsp;
             <Tooltip
               label={
                 'Cantidad máxima de turnos seguidos que se pueden solicitar en una misma reserva'
@@ -310,7 +337,7 @@ export default function UpsertServiceForm({
         <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
-            8. ¿Quienes pueden reservar este servicio?
+            9. ¿Quiénes pueden reservar este servicio?
           </Heading>
           <CheckboxGroup
             colorScheme={'linkedin'}

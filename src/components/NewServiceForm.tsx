@@ -16,6 +16,7 @@ import { getErrorMessage } from '../utils/errorUtils';
 const initialValues = {
   name: '',
   description: '',
+  returnable: false,
   automatic_confirmation: true,
   granularity_days: 0,
   granularity_hours: 1,

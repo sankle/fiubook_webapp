@@ -55,6 +55,7 @@ export default function EditServiceModal({
   const initialValues = {
     name: service.name,
     description: service.description,
+    returnable: service.returnable,
     automatic_confirmation: service.booking_type === BookingType.Automatic,
     max_slots: service.max_time,
     allowed_roles: service.allowed_roles,
