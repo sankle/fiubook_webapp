@@ -27,12 +27,13 @@ import {
   normalizeBookingSlot,
 } from '../../utils/dateUtils';
 import constants from '../../constants';
-import { Service } from '../../__generated__/graphql';
+import { BookingType, Service } from '../../__generated__/graphql';
 import { gql } from '../../__generated__/gql';
 import { useMutation, useQuery } from '@apollo/client';
 import {
   serviceBookedSuccessfullyToast,
   serviceBookFailedToast,
+  serviceBookingRequestedSuccessfullyToast,
 } from '../notificationToasts';
 import { getErrorMessage } from '../../utils/errorUtils';
 import ServiceBookingLimits from '../ServiceBookingLimits';
@@ -139,13 +140,19 @@ export default function BookServiceModal({
       toast(serviceBookFailedToast(service.name, getErrorMessage(error)));
     },
     onCompleted: data => {
+      const getToast =
+        service.booking_type === BookingType.RequiresConfirmation
+          ? serviceBookingRequestedSuccessfullyToast
+          : serviceBookedSuccessfullyToast;
+
       toast(
-        serviceBookedSuccessfullyToast(
+        getToast(
           service.name,
           data.createBooking.bookingEdge.node.start_date,
           data.createBooking.bookingEdge.node.end_date
         )
       );
+
       onClose();
     },
     refetchQueries: ['MyBookingsQuery', 'MyRequestsQuery'],

@@ -14,7 +14,7 @@ const convertDateToString = (date: string) =>
 const getTimeRangeString = (startDate: string, endDate: string) =>
   `Desde: ${convertDateToString(startDate)} hasta: ${convertDateToString(
     endDate
-  )}`;
+  )}.`;
 
 export const serviceBookedSuccessfullyToast = (
   name: string,
@@ -23,6 +23,21 @@ export const serviceBookedSuccessfullyToast = (
 ): UseToastOptions => ({
   title: `Has reservado ${name} correctamente`,
   description: getTimeRangeString(startDate, endDate),
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const serviceBookingRequestedSuccessfullyToast = (
+  name: string,
+  startDate: string,
+  endDate: string
+): UseToastOptions => ({
+  title: `Se ha solicitado reservar ${name}`,
+  description: `${getTimeRangeString(
+    startDate,
+    endDate
+  )} Deberá esperar la confirmación de su reserva.`,
   status: 'success',
   duration: 9000,
   isClosable: true,
