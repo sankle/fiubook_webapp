@@ -7,6 +7,7 @@ import { Service, User } from '../__generated__/graphql';
 import { Button } from '@chakra-ui/button';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
+import { VStack, Text } from '@chakra-ui/react';
 
 const myRequestsQuery = gql(/* GraphQL */ `
   query MyRequestsQuery($cursor: String, $queryTerm: String) {
@@ -31,6 +32,7 @@ const myRequestsQuery = gql(/* GraphQL */ `
       pageInfo {
         hasNextPage
         endCursor
+        totalCount
       }
     }
   }
@@ -74,6 +76,12 @@ export default function MyRequestsList(): JSX.Element {
               />
             </div>
           ))}
+          <VStack>
+            <Text color={'gray'}>
+              Mostrando {data.myBookingsForPublisher.edges.length} de{' '}
+              {pageInfo.totalCount} reservas.
+            </Text>
+          </VStack>
           {pageInfo.hasNextPage && (
             <Button
               className={styles.loadMoreButton}

@@ -2,7 +2,7 @@ import styles from '@styles/ServiceList.module.css';
 import ServiceCard from './ServiceCard';
 import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
-import { Button, Spinner } from '@chakra-ui/react';
+import { Button, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
 import { CalendarIcon } from '@chakra-ui/icons';
@@ -10,7 +10,7 @@ import BookServiceModal from './Modals/BookServiceModal';
 
 const getServicesQuery = gql(/* GraphQL */ `
   query GetServices($cursor: String, $queryTerm: String) {
-    services(first: 6, after: $cursor, query_term: $queryTerm) {
+    services(first: 2, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
@@ -29,6 +29,7 @@ const getServicesQuery = gql(/* GraphQL */ `
         startCursor
         endCursor
         hasNextPage
+        totalCount
       }
     }
   }
@@ -78,6 +79,12 @@ export default function ServiceList(): JSX.Element {
               />
             </div>
           ))}
+          <VStack>
+            <Text color={'gray'}>
+              Mostrando {data.services.edges.length} de {pageInfo.totalCount}{' '}
+              servicios.
+            </Text>
+          </VStack>
           {pageInfo.hasNextPage && (
             <Button
               className={styles.loadMoreButton}

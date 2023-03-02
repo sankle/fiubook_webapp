@@ -2,7 +2,7 @@ import styles from '@styles/ServiceList.module.css';
 import ServiceCard from './ServiceCard';
 import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
-import { Button, Spinner } from '@chakra-ui/react';
+import { Button, Spinner, VStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
@@ -30,6 +30,7 @@ const getMyServicesQuery = gql(/* GraphQL */ `
         startCursor
         endCursor
         hasNextPage
+        totalCount
       }
     }
   }
@@ -85,6 +86,12 @@ export default function ServiceList(): JSX.Element {
               />
             </div>
           ))}
+          <VStack>
+            <Text color={'gray'}>
+              Mostrando {data.myServices.edges.length} de {pageInfo.totalCount}{' '}
+              servicios.
+            </Text>
+          </VStack>
           {pageInfo.hasNextPage && (
             <Button
               className={styles.loadMoreButton}
