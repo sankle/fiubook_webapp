@@ -63,7 +63,13 @@ interface Props {
   };
 }
 
-const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
+const BookingStatusStrip = ({
+  isPastBooking,
+  status,
+}: {
+  isPastBooking: boolean;
+  status: string;
+}): JSX.Element => {
   let color;
   let caption;
   let icon;
@@ -71,7 +77,7 @@ const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
   switch (status) {
     case 'PENDING_CONFIRMATION':
       color = '#FFC93C';
-      caption = 'Pendiente de Confirmacion';
+      caption = 'Pendiente de Confirmación';
       icon = <InfoOutlineIcon />;
       break;
     case 'CANCELLED':
@@ -86,13 +92,12 @@ const BookingStatusStrip = ({ status }: { status: string }): JSX.Element => {
       break;
     case 'RETURNED':
       color = '#38A169';
-      caption = 'Devuelto';
+      caption = 'Finalizada';
       icon = <CheckIcon />;
       break;
-    // TODO: DISTINGUISH NON-RETURNABLE/PAST CONFIRMED/FUTURE CONFIRMED/ETC.
     case 'CONFIRMED':
-      color = '#01A0E4';
-      caption = 'Confirmada';
+      color = isPastBooking ? '#38A169' : '#01A0E4';
+      caption = isPastBooking ? 'Finalizada' : 'Confirmada';
       icon = <CheckIcon />;
       break;
   }
@@ -130,6 +135,7 @@ const ButtonGroup = ({
   onReturnClick,
   isMutationInFlight,
   returnableService,
+  isPastBooking,
 }: {
   isPublisher: boolean;
   bookingStatus: string;
@@ -140,6 +146,7 @@ const ButtonGroup = ({
   onReturnClick: () => void;
   isMutationInFlight: boolean;
   returnableService: boolean;
+  isPastBooking: boolean;
 }): JSX.Element | null => {
   if (isPublisher) {
     switch (bookingStatus) {
@@ -167,6 +174,10 @@ const ButtonGroup = ({
           </>
         );
       case 'CONFIRMED':
+        if (isPastBooking) {
+          return null;
+        }
+
         return (
           <>
             {returnableService ? (
@@ -206,6 +217,10 @@ const ButtonGroup = ({
         );
     }
   } else {
+    if (isPastBooking) {
+      return null;
+    }
+
     switch (bookingStatus) {
       case 'PENDING_CONFIRMATION':
       case 'CONFIRMED':
@@ -235,6 +250,8 @@ export default function BookingCard({
   requestor,
 }: Props): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const isPastBooking = !(new Date(endDate).getTime() > Date.now());
 
   const parsedStartDate = new Date(startDate);
   const parsedEndDate = new Date(endDate);
@@ -294,7 +311,10 @@ export default function BookingCard({
 
   return (
     <>
-      <BookingStatusStrip status={bookingStatus} />
+      <BookingStatusStrip
+        status={bookingStatus}
+        isPastBooking={isPastBooking}
+      />
       <div className={styles.cardInfoContainer}>
         <ServiceImage
           className={styles.imageContainer}
@@ -352,6 +372,7 @@ export default function BookingCard({
               confirmOrRejectLoading || deliverLoading || returnLoading
             }
             returnableService={service.returnable}
+            isPastBooking={isPastBooking}
           />
         </div>
       </div>
