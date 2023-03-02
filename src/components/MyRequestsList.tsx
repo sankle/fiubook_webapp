@@ -22,6 +22,7 @@ const myRequestsQuery = gql(/* GraphQL */ `
             description
             tags
             image_url
+            returnable
           }
           requestor {
             dni

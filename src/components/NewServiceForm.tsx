@@ -16,8 +16,8 @@ import { getErrorMessage } from '../utils/errorUtils';
 const initialValues = {
   name: '',
   description: '',
-  returnable: false,
   automatic_confirmation: true,
+  returnable: false,
   granularity_days: 0,
   granularity_hours: 1,
   granularity_minutes: 0,
@@ -82,6 +82,7 @@ export default function NewServiceForm(): JSX.Element {
           booking_type: values.automatic_confirmation
             ? BookingType.Automatic
             : BookingType.RequiresConfirmation,
+          returnable: values.returnable,
           allowed_roles: values.allowed_roles as UniversityRole[],
           tags: values.tags,
           image_url: imageUrl,
