@@ -80,7 +80,7 @@ export default function MyRequestsList(): JSX.Element {
           <VStack>
             <Text color={'gray'}>
               Mostrando {data.myBookingsForPublisher.edges.length} de{' '}
-              {pageInfo.totalCount} reservas.
+              {pageInfo.totalCount} solicitudes.
             </Text>
           </VStack>
           {pageInfo.hasNextPage && (
