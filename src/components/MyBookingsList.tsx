@@ -4,10 +4,12 @@ import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
 import { Button, Spinner } from '@chakra-ui/react';
 import { Service, User } from 'src/__generated__/graphql';
+import { useRouter } from 'found';
+import { useEffect } from 'react';
 
 const myBookingsQuery = gql(/* GraphQL */ `
-  query MyBookingsQuery($cursor: String) {
-    myBookings(first: 6, after: $cursor) {
+  query MyBookingsQuery($cursor: String, $queryTerm: String) {
+    myBookings(first: 6, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
@@ -35,7 +37,18 @@ const myBookingsQuery = gql(/* GraphQL */ `
 `);
 
 export default function MyBookingsList(): JSX.Element {
-  const { data, loading, fetchMore } = useQuery(myBookingsQuery);
+  const { match } = useRouter();
+  const { data, loading, refetch, fetchMore } = useQuery(myBookingsQuery, {
+    variables: {
+      queryTerm: match.location.query.search,
+    },
+  });
+
+  useEffect(() => {
+    void refetch({
+      queryTerm: match.location.query.search,
+    });
+  }, [match.location.query.search]);
 
   if (loading || !data) {
     return <Spinner />;
