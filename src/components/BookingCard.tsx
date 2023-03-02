@@ -324,7 +324,7 @@ export default function BookingCard({
           <Heading as="h3" size="md" noOfLines={1}>
             {service.name}
           </Heading>
-          <Text fontSize="md" noOfLines={3} overflow="scroll">
+          <Text fontSize="md" noOfLines={3} overflow="auto">
             {service.description}
           </Text>
           <div className={styles.tagsContainer}>

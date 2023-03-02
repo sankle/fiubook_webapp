@@ -347,7 +347,7 @@ export default function BookServiceModal({
           <div className={styles.serviceContainer}>
             <div className={styles.nameAndDescriptionContainer}>
               <p className={styles.serviceName}>{service.name}</p>
-              <Text fontSize="md" noOfLines={3} overflow="scroll">
+              <Text fontSize="md" noOfLines={3} overflow="auto">
                 {service.description}
               </Text>
               <ServiceBookingLimits service={service} />
