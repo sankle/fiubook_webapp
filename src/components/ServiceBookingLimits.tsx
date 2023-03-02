@@ -3,7 +3,7 @@ import styles from '@styles/ServiceBookingLimits.module.css';
 import { getGranularityString } from '../utils/dateUtils';
 import { BookingType, Service } from '../__generated__/graphql';
 import IconWithText from './IconWithText';
-
+import { MdAssignmentReturn } from 'react-icons/md';
 interface Props {
   service: Service;
 }
@@ -28,6 +28,12 @@ export default function ServiceBookingLimits({ service }: Props) {
         <IconWithText
           icon={<WarningIcon />}
           text={<p>Requiere confirmación</p>}
+        />
+      )}
+      {service.returnable && (
+        <IconWithText
+          icon={<MdAssignmentReturn />}
+          text={<p>Requiere devolución</p>}
         />
       )}
     </div>

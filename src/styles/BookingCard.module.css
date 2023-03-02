@@ -1,7 +1,7 @@
 .cardInfoContainer {
   display: flex;
   justify-content: space-between;
-  height: 150px;
+  height: 180px;
   width: 1000px;
   background-color: #FFFFFF;
   overflow: hidden;

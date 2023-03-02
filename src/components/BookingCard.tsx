@@ -14,6 +14,7 @@ import ServiceTags from './ServiceTags';
 import CancelBookingModal from './Modals/CancelBookingModal';
 import { gql } from '../__generated__/gql';
 import { useMutation } from '@apollo/client';
+import { MdAssignmentReturn } from 'react-icons/md';
 
 const bookingConfirmOrRejectMutation = gql(/* GraphQL */ `
   mutation BookingCardConfirmOrRejectMutation(
@@ -357,6 +358,14 @@ export default function BookingCard({
             <Text fontSize="md" noOfLines={3}>
               {getFormattedDate(parsedEndDate)}
             </Text>
+          </Stack>
+          <Stack direction={'column'}>
+            {service.returnable && (
+              <IconWithText
+                icon={<MdAssignmentReturn />}
+                text={<p>Requiere devolución</p>}
+              />
+            )}
           </Stack>
         </div>
         <div className={styles.cancelBookingContainer}>
