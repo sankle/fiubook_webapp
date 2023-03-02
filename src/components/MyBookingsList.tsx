@@ -2,7 +2,7 @@ import styles from '@styles/MyBookingsList.module.css';
 import BookingCard from './BookingCard';
 import { gql } from '../__generated__/gql';
 import { useQuery } from '@apollo/client';
-import { Button, Spinner } from '@chakra-ui/react';
+import { Button, Spinner, VStack, Text } from '@chakra-ui/react';
 import { Service, User } from 'src/__generated__/graphql';
 import { useRouter } from 'found';
 import { useEffect } from 'react';
@@ -32,6 +32,7 @@ const myBookingsQuery = gql(/* GraphQL */ `
         startCursor
         hasNextPage
         endCursor
+        totalCount
       }
     }
   }
@@ -74,6 +75,12 @@ export default function MyBookingsList(): JSX.Element {
               />
             </div>
           ))}
+          <VStack>
+            <Text color={'gray'}>
+              Mostrando {data.myBookings.edges.length} de {pageInfo.totalCount}{' '}
+              reservas.
+            </Text>
+          </VStack>
           {pageInfo.hasNextPage && (
             <Button
               className={styles.loadMoreButton}
