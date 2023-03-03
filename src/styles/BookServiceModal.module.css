@@ -7,7 +7,8 @@
 .serviceContainer {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  height: 195px;
 }
 
 .serviceName {
@@ -22,12 +23,13 @@
 .imageContainer {
   display: flex;
   width: 70%;
+  margin: auto;
   justify-content: center;
+  align-items: center;
 }
 
 .tagsContainer {
-  margin-top: auto;
-  width: 100%;
+  margin: auto;
 }
 
 .nameAndDescriptionContainer {
@@ -35,15 +37,23 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  width: 78%;
+  width: 45%;
   gap: 5px;
+}
+
+.bookingLimitsContainer {
+  width: 35%;
+  margin-right: auto;
+  margin-left: 30px;
+  margin-top: 43px;
 }
 
 .imageAndTagsContainer {
   display: flex;
   flex-direction: column;
-  width: 22%;
-  align-items: center;
+  width: 30%;
+  align-items: flex-start;
+  gap: 10px;
   justify-content: space-between;
 }
 

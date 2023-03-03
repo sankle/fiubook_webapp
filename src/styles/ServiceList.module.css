@@ -8,7 +8,7 @@
 .cardContainer {
   display: flex;
   justify-content: space-between;
-  height: 150px;
+  height: 170px;
   width: 1000px;
   background-color: #FFFFFF;
   overflow: hidden;

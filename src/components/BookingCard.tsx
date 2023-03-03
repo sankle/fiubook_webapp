@@ -328,9 +328,15 @@ export default function BookingCard({
           <Text fontSize="md" noOfLines={3} overflow="auto">
             {service.description}
           </Text>
-          <div className={styles.tagsContainer}>
-            <ServiceTags tags={service.tags} />
+          <div className={styles.returnableLabel}>
+            {service.returnable && (
+              <IconWithText
+                icon={<MdAssignmentReturn />}
+                text={<p>Requiere devolución</p>}
+              />
+            )}
           </div>
+          <ServiceTags tags={service.tags} />
         </div>
         <div className={styles.reservationTimeContainer}>
           {isPublisher && (
@@ -358,14 +364,6 @@ export default function BookingCard({
             <Text fontSize="md" noOfLines={3}>
               {getFormattedDate(parsedEndDate)}
             </Text>
-          </Stack>
-          <Stack direction={'column'}>
-            {service.returnable && (
-              <IconWithText
-                icon={<MdAssignmentReturn />}
-                text={<p>Requiere devolución</p>}
-              />
-            )}
           </Stack>
         </div>
         <div className={styles.cancelBookingContainer}>

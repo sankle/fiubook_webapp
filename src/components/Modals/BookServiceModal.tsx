@@ -350,6 +350,8 @@ export default function BookServiceModal({
               <Text fontSize="md" noOfLines={3} overflow="auto">
                 {service.description}
               </Text>
+            </div>
+            <div className={styles.bookingLimitsContainer}>
               <ServiceBookingLimits service={service} />
             </div>
             <div className={styles.imageAndTagsContainer}>
