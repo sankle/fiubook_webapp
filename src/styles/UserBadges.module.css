@@ -1,0 +1,7 @@
+.badgeStack {
+  display: flex;
+  margin-top: 0px;
+  vertical-align: top;
+  justify-content: flex-end;
+  gap: 5px;
+}
