@@ -1,7 +1,16 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import fiubaLogo from '@images/fiuba_logo.jpg';
-import { Button, Input, Image, VStack, Flex } from '@chakra-ui/react';
+import {
+  Button,
+  Input,
+  Image,
+  VStack,
+  Flex,
+  InputRightElement,
+  InputGroup,
+  Tooltip,
+} from '@chakra-ui/react';
 import styles from '@styles/LoginPage.module.css';
 import WrongLoginAlert from './WrongLoginAlert';
 import { useState } from 'react';
@@ -11,6 +20,7 @@ import { setToken } from '../../../services/sessionService';
 import { useRouter } from 'found';
 import { gql } from '../../../__generated__/gql';
 import { getErrorMessage } from '../../../utils/errorUtils';
+import { InfoIcon } from '@chakra-ui/icons';
 
 const validationSchema = yup.object({
   dni: yup
@@ -76,45 +86,55 @@ export default function LoginPage(): JSX.Element {
         <form onSubmit={formik.handleSubmit} className={styles.form}>
           <h1 className={styles.logoTitle}>FIUBOOK</h1>
           <h1 className={styles.formTitle}>Inicio de sesión</h1>
-          <Input
-            id="dni"
-            name="dni"
-            placeholder="DNI"
-            value={formik.values.dni}
-            onChange={formik.handleChange}
-            isInvalid={
-              (formik.touched.dni && Boolean(formik.errors.dni)) ||
-              failedLoginAttempt.showFailedLoginError
-            }
-            isDisabled={loading}
-            onBlur={() => {
-              void formik.setFieldTouched('dni', true);
-              
-            }}
-          />
-          {formik.touched.dni && formik.errors.dni ? (
-            <div className={styles.errorMessage}>{formik.errors.dni}</div>
-          ) : null}
-          <Input
-            id="password"
-            name="password"
-            placeholder="Contraseña"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            isInvalid={
-              (formik.touched.password && Boolean(formik.errors.password)) ||
-              failedLoginAttempt.showFailedLoginError
-            }
-            isDisabled={loading}
-            onBlur={() => {
-              void formik.setFieldTouched('password', true);
-              
-            }}
-          />
-          {formik.touched.password && formik.errors.password ? (
-            <div className={styles.errorMessage}>{formik.errors.password}</div>
-          ) : null}
+          <InputGroup>
+            <Input
+              id="dni"
+              name="dni"
+              placeholder="DNI"
+              value={formik.values.dni}
+              onChange={formik.handleChange}
+              isInvalid={
+                (formik.touched.dni && Boolean(formik.errors.dni)) ||
+                failedLoginAttempt.showFailedLoginError
+              }
+              isDisabled={loading}
+              onBlur={() => {
+                void formik.setFieldTouched('dni', true);
+              }}
+            />
+            {formik.touched.dni && !!formik.errors.dni && (
+              <InputRightElement>
+                <Tooltip label={formik.errors.dni}>
+                  <InfoIcon color="red" />
+                </Tooltip>
+              </InputRightElement>
+            )}
+          </InputGroup>
+          <InputGroup>
+            <Input
+              id="password"
+              name="password"
+              placeholder="Contraseña"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              isInvalid={
+                (formik.touched.password && Boolean(formik.errors.password)) ||
+                failedLoginAttempt.showFailedLoginError
+              }
+              isDisabled={loading}
+              onBlur={() => {
+                void formik.setFieldTouched('password', true);
+              }}
+            />
+            {formik.touched.password && !!formik.errors.password && (
+              <InputRightElement>
+                <Tooltip label={formik.errors.password}>
+                  <InfoIcon color="red" />
+                </Tooltip>
+              </InputRightElement>
+            )}
+          </InputGroup>
           <Button
             colorScheme="primary"
             type="submit"

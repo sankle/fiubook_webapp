@@ -1,4 +1,4 @@
-import styles from '@styles/NewServiceForm.module.css';
+import styles from '@styles/UpsertServiceForm.module.css';
 import {
   Heading,
   Input,
@@ -30,10 +30,12 @@ const validationSchema = yup.object({
   name: yup
     .string()
     .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(128, 'El nombre debe tener como mucho 128 caracteres')
     .required('El nombre no puede estar vacío'),
   description: yup
     .string()
     .min(8, 'La descripción debe tener al menos 8 caracteres')
+    .max(128, 'La descripción debe tener como mucho 512 caracteres')
     .required('La descripción no puede estar vacía'),
   returnable: yup.boolean().required(),
   automatic_confirmation: yup.boolean().required(),
@@ -44,7 +46,10 @@ const validationSchema = yup.object({
   allowed_roles: yup
     .array()
     .of(yup.string().oneOf(['PROFESSOR', 'STUDENT', 'NODO'])),
-  tags: yup.array().of(yup.string()),
+  tags: yup
+    .array()
+    .of(yup.string().max(40, 'Los tags debe tener como mucho 40 caracteres'))
+    .max(5, 'Puedes agregar hasta 5 tags solamente'),
 });
 
 interface Props {
@@ -90,13 +95,15 @@ export default function UpsertServiceForm({
               name="name"
               type="text"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
               value={formik.values.name}
               isInvalid={formik.touched.name && !!formik.errors.name}
               placeholder={'Nombre del servicio'}
               variant={'flushed'}
               fontSize={'sm'}
               isDisabled={loading}
+              onBlur={() => {
+                void formik.setFieldTouched('name', true);
+              }}
             />
             {formik.touched.name && !!formik.errors.name && (
               <InputRightElement>
@@ -116,7 +123,6 @@ export default function UpsertServiceForm({
               id="description"
               name="description"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
               value={formik.values.description}
               isInvalid={
                 formik.touched.description && !!formik.errors.description
@@ -126,6 +132,9 @@ export default function UpsertServiceForm({
               variant={'flushed'}
               fontSize={'sm'}
               isDisabled={loading}
+              onBlur={() => {
+                void formik.setFieldTouched('description', true);
+              }}
             />
             {formik.touched.description && !!formik.errors.description && (
               <InputRightElement>
@@ -145,18 +154,26 @@ export default function UpsertServiceForm({
               void formik.setFieldValue('tags', tags);
             }}
             tags={formik.values.tags}
+            onBlur={() => {
+              void formik.setFieldTouched('tags', true);
+            }}
+            touched={formik.touched.tags}
+            error={formik.errors.tags || formik.errors.tag}
           />
         </Stack>
         {showImageField && (
-          <Stack>
-            <Heading as="h2" size="sm" className={styles.fieldTitle}>
-              4. Imagen
-            </Heading>
-            <ImageUploader
-              images={images as ImageListType}
-              setImages={setImages as (images: ImageListType) => void}
-            />
-          </Stack>
+          <>
+            <Stack>
+              <Heading as="h2" size="sm" className={styles.fieldTitle}>
+                4. Imagen
+              </Heading>
+              <ImageUploader
+                images={images as ImageListType}
+                setImages={setImages as (images: ImageListType) => void}
+              />
+            </Stack>
+            <Divider />
+          </>
         )}
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
@@ -177,13 +194,16 @@ export default function UpsertServiceForm({
               name="automatic_confirmation"
               id="automatic_confirmation"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onBlur={() => {
+                void formik.setFieldTouched('automatic_confirmation', true);
+              }}
               checked={formik.values.automatic_confirmation}
               isDisabled={loading}
               defaultChecked={formik.values.automatic_confirmation}
             />
           </Stack>
         </Stack>
+        <Divider />
         <Stack>
           <Heading as="h2" size="sm" className={styles.fieldTitle}>
             6. Retornable&nbsp;
@@ -203,7 +223,9 @@ export default function UpsertServiceForm({
               name="returnable"
               id="returnable"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onBlur={() => {
+                void formik.setFieldTouched('returnable', true);
+              }}
               checked={formik.values.returnable}
               isDisabled={loading}
               defaultChecked={formik.values.returnable}
@@ -230,7 +252,9 @@ export default function UpsertServiceForm({
                 id="granularity_days"
                 name="granularity_days"
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  void formik.setFieldTouched('granularity_days', true);
+                }}
                 value={formik.values.granularity_days}
               />
               <NumberInputStepper>
@@ -256,7 +280,9 @@ export default function UpsertServiceForm({
                 name="granularity_hours"
                 id="granularity_hours"
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  void formik.setFieldTouched('granularity_hours', true);
+                }}
                 value={formik.values.granularity_hours}
               />
               <NumberInputStepper>
@@ -282,7 +308,9 @@ export default function UpsertServiceForm({
                 id="granularity_minutes"
                 name="granularity_minutes"
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  void formik.setFieldTouched('granularity_minutes', true);
+                }}
                 value={formik.values.granularity_minutes}
               />
               <NumberInputStepper>
@@ -321,7 +349,9 @@ export default function UpsertServiceForm({
               <NumberInputField
                 id="max_slots"
                 name="max_slots"
-                onBlur={formik.handleBlur}
+                onBlur={() => {
+                  void formik.setFieldTouched('max_slots', true);
+                }}
                 value={formik.values.max_slots}
               />
               <NumberInputStepper>
@@ -349,13 +379,28 @@ export default function UpsertServiceForm({
             isDisabled={loading}
           >
             <Stack direction={'row'} spacing={'10'}>
-              <Checkbox value="STUDENT">
+              <Checkbox
+                value="STUDENT"
+                onBlur={() => {
+                  void formik.setFieldTouched('allowed_roles', true);
+                }}
+              >
                 <Text fontSize={'sm'}>Estudiantes</Text>
               </Checkbox>
-              <Checkbox value="PROFESSOR">
+              <Checkbox
+                value="PROFESSOR"
+                onBlur={() => {
+                  void formik.setFieldTouched('allowed_roles', true);
+                }}
+              >
                 <Text fontSize={'sm'}>Profesores</Text>
               </Checkbox>
-              <Checkbox value="NODO">
+              <Checkbox
+                value="NODO"
+                onBlur={() => {
+                  void formik.setFieldTouched('allowed_roles', true);
+                }}
+              >
                 <Text fontSize={'sm'}>No Docentes</Text>
               </Checkbox>
             </Stack>
