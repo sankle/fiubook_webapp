@@ -45,6 +45,7 @@ const cache = new InMemoryCache({
         myBookingsForPublisher: relayStylePagination(),
         services: relayStylePagination(),
         users: relayStylePagination(),
+        notifications: relayStylePagination(),
       },
     },
   },

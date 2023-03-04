@@ -7,7 +7,6 @@ interface Props {
 }
 
 export default function ServiceImage({ className, url }: Props): JSX.Element {
-  console.log(url);
   return (
     <div className={className}>
       <Image src={url} className={styles.serviceImage} />

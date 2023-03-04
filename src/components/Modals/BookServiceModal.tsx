@@ -177,8 +177,6 @@ export default function BookServiceModal({
           false
         );
 
-      console.log(initialToDate || currentDate);
-
       return {
         currentDate,
         initialFromDateString: convertToLocaleString(

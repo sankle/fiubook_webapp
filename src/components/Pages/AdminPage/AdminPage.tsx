@@ -51,11 +51,6 @@ export default function AdminPage(props: any): JSX.Element {
           onKeyDown={event => {
             if (event.key === 'Enter') {
               setTabIndex(tabIndexToRouteArray.indexOf('/admin/services'));
-              console.log(
-                `setting index to ${tabIndexToRouteArray.indexOf(
-                  '/admin/services'
-                )}`
-              );
               if (searchStringValue !== '') {
                 router.replace(`/admin/services?search=${searchStringValue}`);
               } else {

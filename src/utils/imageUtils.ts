@@ -13,7 +13,6 @@ export const uploadImage = async (image: File): Promise<string> => {
     }
   );
 
-  console.log(result);
   if (result.status === 200) {
     if (result.data.success) {
       return result.data.data.url;
