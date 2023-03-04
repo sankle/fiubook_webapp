@@ -148,7 +148,7 @@ export default function NotificationsContent({
   onLoadMore,
 }: Props): JSX.Element {
   return (
-    <VStack overflow={'auto'} maxHeight={'300px'}>
+    <VStack overflow={'auto'}>
       {notifications?.map((notification, i) => (
         <NotificationCard notification={notification} key={i} />
       ))}

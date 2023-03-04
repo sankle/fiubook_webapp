@@ -59,7 +59,13 @@ const updateUserMutation = gql(/* GraphQL */ `
   }
 `);
 
-function ProfileField({ name, children }: { name: string; children: any }) {
+export function ProfileField({
+  name,
+  children,
+}: {
+  name: string;
+  children: any;
+}) {
   return (
     <HStack>
       <Heading fontSize="m">{name}:</Heading>

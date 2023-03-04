@@ -1,4 +1,4 @@
-import { Button, HStack, Image, Spinner, VStack } from '@chakra-ui/react';
+import { Button, Image, Spinner } from '@chakra-ui/react';
 import fiubaLogo from '@images/fiuba_logo.jpg';
 import styles from '@styles/NavigationBar.module.css';
 import LoggedUserInfo from './LoggedUserInfo';
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function NavigationBar({ getInputGroup, getTabs }: Props): JSX.Element {
-  const { router } = useRouter();
+  const { router, match } = useRouter();
   const { data, error, loading } = useLoggedInUserInfoFetch();
 
   // TODO: check if we can move this to a common apollo handler
@@ -34,31 +34,29 @@ export function NavigationBar({ getInputGroup, getTabs }: Props): JSX.Element {
   return (
     <div className={styles.navigationContainer}>
       <div className={styles.leftNavigationContainer}>
-        <VStack align={'flex-start'}>
-          <h1 className={styles.logoTitle}>
-            <a href={'/'}>FIUBOOK</a>
-          </h1>
-          <HStack>
+        <h1 className={styles.logoTitle}>
+          <a href={'/'}>FIUBOOK</a>
+        </h1>
+        <div className={styles.logoButtonsContainer}>
+          <Button
+            size={'sm'}
+            variant={'outline'}
+            colorScheme={'linkedin'}
+            onClick={onLogoutClick}
+          >
+            Cerrar sesión
+          </Button>
+          {data?.me.is_admin && !match.location.pathname.includes('/admin') && (
             <Button
               size={'sm'}
               variant={'outline'}
               colorScheme={'linkedin'}
-              onClick={onLogoutClick}
+              onClick={onAdminClick}
             >
-              Cerrar sesión
+              Administración
             </Button>
-            {data?.me.is_admin && (
-              <Button
-                size={'sm'}
-                variant={'outline'}
-                colorScheme={'linkedin'}
-                onClick={onAdminClick}
-              >
-                Administración
-              </Button>
-            )}
-          </HStack>
-        </VStack>
+          )}
+        </div>
       </div>
       <div className={styles.centerNavigationContainer}>
         {getInputGroup()}

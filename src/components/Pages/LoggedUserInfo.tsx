@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { BellIcon, InfoIcon } from '@chakra-ui/icons';
 import {
-  Avatar,
   Heading,
   HStack,
   IconButton,
@@ -10,17 +9,17 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Text,
 } from '@chakra-ui/react';
 import styles from '@styles/LoggedUserInfo.module.css';
 import { useEffect, useState } from 'react';
 import { NotificationsEdgeType } from 'src/__generated__/graphql';
 import { Roles } from '../../global/types';
-import UserBadges from '../UserBadges';
-
 import { gql } from '../../__generated__/gql';
 import NotificationsContent from '../NotificationsContent';
-
 import { IoMdPerson } from 'react-icons/io';
+import { ProfileField } from '../Profile';
+import { useRouter } from 'found';
 
 interface Props {
   dni: string;
@@ -65,6 +64,7 @@ const markAsReadMutation = gql(/* GraphQL */ `
 `);
 
 export default function loggedUserInfo({ dni }: Props): JSX.Element {
+  const { router } = useRouter();
   const [showNewNotifications, setShowNewNotifications] = useState(false);
   const { data, fetchMore, startPolling, stopPolling } = useQuery(
     notificationsQuery,
@@ -85,51 +85,57 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
   }, []);
   return (
     <div className={styles.loggedUserInfoContainer}>
-      <HStack alignItems={'center'} marginRight={'5px'}>
+      <div className={styles.dniContainer}>
+        <ProfileField name="DNI">
+          <Text mt={4}>{dni}</Text>
+        </ProfileField>
+      </div>
+      <HStack>
+        <IconButton
+          icon={<IoMdPerson />}
+          variant={'ghost'}
+          size={'md'}
+          aria-label={'Profile'}
+          onClick={() => router.replace('/profile')}
+        />
         <HStack>
-          <IconButton
-            icon={<IoMdPerson />}
-            variant={'ghost'}
-            size={'md'}
-            aria-label={'Profile'}
-          />
-          <HStack>
-            <Popover
-              onOpen={() => stopPolling()}
-              onClose={() => startPolling(3000)}
-            >
-              <PopoverTrigger>
-                <IconButton
-                  aria-label="Notifications"
-                  icon={<BellIcon />}
-                  variant={'ghost'}
-                  size={'md'}
-                  fontSize={'20px'}
-                  onClick={() => {
-                    setShowNewNotifications(false);
-                    if (
-                      (data?.notifications.pageInfo.totalCount as number) > 0
-                    ) {
-                      console.log(
-                        `Marking as read all notifications until:
+          <Popover
+            onOpen={() => stopPolling()}
+            onClose={() => startPolling(3000)}
+          >
+            <PopoverTrigger>
+              <IconButton
+                aria-label="Notifications"
+                icon={<BellIcon />}
+                variant={'ghost'}
+                size={'md'}
+                fontSize={'20px'}
+                onClick={() => {
+                  setShowNewNotifications(false);
+                  if ((data?.notifications.pageInfo.totalCount as number) > 0) {
+                    console.log(
+                      `Marking as read all notifications until:
                         ${data?.notifications.edges[0].node.ts as string}`
-                      );
-                      void markAsRead({
-                        variables: {
-                          until: new Date(data?.notifications.edges[0].node.ts),
-                        },
-                      });
-                    }
-                  }}
-                />
-              </PopoverTrigger>
-              {showNewNotifications && (
-                <InfoIcon boxSize={'3'} position={'absolute'} color={'red'} />
-              )}
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverBody>
-                  <Heading size={'md'}>Notificaciones</Heading>
+                    );
+                    void markAsRead({
+                      variables: {
+                        until: new Date(data?.notifications.edges[0].node.ts),
+                      },
+                    });
+                  }
+                }}
+              />
+            </PopoverTrigger>
+            {showNewNotifications && (
+              <InfoIcon boxSize={'3'} position={'absolute'} color={'red'} />
+            )}
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverBody>
+                <div className={styles.popoverBodyContainer}>
+                  <Heading size="md" marginLeft="3px">
+                    Notificaciones
+                  </Heading>
                   <NotificationsContent
                     notifications={
                       data?.notifications.edges as NotificationsEdgeType[]
@@ -145,14 +151,12 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
                       });
                     }}
                   />
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
-          </HStack>
+                </div>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </HStack>
-        <p className={styles.userName}>{dni}</p>
       </HStack>
-      <Avatar name={dni} />
     </div>
   );
 }
