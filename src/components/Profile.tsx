@@ -69,6 +69,8 @@ function ProfileField({ name, children }: { name: string; children: any }) {
 }
 
 export default function Profile(): JSX.Element {
+  document.title = 'Perfil | FIUBOOK';
+
   const { data, loading } = useLoggedInUserInfoFetch();
 
   const [editMode, setEditMode] = useState(false);

@@ -20,7 +20,7 @@ import { renderButtonAndModal } from '../../ServiceCard';
 
 const getBookingsAdminQuery = gql(/* GraphQL */ `
   query GetBookingsAdmin($cursor: String) {
-    bookings(first: 3, after: $cursor) {
+    bookings(first: 10, after: $cursor) {
       edges {
         node {
           id
@@ -45,6 +45,8 @@ const getBookingsAdminQuery = gql(/* GraphQL */ `
 `);
 
 export default function AdminBookingList(): JSX.Element {
+  document.title = 'Administrar Reservas | FIUBOOK';
+
   const { match } = useRouter();
 
   const { data, loading, fetchMore, refetch } = useQuery(

@@ -39,6 +39,8 @@ const createServiceMutation = gql(/* GraphQL */ `
 `);
 
 export default function NewServiceForm(): JSX.Element {
+  document.title = 'Crear Servicio | FIUBOOK';
+
   const { router } = useRouter();
   const toast = useToast();
 

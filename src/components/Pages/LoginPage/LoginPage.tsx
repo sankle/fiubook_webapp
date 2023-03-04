@@ -42,6 +42,8 @@ const createSessionMutation = gql(/* GraphQL */ `
 `);
 
 export default function LoginPage(): JSX.Element {
+  document.title = 'Login | FIUBOOK';
+
   const { router } = useRouter();
 
   const [failedLoginAttempt, setFailedLoginAttempt] = useState({

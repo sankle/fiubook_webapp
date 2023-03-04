@@ -65,8 +65,10 @@ const metricsQuery = gql(/* GraphQL */ `
 `);
 
 export default function AdminMetrics(): JSX.Element {
+  document.title = 'Métricas | FIUBOOK';
+
   const { data, loading, refetch } = useQuery(metricsQuery);
-  console.log(JSON.stringify(data));
+
   if (loading || !data) {
     return <Spinner />;
   }
