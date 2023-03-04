@@ -19,6 +19,8 @@ import { Roles } from '../../global/types';
 import { gql } from '../../__generated__/gql';
 import NotificationsContent from '../NotificationsContent';
 
+import { IoMdPerson } from 'react-icons/io';
+
 interface Props {
   dni: string;
   roles: Roles[];
@@ -85,56 +87,68 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
     <div className={styles.loggedUserInfoContainer}>
       <HStack alignItems={'center'} marginRight={'5px'}>
         <HStack>
-          <Popover
-            onOpen={() => stopPolling()}
-            onClose={() => startPolling(3000)}
-          >
-            <PopoverTrigger>
-              <IconButton
-                aria-label="Notifications"
-                icon={<BellIcon />}
-                variant={'ghost'}
-                size={'md'}
-                fontSize={'20px'}
-                onClick={() => {
-                  setShowNewNotifications(false);
-                  if ((data?.notifications.pageInfo.totalCount as number) > 0) {
-                    console.log(
-                      `Marking as read all notifications until:
+          <IconButton
+            icon={<IoMdPerson />}
+            variant={'ghost'}
+            size={'md'}
+            aria-label={'Profile'}
+          />
+          <HStack>
+            <Popover
+              onOpen={() => stopPolling()}
+              onClose={() => startPolling(3000)}
+            >
+              <PopoverTrigger>
+                <IconButton
+                  aria-label="Notifications"
+                  icon={<BellIcon />}
+                  variant={'ghost'}
+                  size={'md'}
+                  fontSize={'20px'}
+                  onClick={() => {
+                    setShowNewNotifications(false);
+                    if (
+                      (data?.notifications.pageInfo.totalCount as number) > 0
+                    ) {
+                      console.log(
+                        `Marking as read all notifications until:
                         ${data?.notifications.edges[0].node.ts as string}`
-                    );
-                    void markAsRead({
-                      variables: {
-                        until: new Date(data?.notifications.edges[0].node.ts),
-                      },
-                    });
-                  }
-                }}
-              />
-            </PopoverTrigger>
-            {showNewNotifications && (
-              <InfoIcon boxSize={'3'} position={'absolute'} color={'red'} />
-            )}
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverBody>
-                <Heading size={'md'}>Notificaciones</Heading>
-                <NotificationsContent
-                  notifications={
-                    data?.notifications.edges as NotificationsEdgeType[]
-                  }
-                  hasMore={data?.notifications.pageInfo.hasNextPage as boolean}
-                  onLoadMore={() => {
-                    void fetchMore({
-                      variables: {
-                        cursor: data?.notifications.pageInfo.endCursor,
-                      },
-                    });
+                      );
+                      void markAsRead({
+                        variables: {
+                          until: new Date(data?.notifications.edges[0].node.ts),
+                        },
+                      });
+                    }
                   }}
                 />
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+              </PopoverTrigger>
+              {showNewNotifications && (
+                <InfoIcon boxSize={'3'} position={'absolute'} color={'red'} />
+              )}
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverBody>
+                  <Heading size={'md'}>Notificaciones</Heading>
+                  <NotificationsContent
+                    notifications={
+                      data?.notifications.edges as NotificationsEdgeType[]
+                    }
+                    hasMore={
+                      data?.notifications.pageInfo.hasNextPage as boolean
+                    }
+                    onLoadMore={() => {
+                      void fetchMore({
+                        variables: {
+                          cursor: data?.notifications.pageInfo.endCursor,
+                        },
+                      });
+                    }}
+                  />
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </HStack>
         </HStack>
         <p className={styles.userName}>{dni}</p>
       </HStack>

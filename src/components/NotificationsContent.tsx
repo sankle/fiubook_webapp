@@ -115,9 +115,10 @@ const NotificationCard = ({
           NotificationTargetByType[notification.node.type as NotificationType]
         )
       }
+      backgroundColor={notification.node.read ? 'white' : 'blue.100'}
     >
-      <HStack justifyContent={'space-between'}>
-        <VStack alignItems={'flex-start'}>
+      <HStack justifyContent={'space-between'} width={'100%'}>
+        <VStack alignItems={'flex-start'} textAlign={'left'}>
           <Heading size={'sm'}>
             {
               NotificationTitleByType[
