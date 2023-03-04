@@ -75,6 +75,7 @@ export default function UpsertServiceForm({
     initialValues,
     validationSchema,
     onSubmit,
+    validateOnChange: false,
   });
 
   return (
