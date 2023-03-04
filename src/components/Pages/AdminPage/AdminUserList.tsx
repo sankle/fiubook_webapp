@@ -23,7 +23,7 @@ import {
 
 const getUsersAdminQuery = gql(/* GraphQL */ `
   query GetUsersAdmin($cursor: String) {
-    users(first: 3, after: $cursor) {
+    users(first: 10, after: $cursor) {
       edges {
         node {
           id
@@ -53,6 +53,8 @@ const updateUserMutation = gql(/* GraphQL */ `
 `);
 
 export default function AdminBookingList(): JSX.Element {
+  document.title = 'Administrar Usuarios | FIUBOOK';
+
   const { match } = useRouter();
   const toast = useToast();
 

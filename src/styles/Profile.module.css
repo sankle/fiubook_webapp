@@ -1,0 +1,23 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 30px;
+  background-color: white;
+}
+
+.editButton {
+  align-self: center;
+  width: 180px;
+}
+
+.formButton {
+  width: 130px;
+}
+
+.formButtonsContainer {
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
+}

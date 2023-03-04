@@ -21,7 +21,7 @@ import { renderButtonAndModal } from '../../ServiceCard';
 
 const getServicesAdminQuery = gql(/* GraphQL */ `
   query GetServicesAdmin($cursor: String, $queryTerm: String) {
-    services(first: 3, after: $cursor, query_term: $queryTerm) {
+    services(first: 10, after: $cursor, query_term: $queryTerm) {
       edges {
         node {
           id
@@ -47,6 +47,8 @@ const getServicesAdminQuery = gql(/* GraphQL */ `
 `);
 
 export default function AdminServiceList(): JSX.Element {
+  document.title = 'Administrar Servicios | FIUBOOK';
+
   const { match } = useRouter();
 
   const { data, loading, fetchMore, refetch } = useQuery(

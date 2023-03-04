@@ -39,6 +39,8 @@ const myBookingsQuery = gql(/* GraphQL */ `
 `);
 
 export default function MyBookingsList(): JSX.Element {
+  document.title = 'Mis Reservas | FIUBOOK';
+
   const { match } = useRouter();
   const { data, loading, refetch, fetchMore } = useQuery(myBookingsQuery, {
     variables: {

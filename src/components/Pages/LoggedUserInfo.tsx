@@ -15,6 +15,7 @@ import styles from '@styles/LoggedUserInfo.module.css';
 import { useEffect, useState } from 'react';
 import { NotificationsEdgeType } from 'src/__generated__/graphql';
 import { Roles } from '../../global/types';
+import UserBadges from '../UserBadges';
 
 import { gql } from '../../__generated__/gql';
 import NotificationsContent from '../NotificationsContent';
@@ -82,7 +83,6 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
   useEffect(() => {
     startPolling(3000);
   }, []);
-
   return (
     <div className={styles.loggedUserInfoContainer}>
       <HStack alignItems={'center'} marginRight={'5px'}>

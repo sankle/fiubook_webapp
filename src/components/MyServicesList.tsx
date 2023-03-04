@@ -38,6 +38,8 @@ const getMyServicesQuery = gql(/* GraphQL */ `
 `);
 
 export default function ServiceList(): JSX.Element {
+  document.title = 'Mis Servicios | FIUBOOK';
+
   const { match } = useRouter();
 
   const { data, loading, fetchMore, refetch } = useQuery(getMyServicesQuery, {

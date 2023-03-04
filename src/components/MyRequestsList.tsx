@@ -40,6 +40,8 @@ const myRequestsQuery = gql(/* GraphQL */ `
 `);
 
 export default function MyRequestsList(): JSX.Element {
+  document.title = 'Solicitudes | FIUBOOK';
+
   const { match } = useRouter();
 
   const { data, loading, fetchMore, refetch } = useQuery(myRequestsQuery, {

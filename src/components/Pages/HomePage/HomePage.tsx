@@ -78,7 +78,6 @@ const getSearchPath = (pathname: string, searchString: string) => {
 export default function HomePage(props: any): JSX.Element {
   const { match, router } = useRouter();
 
-  console.log(match.location.pathname);
   const defaultTabIndex = tabIndexToRouteArray.findIndex(
     route => match.location.pathname === route
   );

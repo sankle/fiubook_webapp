@@ -9,6 +9,10 @@ const getUserInfoQuery = gql(/* GraphQL */ `
       roles
       is_admin
       can_publish_services
+      name
+      lastname
+      email
+      ts
     }
   }
 `);
