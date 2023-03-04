@@ -48,12 +48,9 @@ const validationSchema = yup.object({
     .required('El mail no puede estar vacío'),
 });
 
-const updateUserMutation = gql(/* GraphQL */ `
-  mutation ProfileUpdateUserMutation(
-    $user_id: String!
-    $update_args: UpdateUserArgs!
-  ) {
-    updateUser(id: $user_id, update_args: $update_args) {
+const updateProfileMutation = gql(/* GraphQL */ `
+  mutation ProfileUpdateMutation($update_args: UpdateProfileArgs!) {
+    updateProfile(update_args: $update_args) {
       id
     }
   }
@@ -89,8 +86,8 @@ export default function Profile(): JSX.Element {
 
   const toast = useToast();
 
-  const [updateUser, { loading: mutationLoading }] = useMutation(
-    updateUserMutation,
+  const [updateProfile, { loading: mutationLoading }] = useMutation(
+    updateProfileMutation,
     {
       onCompleted: response => {
         setEditMode(false);
@@ -105,9 +102,8 @@ export default function Profile(): JSX.Element {
   );
 
   const onSubmit = (values: any) => {
-    void updateUser({
+    void updateProfile({
       variables: {
-        user_id: data?.me.id,
         update_args: {
           name: values.name,
           lastname: values.lastname,
