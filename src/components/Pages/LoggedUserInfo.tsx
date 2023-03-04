@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { BellIcon, InfoIcon } from '@chakra-ui/icons';
 import {
   Avatar,
@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 import styles from '@styles/LoggedUserInfo.module.css';
+import { useEffect, useState } from 'react';
 import { NotificationsEdgeType } from 'src/__generated__/graphql';
 import { Roles } from '../../global/types';
 
@@ -30,6 +31,7 @@ const notificationsQuery = gql(/* GraphQL */ `
       edges {
         node {
           id
+          ts
           type
           read
           booking {
@@ -39,6 +41,7 @@ const notificationsQuery = gql(/* GraphQL */ `
             service {
               name
               description
+              image_url
             }
           }
         }
@@ -52,14 +55,40 @@ const notificationsQuery = gql(/* GraphQL */ `
   }
 `);
 
+const markAsReadMutation = gql(/* GraphQL */ `
+  mutation MarkAsRead($until: DateTime!) {
+    markAsRead(until: $until)
+  }
+`);
+
 export default function loggedUserInfo({ dni }: Props): JSX.Element {
-  const { data } = useQuery(notificationsQuery);
-  console.log(data);
+  const [showNewNotifications, setShowNewNotifications] = useState(false);
+  const { data, fetchMore, startPolling, stopPolling } = useQuery(
+    notificationsQuery,
+    {
+      onCompleted: data => {
+        if (data.notifications.pageInfo.totalCount > 0) {
+          setShowNewNotifications(true);
+        }
+      },
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+  const [markAsRead] = useMutation(markAsReadMutation);
+
+  useEffect(() => {
+    startPolling(3000);
+  }, []);
+
   return (
     <div className={styles.loggedUserInfoContainer}>
       <HStack alignItems={'center'} marginRight={'5px'}>
         <HStack>
-          <Popover>
+          <Popover
+            onOpen={() => stopPolling()}
+            onClose={() => startPolling(3000)}
+          >
             <PopoverTrigger>
               <IconButton
                 aria-label="Notifications"
@@ -67,9 +96,23 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
                 variant={'ghost'}
                 size={'md'}
                 fontSize={'20px'}
-              ></IconButton>
+                onClick={() => {
+                  setShowNewNotifications(false);
+                  if ((data?.notifications.pageInfo.totalCount as number) > 0) {
+                    console.log(
+                      `Marking as read all notifications until:
+                        ${data?.notifications.edges[0].node.ts as string}`
+                    );
+                    void markAsRead({
+                      variables: {
+                        until: new Date(data?.notifications.edges[0].node.ts),
+                      },
+                    });
+                  }
+                }}
+              />
             </PopoverTrigger>
-            {data?.notifications.pageInfo.totalCount && (
+            {showNewNotifications && (
               <InfoIcon boxSize={'2'} position={'absolute'} color={'red'} />
             )}
             <PopoverContent>
@@ -80,6 +123,14 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
                   notifications={
                     data?.notifications.edges as NotificationsEdgeType[]
                   }
+                  hasMore={data?.notifications.pageInfo.hasNextPage as boolean}
+                  onLoadMore={() => {
+                    void fetchMore({
+                      variables: {
+                        cursor: data?.notifications.pageInfo.endCursor,
+                      },
+                    });
+                  }}
                 />
               </PopoverBody>
             </PopoverContent>

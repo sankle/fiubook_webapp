@@ -134,7 +134,6 @@ export default function AdminBookingList(): JSX.Element {
                           size="lg"
                           isChecked={user.node.roles.includes('STUDENT')}
                           onChange={event => {
-                            console.log('checked: ', event.target.checked);
                             onUserChange(
                               user.node.id,
                               'roles',

@@ -1,7 +1,17 @@
-import { Avatar, Card, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import {
+  Avatar,
+  Button,
+  Card,
+  Heading,
+  HStack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import type { NotificationsEdgeType } from 'src/__generated__/graphql';
 interface Props {
   notifications?: NotificationsEdgeType[];
+  hasMore: boolean;
+  onLoadMore: () => void;
 }
 
 enum NotificationType {
@@ -55,6 +65,24 @@ const getNotificationDescription = (notification: NotificationsEdgeType) => {
   }
 };
 
+const getNotificationTime = (notificationTime: Date) => {
+  const now = new Date();
+  const diff = now.getTime() - notificationTime.getTime();
+  const diffDays = Math.floor(diff / (1000 * 3600 * 24));
+  const diffHours = Math.floor(diff / (1000 * 3600));
+  const diffMinutes = Math.floor(diff / (1000 * 60));
+  if (diffDays > 0) {
+    return `Hace ${diffDays} días`;
+  }
+  if (diffHours > 0) {
+    return `Hace ${diffHours} horas`;
+  }
+  if (diffMinutes > 0) {
+    return `Hace ${diffMinutes} minutos`;
+  }
+  return 'Ahora';
+};
+
 const NotificationCard = ({
   notification,
 }: {
@@ -65,9 +93,9 @@ const NotificationCard = ({
       marginBottom={'5px'}
       width={'100%'}
       padding={'3px'}
-      maxHeight={'200px'}
+      maxHeight={'120px'}
       overflow={'hidden'}
-      minHeight={'80px'}
+      minHeight={'100px'}
     >
       <HStack justifyContent={'space-between'}>
         <VStack alignItems={'flex-start'}>
@@ -78,11 +106,17 @@ const NotificationCard = ({
               ]
             }
           </Heading>
-          <Text fontSize={'sm'}>
+          <Text fontSize={'sm'} maxHeight={'100px'}>
             {getNotificationDescription(notification)}
           </Text>
+          <Text fontSize={'x-small'} color={'gray.500'}>
+            {getNotificationTime(new Date(notification.node.ts))}
+          </Text>
         </VStack>
-        <Avatar name={notification.node.booking?.service?.name} />
+        <Avatar
+          name={notification.node.booking?.service?.name}
+          src={notification.node.booking?.service?.image_url}
+        />
       </HStack>
     </Card>
   );
@@ -90,12 +124,24 @@ const NotificationCard = ({
 
 export default function NotificationsContent({
   notifications,
+  hasMore,
+  onLoadMore,
 }: Props): JSX.Element {
   return (
     <VStack overflow={'auto'} maxHeight={'300px'}>
       {notifications?.map((notification, i) => (
         <NotificationCard notification={notification} key={i} />
       ))}
+
+      {hasMore && (
+        <Button
+          variant={'outline'}
+          colorScheme={'linkedin'}
+          onClick={onLoadMore}
+        >
+          Más
+        </Button>
+      )}
     </VStack>
   );
 }

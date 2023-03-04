@@ -107,9 +107,6 @@ export default function HomePage(props: any): JSX.Element {
           value={searchStringValue}
           onKeyDown={event => {
             if (event.key === 'Enter') {
-              console.log(
-                `setting index to ${tabIndexToRouteArray.indexOf('/services')}`
-              );
               router.replace(
                 getSearchPath(match.location.pathname, searchStringValue)
               );
