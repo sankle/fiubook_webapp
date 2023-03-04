@@ -133,3 +133,21 @@ export const userPermissionsModificationFailedToast = (
   duration: 9000,
   isClosable: true,
 });
+
+export const userProfileUpdatedSuccessfullyToast = (): UseToastOptions => ({
+  title: 'Perfl de usuario actualizado',
+  description: 'Su perfil del usuario ha sido actualizado exitosamente.',
+  status: 'success',
+  duration: 9000,
+  isClosable: true,
+});
+
+export const userProfileUpdateFailedToast = (
+  errorDescription: string
+): UseToastOptions => ({
+  title: 'Error al actualizar perfil de usuario',
+  description: errorDescription,
+  status: 'error',
+  duration: 9000,
+  isClosable: true,
+});

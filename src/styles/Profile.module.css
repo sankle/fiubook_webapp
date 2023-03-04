@@ -9,5 +9,15 @@
 
 .editButton {
   align-self: center;
-  width: 200px;
+  width: 180px;
+}
+
+.formButton {
+  width: 130px;
+}
+
+.formButtonsContainer {
+  display: flex;
+  justify-content: space-around;
+  gap: 5px;
 }
