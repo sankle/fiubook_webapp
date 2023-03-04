@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useRouter } from 'found';
 import type { NotificationsEdgeType } from 'src/__generated__/graphql';
 interface Props {
   notifications?: NotificationsEdgeType[];
@@ -32,6 +33,16 @@ const NotificationTitleByType = {
   BOOKING_REQUEST_CANCELLED: 'Reserva cancelada',
   OBJECT_DELIVERED: 'Objeto entregado',
   OBJECT_RETURNED: 'Objeto devuelto',
+};
+
+const NotificationTargetByType = {
+  NEW_BOOKING_REQUEST: '/requests',
+  BOOKING_REQUEST_ACCEPTED: '/bookings',
+  BOOKING_REQUEST_REJECTED: '/bookings',
+  BOOKING_CANCELLED: '/bookings',
+  BOOKING_REQUEST_CANCELLED: '/requests',
+  OBJECT_DELIVERED: '/bookings',
+  OBJECT_RETURNED: '/bookings',
 };
 
 const getNotificationDescription = (notification: NotificationsEdgeType) => {
@@ -88,6 +99,8 @@ const NotificationCard = ({
 }: {
   notification: NotificationsEdgeType;
 }) => {
+  const { router } = useRouter();
+
   return (
     <Card
       marginBottom={'5px'}
@@ -96,6 +109,12 @@ const NotificationCard = ({
       maxHeight={'120px'}
       overflow={'hidden'}
       minHeight={'100px'}
+      as={'button'}
+      onClick={() =>
+        router.push(
+          NotificationTargetByType[notification.node.type as NotificationType]
+        )
+      }
     >
       <HStack justifyContent={'space-between'}>
         <VStack alignItems={'flex-start'}>

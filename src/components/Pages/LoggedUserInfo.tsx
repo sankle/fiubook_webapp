@@ -113,7 +113,7 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
               />
             </PopoverTrigger>
             {showNewNotifications && (
-              <InfoIcon boxSize={'2'} position={'absolute'} color={'red'} />
+              <InfoIcon boxSize={'3'} position={'absolute'} color={'red'} />
             )}
             <PopoverContent>
               <PopoverArrow />

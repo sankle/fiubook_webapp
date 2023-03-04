@@ -17,7 +17,7 @@ import {
   SettingsIcon,
 } from '@chakra-ui/icons';
 import { useRouter } from 'found';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useLoggedInUserInfoFetch from '../useLoggedInUserInfoFetch';
 import { invalidateSession } from '../../../services/sessionService';
 
@@ -94,6 +94,9 @@ export default function HomePage(props: any): JSX.Element {
   const [tabIndex, setTabIndex] = useState(defaultTabIndex);
   const [searchStringValue, setSearchStringValue] = useState('');
 
+  useEffect(() => {
+    setTabIndex(tabIndexToRouteArray.indexOf(match.location.pathname));
+  }, [match.location.pathname]);
   const getInputGroup = () => {
     return (
       <InputGroup>
@@ -109,9 +112,6 @@ export default function HomePage(props: any): JSX.Element {
             if (event.key === 'Enter') {
               router.replace(
                 getSearchPath(match.location.pathname, searchStringValue)
-              );
-              setTabIndex(
-                tabIndexToRouteArray.indexOf(match.location.pathname)
               );
             }
           }}
