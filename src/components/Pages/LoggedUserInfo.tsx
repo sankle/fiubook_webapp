@@ -74,7 +74,7 @@ export default function loggedUserInfo({ dni }: Props): JSX.Element {
           setShowNewNotifications(true);
         }
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'no-cache',
       notifyOnNetworkStatusChange: true,
     }
   );
