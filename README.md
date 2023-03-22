@@ -28,41 +28,22 @@ nvm use
 npm i
 ```
 
-3. Configure the [FIUBOOK Core](https://github.com/nicomatex/fiubook_core) URL in both `codegen.ts` and `default.ts`:
-
-- `codegen.ts`
-
-```
-const config: CodegenConfig = {
-  schema: 'http://fiubook-core-ip:3000/graph',
-  ...
-};
-```
+3. Configure the [FIUBOOK Core](https://github.com/nicomatex/fiubook_core) server instance URL, and the [ImgBB](https://imgbb.com/) API key in `default.ts`:
 
 - `default.ts`
 
 ```
 const config = {
   graphqlServerUrl: 'http://fiubook-core-ip:3000/graph',
-  ...
-};
-```
-
-4. Add [ImgBB](https://imgbb.com/) (service we use to store images) API key in `imageUtils.ts`.
-
-- `default.ts`
-
-```
-const config = {
-  ...
   imgBBApiKey: 'your-api-key',
+  ...
 };
 ```
 
-5. Start the service
+4. Start the service
 
 ```
 npm start
 ```
 
-6. Enjoy ;)
+5. Enjoy ;)
