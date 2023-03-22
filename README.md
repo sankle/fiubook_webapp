@@ -11,7 +11,7 @@ Developed on assignment "(75.61) Programming Workshop III" - Faculty of Engineer
 | Aguerre, Nicolás Federico |     102145     |    [@nicomatex](https://github.com/nicomatex)   |
 | Klein, Santiago           |     102192     |     [@sankle](https://github.com/sankle)        |
 
-[Here](https://github.com/nicomatex/fiubook_core) you can find the backend repository.
+- Backend repository: https://github.com/nicomatex/fiubook_core
 
 ## Run the webapp
 
