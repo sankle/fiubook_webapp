@@ -1,7 +1,8 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
+import config from './config/default';
 
-const config: CodegenConfig = {
-  schema: 'http://10.108.174.142:3000/graph',
+const codegenConfig: CodegenConfig = {
+  schema: config.graphqlServerUrl,
   documents: ['src/**/*.tsx'],
   generates: {
     './src/__generated__/': {
@@ -15,4 +16,4 @@ const config: CodegenConfig = {
   ignoreNoDocuments: true,
 };
 
-export default config;
+export default codegenConfig;

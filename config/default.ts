@@ -1,5 +1,6 @@
 const config = {
-  graphqlServerUrl: 'http://10.108.174.142:3000/graph',
+  graphqlServerUrl: 'http://127.0.0.1:3000/graph',
+  imgBBApiKey: 'your-api-key',
 };
 
 export default config;
